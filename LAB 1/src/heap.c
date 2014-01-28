@@ -16,7 +16,7 @@ U32 * h_pop(void) {
 	U32* ret;
 	
 	if (first_mem_block == NULL){//crash
-		}
+	}
 	
 	ret = (U32 *)first_mem_block;
 	first_mem_block = first_mem_block->next_blk; 

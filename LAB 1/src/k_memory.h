@@ -20,6 +20,7 @@
 extern unsigned int Image$$RW_IRAM1$$ZI$$Limit; 
 extern PCB **gp_pcbs;
 extern PROC_INIT g_proc_table[NUM_TEST_PROCS];
+extern PCB *gp_current_process;
 
 /* ----- Functions ------ */
 void memory_init(void);

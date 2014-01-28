@@ -15,7 +15,7 @@
 /* ----- Definitions ----- */
 
 #define INITIAL_xPSR 0x01000000        /* user process initial xPSR value */
-
+//PCB *gp_current_process; /* always point to the current RUN process */
 /* ----- Functions ----- */
 
 void process_init(void);               /* initialize all procs in the system */
@@ -25,7 +25,6 @@ int k_get_process_priority(int process_id);
 int k_set_process_priority(int process_id, int priority);
 int get_process_priority(int process_id);
 int set_process_priority(int process_id, int priority);
-
 
 
 void add_null_process(void);

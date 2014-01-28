@@ -15,7 +15,9 @@
 U32 *gp_stack; /* The last allocated stack low address. 8 bytes aligned */
                /* The first stack starts at the RAM high address */
 	       /* stack grows down. Fully decremental stack */
-				 
+
+Queue *blocked_queue;
+Node nodes[NUM_TEST_PROCS+1];
 
 /**
  * @brief: Initialize RAM as follows:
@@ -73,6 +75,7 @@ void memory_init(void)
 	MemBlock *hp;
 	U32 *test;
   
+	gp_current_process = NULL;
 	/* 4 bytes padding */
 	p_end += 4;
 
@@ -157,7 +160,7 @@ U32 *alloc_stack(U32 size_b)
 	/* update gp_stack */
 	gp_stack = (U32 *)((U8 *)sp - size_b);
 	
-	/* 8 bytes alignement adjustment to exception stack frame */
+	/* 8 bytes alignement adjustme	t to exception stack frame */
 	if ((U32)gp_stack & 0x04) {
 		--gp_stack; 
 	}
@@ -171,7 +174,14 @@ void *k_request_memory_block(void) {
 #endif /* ! DEBUG_0 */
 	//_atomic_(0);
 	while (first_mem_block == NULL) {
+		// set that process state to BLOCKED
+		gp_current_process->m_state = BLK;
 		
+		// put PCB on blocked_resource q
+		q_push(blocked_queue, gp_current_process);
+		
+		// release processor
+		release_processor();
 	}
 	ret_val = h_pop();
 	//_endatomic_();
@@ -187,7 +197,11 @@ int k_release_memory_block(void *p_mem_blk) {
 		return RTX_ERR;
 	}
 	h_push(p_mem_blk);
-	//TODO Q
+	/*
+		if (blocked on resource q is not empty)
+			handle_process_ready(pop(blocked resource q))
+		}
+	*/
 	//_endatomic_();
 	return RTX_OK;
 }
