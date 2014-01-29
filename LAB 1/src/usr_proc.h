@@ -11,6 +11,6 @@
 void set_test_procs(void);
 void proc1(void);
 void proc2(void);
-void alloc_test(void);
+void set_priority_test(void);
 
 #endif /* USR_PROC_H_ */

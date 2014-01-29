@@ -12,17 +12,14 @@ PCB* q_pop(Queue* q) {
 	Node* iter = NULL;
 	Node* prev_iter = NULL;
 	
-	//printf("Pre-pop:\r\n");
-	//q_print(q);
-	
 	highest_pri = 4;
 	iter = q->first;
 	
-	//printf("Entered pop \r\n");
-	
+	// Nothing to pop
 	if (iter == NULL) {
 		return NULL;
-	}
+	} 
+	// Only one node in queue
 	else if (q->first == q->last) {
 		ret = q->first->value;
 		freeNode(q->first);
@@ -41,36 +38,35 @@ PCB* q_pop(Queue* q) {
 	printf("Highest priority: %d \n", highest_pri);
 	
 	iter = q->first;
-	
 	prev_iter = NULL;
 	
-	///////////////////////////////////////////////////
-	// Pop the first element with the highest priority 
-	///////////////////////////////////////////////////
-	
+	// Pop the first element with the highest priority	
 	while(iter != NULL) {
 		if (get_process_priority(iter->value->m_pid) == highest_pri) {
 			ret = iter->value;
-			printf("Returned process: %d\n",ret->m_pid);
-			if (iter == q->first) {							//matched node at begin
+			
+			// Node at beginning
+			if (iter == q->first) {
 				q->first = q->first->next;
 				if(q->first != NULL && q->first->next == NULL) {
 					q->last = q->first;
 				}
 			}
-			else if (iter == q->last) {					//matched node at end
+			// Node at end
+			else if (iter == q->last) {
 				q->last = prev_iter;
 				q->last->next = NULL;
 			}
-			else {															//matched node in middle
+			// Node in middle
+			else {
 				prev_iter->next = iter->next;
-				//q->last->next = NULL;
 			}
+			
+			// Free deleted node
 			freeNode(iter);
-			printf("Post-pop (valid return):\r\n");
-			//q_print(q);
 			return ret;
 		}
+		// Iterate through nodes until found
 		prev_iter = iter;
 		iter = iter->next;
 	}

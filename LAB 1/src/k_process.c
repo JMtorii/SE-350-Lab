@@ -31,7 +31,7 @@ PROC_INIT g_proc_table[NUM_TEST_PROCS];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
 
 /**
- * @biref: initialize all processes in the system
+ * @brief: initialize all processes in the system
  * NOTE: We assume there are only two user processes in the system in this example.
  */
 void process_init() 
@@ -39,7 +39,7 @@ void process_init()
 	int i;
 	U32 *sp;
   
-        /* fill out the initialization table */
+  /* fill out the initialization table */
 	add_null_process();
 
 	set_test_procs();	
@@ -53,19 +53,11 @@ void process_init()
 	/* initilize exception stack frame (i.e. initial context) for each process */
 	for ( i = 0; i < NUM_TEST_PROCS+1; i++ ) {
 		int j;
-		
-		// Tester
-		if (0) {
-			for ( j = 0; j < NUM_TEST_PROCS; j++ ) {
-				printf("*gp_pcbs[%d]: %x\r\n",j, gp_pcbs[j]);
-				printf("*g_proc_table[%d]: %x\r\n",j, &g_proc_table[j]);
-			}
-		}
-		
-		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid; //???
-		
+		// Add test procs to pcbs
+		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid;
 		(gp_pcbs[i])->m_state = NEW;
 		
+		// Create stack pointer and alloc space
 		sp = alloc_stack((g_proc_table[i]).m_stack_size);
 		
 		*(--sp)  = INITIAL_xPSR;      // user process initial xPSR  
@@ -74,25 +66,12 @@ void process_init()
 			*(--sp) = 0x0;
 		}
 		
-		//(gp_pcbs[i])->m_state = RDY;
+		// Push each pcb into ready_queue
 		q_push(ready_queue,gp_pcbs[i]);
 		
+		// Assign memory address of stack pointer for each pcb
 		(gp_pcbs[i])->mp_sp = sp;
 	}
-//	n_print();
-//	q_print(ready_queue);
-	//while (1) { }
-		
-	//TESTING BE HERE
-	if (0) {
-		printf("Priority of Proc1, Proc2: %d, %d \r\n", k_get_process_priority(1), k_get_process_priority(2));
-		k_set_process_priority(1,0);
-		k_set_process_priority(2,1);
-		printf("Priority of Proc1, Proc2: %d, %d \r\n", k_get_process_priority(1), k_get_process_priority(2));
-		while(1){}
-	}
-	
-	printf("\r\nProcess INIT completed\r\n\r\n");
 }
 
 /*@brief: scheduler, pick the pid of the next to run process
@@ -101,24 +80,15 @@ void process_init()
  *POST: if gp_current_process was NULL, then it gets set to pcbs[0].
  *      No other effect on other global variables.
  */
-
 PCB *scheduler(void)
 {
+	// Get next pcb to execute and return
 	PCB* tmp_pcb;
-	
 	tmp_pcb = q_pop(ready_queue);
 	
-	printf("Sched entered\r\n");
-	//if (gp_current_process == NULL) {
-		//gp_current_process = gp_pcbs[0];
-		//printf("q_print in scheduler\r\n");
-		//q_print(ready_queue);
-		//return gp_pcbs[0];
-	//}
-		printf("Process popped\r\n");
-		gp_current_process = tmp_pcb; 
-		printf("Current process: %d\r\n",tmp_pcb->m_pid);
-		return tmp_pcb;
+	// Assign current process to execute to global var
+	gp_current_process = tmp_pcb; 
+	return tmp_pcb;
 }
 
 /*@brief: switch out old pcb (p_pcb_old), run the new pcb (gp_current_process)
@@ -132,7 +102,6 @@ PCB *scheduler(void)
 int process_switch(PCB *p_pcb_old) 
 {
 	PROC_STATE_E state;
-	
 	state = gp_current_process->m_state;
 	
 	if (state == NEW) {
@@ -146,7 +115,6 @@ int process_switch(PCB *p_pcb_old)
 	} 
 	
 	/* The following will only execute if the if block above is FALSE */
-
 	if (gp_current_process != p_pcb_old) {
 		if (state == RDY){ 		
 			p_pcb_old->m_state = RDY; 
@@ -160,6 +128,7 @@ int process_switch(PCB *p_pcb_old)
 	}
 	return RTX_OK;
 }
+
 /**
  * @brief release_processor(). 
  * @return RTX_ERR on error and zero on success
@@ -167,31 +136,36 @@ int process_switch(PCB *p_pcb_old)
  */
 int k_release_processor(void)
 {
+	// Set pointer to last executed pcb
 	PCB *p_pcb_old = NULL;
-	//q_print(ready_queue);
-	//n_print();
 	p_pcb_old = gp_current_process;
+	
+	// Obtain next in execution
 	gp_current_process = scheduler();
 	
+	// Nothing to do
 	if ( gp_current_process == NULL  ) {
-		gp_current_process = p_pcb_old; // revert back to the old process
+		gp_current_process = p_pcb_old;
 		return RTX_ERR;
 	}
+	// Init for if no current processes
   if ( p_pcb_old == NULL ) {
 		p_pcb_old = gp_current_process;
 	}
+	// Else push old process back to ready queue
 	else {
 		q_push(ready_queue, p_pcb_old);
 	}
-	
 	process_switch(p_pcb_old);
 	return RTX_OK;
 }
 
+// Wrapper to obtain process priority of process with arg pid
 int get_process_priority(int process_id) {
 	return k_get_process_priority(process_id);
 }
 
+// Obtain process priority of process with arg pid
 int k_get_process_priority(int process_id) {
 	int i;
 	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
@@ -202,10 +176,12 @@ int k_get_process_priority(int process_id) {
 	return RTX_ERR;
 }
 
+// Wrapper to set priority of process with arg PID
 int set_process_priority(int process_id, int priority) {
 	return k_set_process_priority(process_id, priority);
 }
 
+// Set priority of process with arg PID
 int k_set_process_priority(int process_id, int priority) {
 	int i;
 	//Disallow changing null process or iprocess priorities
@@ -221,14 +197,15 @@ int k_set_process_priority(int process_id, int priority) {
 	return RTX_ERR;
 }
 
+// Proc to add null process
 void add_null_process(void) {
 	g_proc_table[0].m_pid = (U32)0;
 	g_proc_table[0].m_stack_size = 0x100;
 	g_proc_table[0].m_priority = 4;
 	g_proc_table[0].mpf_start_pc = &null;
-	
 }
 
+// Proc for what the null process does
 void null (void) {
 	int ret_val = 30;
 	while (1) {

@@ -14,7 +14,7 @@
 /* ----- Global Variables ----- */
 U32 *gp_stack; /* The last allocated stack low address. 8 bytes aligned */
                /* The first stack starts at the RAM high address */
-	       /* stack grows down. Fully decremental stack */
+							 /* stack grows down. Fully decremental stack */
 
 Queue blk_q;
 Queue rdy_q;
@@ -77,30 +77,26 @@ void memory_init(void)
 	int i;
 	MemBlock *hp;
 	U32 *test;
- 
-	for (i = 0;i < 100;i++) {
-		printf("\r\n");
-	}
+	
+	// Create ready and blocked queue
 	blocked_queue = &blk_q;
 	ready_queue = &rdy_q;
 	blocked_queue->first = NULL;
 	blocked_queue->last = NULL;
 	ready_queue->first = NULL;
 	ready_queue->last = NULL;
+	
+	// Create nodes for use in proc queues
 	for (i=0;i<NUM_TEST_PROCS+1;i++) {
 		nodes[i].value = NULL;
 		nodes[i].next = NULL;
 	}
-
-	//n_print();
-	//printf("%x",NULL);
-  //while(1) {}
 		
 	gp_current_process = NULL;
 	/* 4 bytes padding */
 	p_end += 4;
 
-	/* allocate memory for pcb pointers   */
+	//Allocate memory for pcb pointers
 	gp_pcbs = (PCB **)p_end;
 	p_end += (NUM_TEST_PROCS+1) * sizeof(PCB *);
   
@@ -108,25 +104,22 @@ void memory_init(void)
 		gp_pcbs[i] = (PCB *)p_end;
 		p_end += sizeof(PCB); 
 	}
-#ifdef DEBUG_0  
-	printf("gp_pcbs[0] = 0x%x \r\n", gp_pcbs[0]);
-	printf("gp_pcbs[1] = 0x%x \r\n", gp_pcbs[1]);
-	printf("gp_pcbs[2] = 0x%x \r\n", gp_pcbs[2]);
-#endif
 	
-	/* allocate memory for stacks */
-	
+	// Allocate memory for stack
 	gp_stack = (U32 *)RAM_END_ADDR;
 	if ((U32)gp_stack & 0x04) { /* 8 bytes alignment */
 		--gp_stack; 
 	}
   
-	/* allocate memory for heap, not implemented yet*/	  
+	// Allocate memory for heap, implemented
+	// Set first mem block to point to first available location
 	first_mem_block = (MemBlock *)p_end;
 	hp = first_mem_block;
 	
+	// Calculate number of memory blocks using end addresses of stack and pcb
 	NUM_MEM_BLK = (highaddress - p_end) * 3/4 / SIZE_MEM_BLK;
 	
+	// Create heap (linked list) of memory
 	for(i = 0;i < NUM_MEM_BLK;i++) {
 		MemBlock memBlock;
 		memBlock.next_blk = (MemBlock *)((U8 *)hp + SIZE_MEM_BLK);
@@ -136,36 +129,7 @@ void memory_init(void)
 		*hp = memBlock;	
 		hp = memBlock.next_blk;		
 	}
-	
 	heap_begin = p_end;
-	
-	printf("\r\nMemory INIT completed.\r\n\r\n");
-	
-	// HERE BE TESTING
-	if (0) {
-		hp = first_mem_block;
-		for (i = 0; i < 23; i++) {
-			printf("0x%x\r\n", hp->next_blk);
-			hp = (MemBlock*)hp->next_blk;		
-		}
-		
-		printf("gp_stack: 0x%x \r\n", gp_stack);
-		printf("p_end: 0x%x \r\n", p_end);
-		
-		printf("pop_first_mem_block: 0x%x ",first_mem_block);
-		test = h_pop();
-		printf("pop_first_mem_block: 0x%x ",first_mem_block);
-		printf("pop_testblock: 0x%x \r\n",test);
-		
-		printf("push_first_mem_block: 0x%x ",first_mem_block);
-		h_push(test);
-		printf("push_first_mem_block: 0x%x ",first_mem_block);
-		printf("push_testblock: 0x%x \r\n",test);
-		
-		printf("MEM_NUM: %d \r\n",NUM_MEM_BLK);
-		while(1) {
-		}
-	}
 }
 
 /**
@@ -190,43 +154,41 @@ U32 *alloc_stack(U32 size_b)
 	return sp;
 }
 
+// Request a memory block from heap
 void *k_request_memory_block(void) {
 	U32 * ret_val;
-#ifdef DEBUG_0 
-	printf("k_request_memory_block: entering...\r\n");
-#endif /* ! DEBUG_0 */
 	//_atomic_(0);
 	if (first_mem_block == NULL) { //Is this correct?
-		// set that process state to BLOCKED
+		// Set that process state to BLOCKED
 		gp_current_process->m_state = BLK;
 		
-		// put PCB on blocked_resource q
+		// Put PCB on blocked_resource q
 		q_push(blocked_queue, gp_current_process);
 		
-		// release processor
+		// Release processor
 		release_processor();
 	}
+	// Pop from heap
 	ret_val = h_pop();
 	//_endatomic_();
 	return (void *) ret_val;
 }
 
+// Release a memory block to be used by a process
 int k_release_memory_block(void *p_mem_blk) {
 	PCB* tmp;
-#ifdef DEBUG_0 
-	printf("k_release_memory_block: releasing block @ 0x%x\r\n", p_mem_blk);
-#endif /* ! DEBUG_0 */
 	//_atomic_(0);
 	if (p_mem_blk < heap_begin || p_mem_blk > heap_begin+NUM_MEM_BLK*SIZE_MEM_BLK) {
 		return RTX_ERR;
 	}
+	// Push memory block back into heap
 	h_push(p_mem_blk);
 	
+	// If entry in blocked queue after memory is free, then put process back to ready queue
 	if (blocked_queue->first != NULL) {
 		tmp = q_pop(blocked_queue);
 		q_push(ready_queue, tmp);
 	}
-	
 	//_endatomic_();
 	return RTX_OK;
 }
