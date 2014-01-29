@@ -12,10 +12,24 @@ PCB* q_pop(Queue* q) {
 	Node* iter = NULL;
 	Node* prev_iter = NULL;
 	
+	//printf("Pre-pop:\r\n");
+	//q_print(q);
+	
 	highest_pri = 4;
 	iter = q->first;
 	
-	printf("Entered pop \r\n");
+	//printf("Entered pop \r\n");
+	
+	if (iter == NULL) {
+		return NULL;
+	}
+	else if (q->first == q->last) {
+		ret = q->first->value;
+		freeNode(q->first);
+		return ret;
+	}
+	
+	// Find the highest priority in the queue
 	while(iter != NULL) {
 		ret = iter->value;
 		compare = get_process_priority(iter->value->m_pid);
@@ -27,13 +41,22 @@ PCB* q_pop(Queue* q) {
 	printf("Highest priority: %d \n", highest_pri);
 	
 	iter = q->first;
+	
 	prev_iter = NULL;
+	
+	///////////////////////////////////////////////////
+	// Pop the first element with the highest priority 
+	///////////////////////////////////////////////////
+	
 	while(iter != NULL) {
 		if (get_process_priority(iter->value->m_pid) == highest_pri) {
 			ret = iter->value;
 			printf("Returned process: %d\n",ret->m_pid);
 			if (iter == q->first) {							//matched node at begin
 				q->first = q->first->next;
+				if(q->first != NULL && q->first->next == NULL) {
+					q->last = q->first;
+				}
 			}
 			else if (iter == q->last) {					//matched node at end
 				q->last = prev_iter;
@@ -44,11 +67,16 @@ PCB* q_pop(Queue* q) {
 				//q->last->next = NULL;
 			}
 			freeNode(iter);
+			printf("Post-pop (valid return):\r\n");
+			//q_print(q);
 			return ret;
 		}
 		prev_iter = iter;
 		iter = iter->next;
 	}
+	
+	printf("Post-pop (NULL return):\r\n");
+	//q_print(q);
 	return NULL;
 }
 
@@ -83,14 +111,17 @@ void q_print(Queue *q) {
 	Node* iter;
 	int i = 0;
 	iter = q->first;
-	printf("Contents of q:\r\n");
+	printf("\r\nContents of q:\r\n==============\r\n");
 	
 	while (iter != NULL) {
 		i++;
 		printf("%d: ", i);
 		printf("%d\r\n",iter->value->m_pid);
+		printf("Address of next node: %x. \r\n\r\n", iter->next);
 		iter = iter->next;
 	}
+	
+	printf("\r\nq_print complete:==============\r\n");
 }
 
 Node *getFreeNode(void) {
@@ -115,7 +146,7 @@ void n_print() {
 	int i;
 	printf("\r\nNode contents print\r\n");
 	for (i = 0;i < NUM_TEST_PROCS+1;++i) {
-		printf("i: %d, &nodes: %x, &node_val: %x\r\n",i,nodes[i],(nodes[i].value));
+		printf("i: %d, &nodes: %x, &node_val: %x\r\n",i,&nodes[i],(nodes[i].value));
 		printf("PID Value: %d\r\n",nodes[i].value->m_pid);
 	}
 	printf("\r\n");

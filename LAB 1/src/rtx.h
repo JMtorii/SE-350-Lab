@@ -8,7 +8,7 @@
 /* ----- Definitations ----- */
 #define RTX_ERR -1
 #define NULL 0
-#define NUM_TEST_PROCS 2
+#define NUM_TEST_PROCS 3
 /* Process Priority. The bigger the number is, the lower the priority is*/
 #define HIGH    0
 #define MEDIUM  1
@@ -46,5 +46,8 @@ extern void *_request_memory_block(U32 p_func) __SVC_0;
 extern int k_release_memory_block(void *);
 #define release_memory_block(p_mem_blk) _release_memory_block((U32)k_release_memory_block, p_mem_blk)
 extern int _release_memory_block(U32 p_func, void *p_mem_blk) __SVC_0;
+
+extern int k_set_process_priority(int process_id, int priority);
+#define set_process_priority(process_id, priority) k_set_process_priority(process_id, priority)
 
 #endif /* !RTX_H_ */

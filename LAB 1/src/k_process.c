@@ -76,11 +76,11 @@ void process_init()
 		
 		//(gp_pcbs[i])->m_state = RDY;
 		q_push(ready_queue,gp_pcbs[i]);
-		n_print();
 		
 		(gp_pcbs[i])->mp_sp = sp;
 	}
-	q_print(ready_queue);
+//	n_print();
+//	q_print(ready_queue);
 	//while (1) { }
 		
 	//TESTING BE HERE
@@ -106,18 +106,19 @@ PCB *scheduler(void)
 {
 	PCB* tmp_pcb;
 	
+	tmp_pcb = q_pop(ready_queue);
+	
 	printf("Sched entered\r\n");
-	if (gp_current_process == NULL) {
-		gp_current_process = gp_pcbs[0]; 
-		return gp_pcbs[0];
-	}
-	else {
-		printf("Process popped");
-		tmp_pcb = q_pop(ready_queue);
+	//if (gp_current_process == NULL) {
+		//gp_current_process = gp_pcbs[0];
+		//printf("q_print in scheduler\r\n");
+		//q_print(ready_queue);
+		//return gp_pcbs[0];
+	//}
+		printf("Process popped\r\n");
 		gp_current_process = tmp_pcb; 
 		printf("Current process: %d\r\n",tmp_pcb->m_pid);
 		return tmp_pcb;
-	}
 }
 
 /*@brief: switch out old pcb (p_pcb_old), run the new pcb (gp_current_process)
@@ -133,7 +134,7 @@ int process_switch(PCB *p_pcb_old)
 	PROC_STATE_E state;
 	
 	state = gp_current_process->m_state;
-
+	
 	if (state == NEW) {
 		if (gp_current_process != p_pcb_old && p_pcb_old->m_state != NEW) {
 			p_pcb_old->m_state = RDY;
@@ -167,25 +168,23 @@ int process_switch(PCB *p_pcb_old)
 int k_release_processor(void)
 {
 	PCB *p_pcb_old = NULL;
-	printf("k_release completed.\r\n");
-	q_print(ready_queue);
+	//q_print(ready_queue);
 	//n_print();
 	p_pcb_old = gp_current_process;
 	gp_current_process = scheduler();
 	
 	if ( gp_current_process == NULL  ) {
 		gp_current_process = p_pcb_old; // revert back to the old process
-		printf("FAILED\r\n");
 		return RTX_ERR;
 	}
   if ( p_pcb_old == NULL ) {
 		p_pcb_old = gp_current_process;
 	}
-	process_switch(p_pcb_old);
-	printf("Test Push\r\n");
-	if (p_pcb_old != NULL) {
+	else {
 		q_push(ready_queue, p_pcb_old);
 	}
+	
+	process_switch(p_pcb_old);
 	return RTX_OK;
 }
 
@@ -209,6 +208,10 @@ int set_process_priority(int process_id, int priority) {
 
 int k_set_process_priority(int process_id, int priority) {
 	int i;
+	//Disallow changing null process or iprocess priorities
+	if (process_id == 0) {
+		return RTX_ERR;
+	}
 	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			g_proc_table[i].m_priority = priority;

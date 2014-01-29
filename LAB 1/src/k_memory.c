@@ -196,7 +196,7 @@ void *k_request_memory_block(void) {
 	printf("k_request_memory_block: entering...\r\n");
 #endif /* ! DEBUG_0 */
 	//_atomic_(0);
-	while (first_mem_block == NULL) {
+	if (first_mem_block == NULL) { //Is this correct?
 		// set that process state to BLOCKED
 		gp_current_process->m_state = BLK;
 		

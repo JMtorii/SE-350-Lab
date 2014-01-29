@@ -27,7 +27,7 @@ void set_test_procs() {
   
 	g_test_procs[0].mpf_start_pc = &proc1;
 	g_test_procs[1].mpf_start_pc = &proc2;
-	//g_test_procs[2].mpf_start_pc = &null;
+	g_test_procs[2].mpf_start_pc = &alloc_test;
 }
 
 
@@ -73,13 +73,36 @@ void proc2(void)
 	}
 }
 
-/*
-void null (void) {
-	int ret_val = 20;
-	while (1) {
-		ret_val = release_processor();
-		#ifdef DEBUG_0
-			printf("proc0: ret_val=%d\n", ret_val);
-		#endif 
+/**
+ * @brief: Allocates memory on the heap, sums, then frees
+ */
+void alloc_test(void)
+{
+	int i = 0;
+	int ret_val = 300;
+	int passed = 0;
+	int failed = 0;
+	int total = 2;
+	int* numbers;
+	char name[24] = "alloc_test";
+	
+	set_process_priority(2, 1);
+	
+	printf("%s: START\r\n", alloc_test);
+	
+	// Allocate a memory block
+  //numbers = k_request_memory_block();
+	
+	for (i = 0; i < 10; ++i) {
+		numbers[i] = i;
 	}
-}*/
+	
+	printf("%s: Allocate Memory Test\r\n", name);
+
+	printf("%s: %d/%d OK\r\n", alloc_test, passed, total);
+	printf("%s: %d/%d FAIL\r\n", alloc_test, failed, total);
+	printf("%s: END\r\n", alloc_test);
+	while(1) {	
+		ret_val = release_processor();
+	}
+}
