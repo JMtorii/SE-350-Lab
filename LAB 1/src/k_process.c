@@ -47,23 +47,24 @@ void process_init()
 		g_proc_table[i+1].m_pid = g_test_procs[i].m_pid;
 		g_proc_table[i+1].m_stack_size = g_test_procs[i].m_stack_size;
 		g_proc_table[i+1].mpf_start_pc = g_test_procs[i].mpf_start_pc;
+		g_proc_table[i+1].m_priority = g_test_procs[i].m_priority;
 	}
 	
 	/* initilize exception stack frame (i.e. initial context) for each process */
 	for ( i = 0; i < NUM_TEST_PROCS+1; i++ ) {
 		int j;
-		printf("HERE\n");
-		printf("gp_pcbs[i]: %x\n", gp_pcbs[i]);/*
-		for ( j = 0; j < NUM_TEST_PROCS; j++ ) {
-			printf("*gp_pcbs[%d]: %x\n",j, gp_pcbs[j]);
-			printf("*g_proc_table[%d]: %x\n",j, &g_proc_table[j]);
+		
+		// Tester
+		if (0) {
+			for ( j = 0; j < NUM_TEST_PROCS; j++ ) {
+				printf("*gp_pcbs[%d]: %x\r\n",j, gp_pcbs[j]);
+				printf("*g_proc_table[%d]: %x\r\n",j, &g_proc_table[j]);
+			}
 		}
-		while(1){}*/
-
+		
 		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid; //???
 		
 		(gp_pcbs[i])->m_state = NEW;
-		printf("HERE\n");
 		
 		sp = alloc_stack((g_proc_table[i]).m_stack_size);
 		
@@ -72,19 +73,26 @@ void process_init()
 		for ( j = 0; j < 6; j++ ) { // R0-R3, R12 are cleared with 0
 			*(--sp) = 0x0;
 		}
-		printf("HERE\n");
-		(gp_pcbs[i])->mp_sp = sp;
-		printf("%d\n", i);
 		
+		//(gp_pcbs[i])->m_state = RDY;
+		q_push(ready_queue,gp_pcbs[i]);
+		n_print();
+		
+		(gp_pcbs[i])->mp_sp = sp;
 	}
+	q_print(ready_queue);
+	//while (1) { }
+		
 	//TESTING BE HERE
 	if (0) {
-		printf("Priority of Proc1, Proc2: %d, %d \n", k_get_process_priority(1), k_get_process_priority(2));
+		printf("Priority of Proc1, Proc2: %d, %d \r\n", k_get_process_priority(1), k_get_process_priority(2));
 		k_set_process_priority(1,0);
 		k_set_process_priority(2,1);
-		printf("Priority of Proc1, Proc2: %d, %d \n", k_get_process_priority(1), k_get_process_priority(2));
+		printf("Priority of Proc1, Proc2: %d, %d \r\n", k_get_process_priority(1), k_get_process_priority(2));
 		while(1){}
 	}
+	
+	printf("\r\nProcess INIT completed\r\n\r\n");
 }
 
 /*@brief: scheduler, pick the pid of the next to run process
@@ -96,19 +104,19 @@ void process_init()
 
 PCB *scheduler(void)
 {
+	PCB* tmp_pcb;
+	
+	printf("Sched entered\r\n");
 	if (gp_current_process == NULL) {
 		gp_current_process = gp_pcbs[0]; 
 		return gp_pcbs[0];
 	}
-
-	if ( gp_current_process == gp_pcbs[0] ) {
-		return gp_pcbs[1];
-	} else if ( gp_current_process == gp_pcbs[1] ) {
-		return gp_pcbs[2];
-	} else if ( gp_current_process == gp_pcbs[2] ) {
-		return gp_pcbs[0];
-	} else {
-		return NULL;
+	else {
+		printf("Process popped");
+		tmp_pcb = q_pop(ready_queue);
+		gp_current_process = tmp_pcb; 
+		printf("Current process: %d\r\n",tmp_pcb->m_pid);
+		return tmp_pcb;
 	}
 }
 
@@ -159,18 +167,25 @@ int process_switch(PCB *p_pcb_old)
 int k_release_processor(void)
 {
 	PCB *p_pcb_old = NULL;
-	
+	printf("k_release completed.\r\n");
+	q_print(ready_queue);
+	//n_print();
 	p_pcb_old = gp_current_process;
 	gp_current_process = scheduler();
 	
 	if ( gp_current_process == NULL  ) {
 		gp_current_process = p_pcb_old; // revert back to the old process
+		printf("FAILED\r\n");
 		return RTX_ERR;
 	}
-        if ( p_pcb_old == NULL ) {
+  if ( p_pcb_old == NULL ) {
 		p_pcb_old = gp_current_process;
 	}
 	process_switch(p_pcb_old);
+	printf("Test Push\r\n");
+	if (p_pcb_old != NULL) {
+		q_push(ready_queue, p_pcb_old);
+	}
 	return RTX_OK;
 }
 
@@ -180,7 +195,7 @@ int get_process_priority(int process_id) {
 
 int k_get_process_priority(int process_id) {
 	int i;
-	for (i = 0;i<NUM_TOTAL_PROCS;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			return g_proc_table[i].m_priority;
 		}
@@ -194,7 +209,7 @@ int set_process_priority(int process_id, int priority) {
 
 int k_set_process_priority(int process_id, int priority) {
 	int i;
-	for (i = 0;i<NUM_TOTAL_PROCS;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			g_proc_table[i].m_priority = priority;
 			return RTX_OK;
@@ -214,11 +229,10 @@ void add_null_process(void) {
 void null (void) {
 	int ret_val = 30;
 	while (1) {
-		ret_val = release_processor();
 		#ifdef DEBUG_0
-			printf("[proc0]: ret_val=%d\n", ret_val);
-			printf("NULL PROCESS!!\n", ret_val);
+			printf("[proc0]: ret_val=%d\r\n", ret_val);
+			printf("NULL PROCESS!!\r\n", ret_val);
 		#endif 
-		
+		ret_val = release_processor();
 	}
 }

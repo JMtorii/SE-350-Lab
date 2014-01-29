@@ -7,3 +7,5 @@ k_rtx_init.o: src\k_memory.h
 k_rtx_init.o: src\heap.h
 k_rtx_init.o: src\queue.h
 k_rtx_init.o: src\k_process.h
+k_rtx_init.o: src\queue.h
+k_rtx_init.o: src\k_process.h

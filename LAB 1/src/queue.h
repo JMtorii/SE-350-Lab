@@ -19,16 +19,17 @@ typedef struct Node{
 extern Node nodes[NUM_TEST_PROCS+1];
 
 typedef struct Queue{
-		U32 size;
 	  Node* first;
-	  Node* last;
-		
+	  Node* last;		
 } Queue;
 
+void n_print(void);
 
 PCB* q_pop(Queue *q);
 void q_push(Queue *q, PCB *val);
-Node *getFreeNode(void);
+void q_print(Queue *q);
 
+Node *getFreeNode(void);
+void freeNode(Node *n);
 
 #endif

@@ -11,6 +11,7 @@
 #define K_PROCESS_H_
 
 #include "k_rtx.h"
+#include "queue.h"
 
 /* ----- Definitions ----- */
 
@@ -33,5 +34,7 @@ void null(void);
 extern U32 *alloc_stack(U32 size_b);   /* allocate stack for a process */
 extern void __rte(void);               /* pop exception stack frame */
 extern void set_test_procs(void);      /* test process initial set up */
+extern Queue *blocked_queue;
+extern Queue *ready_queue;
 
 #endif /* ! K_PROCESS_H_ */
