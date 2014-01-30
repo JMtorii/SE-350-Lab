@@ -1,3 +1,10 @@
+/**
+ * @file:   queue.c
+ * @brief:  Implementation of queues
+ * @author: TEAM BLACKJACK (21)
+ * @date:   2014/01/17
+ */
+
 #include "queue.h"
 
 #ifdef DEBUG_0
@@ -34,9 +41,7 @@ PCB* q_pop(Queue* q) {
 			highest_pri = compare;
 		}
 		iter = iter->next;
-	}
-	printf("Highest priority: %d \n", highest_pri);
-	
+	}	
 	iter = q->first;
 	prev_iter = NULL;
 	
@@ -61,7 +66,6 @@ PCB* q_pop(Queue* q) {
 			else {
 				prev_iter->next = iter->next;
 			}
-			
 			// Free deleted node
 			freeNode(iter);
 			return ret;
@@ -70,35 +74,28 @@ PCB* q_pop(Queue* q) {
 		prev_iter = iter;
 		iter = iter->next;
 	}
-	
-	printf("Post-pop (NULL return):\r\n");
-	//q_print(q);
 	return NULL;
 }
 
 // Pushes PCB to end, queue sorted by time inserted
 void q_push(Queue* q, PCB *val) {
 	Node *n = getFreeNode();
-	if (n == NULL) {printf("FAILURE at push\r\n");}
+	
+	// This should never be reached, no free nodes available
+	if (n == NULL) { return; }
 
 	n->next = NULL;
 	n->value = val;
 
+  // Queue currently is not empty
 	if (q->last != NULL) {
 		q->last->next = n;
 	}
-	
 	q->last = n;
+	
+	// Queue is currently empty
 	if (q->first == NULL) {
 		q->first = n;
-	}
-	
-	// Tester
-	if (0) {
-		printf("PID of q->first: %d\r\n",q->first->value->m_pid);
-		printf("PID of q->last: %d\r\n",q->last->value->m_pid);
-		q_print(q);
-		printf("Push completed\r\n");
 	}
 }
 
@@ -108,7 +105,6 @@ void q_print(Queue *q) {
 	int i = 0;
 	iter = q->first;
 	printf("\r\nContents of q:\r\n==============\r\n");
-	
 	while (iter != NULL) {
 		i++;
 		printf("%d: ", i);
@@ -116,28 +112,27 @@ void q_print(Queue *q) {
 		printf("Address of next node: %x. \r\n\r\n", iter->next);
 		iter = iter->next;
 	}
-	
 	printf("\r\nq_print complete:==============\r\n");
 }
 
+// Returns a free node for use in queues
 Node *getFreeNode(void) {
 	int i;
 	for (i=0;i<NUM_TEST_PROCS+1;++i) {
 		if (nodes[i].value == NULL) {
-			printf("Return node: %x\r\n",&nodes[i]);
 			return &nodes[i];
 		}
 	}
-	printf("Return NULL");
 	return NULL;
 }
 
+// Free contents of arg node
 void freeNode(Node *n) {
-	printf("Free node called.\r\n");
 	n->value = NULL;
 	n->next = NULL;
 }
 
+// Prints contents of all nodes
 void n_print() {
 	int i;
 	printf("\r\nNode contents print\r\n");

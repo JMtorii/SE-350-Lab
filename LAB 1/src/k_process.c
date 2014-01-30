@@ -1,16 +1,9 @@
 /**
  * @file:   k_process.c  
  * @brief:  process management C file
- * @author: Yiqing Huang
- * @author: Thomas Reidemeister
+ * @author: TEAM BLACKJACK
  * @date:   2014/01/17
- * NOTE: The example code shows one way of implementing context switching.
- *       The code only has minimal sanity check. There is no stack overflow check.
- *       The implementation assumes only two simple user processes and NO HARDWARE INTERRUPTS. 
- *       The purpose is to show how context switch could be done under stated assumptions. 
- *       These assumptions are not true in the required RTX Project!!!
- *       If you decide to use this piece of code, you need to understand the assumptions and
- *       the limitations. 
+ * NOTE: This works (hopefully).
  */
 
 #include <LPC17xx.h>

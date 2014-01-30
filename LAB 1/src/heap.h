@@ -1,7 +1,7 @@
 /**
  * @file:   Heap.h
  * @brief:  Heap implementation header file
- * @author: The coolest guys ever
+ * @author: TEAM BLACKJACK
  * @date:   2014/01/22
  */
  
@@ -13,7 +13,7 @@
 struct MemBlock;
 
 typedef struct MemBlock {
-		struct MemBlock *next_blk;
+	struct MemBlock *next_blk;
 } MemBlock;
 
 extern MemBlock *first_mem_block;

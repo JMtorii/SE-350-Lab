@@ -1,7 +1,7 @@
 /**
  * @file:   k_memory.c
  * @brief:  kernel memory managment routines
- * @author: Yiqing Huang
+ * @author: TEAM BLACKJACK
  * @date:   2014/01/17
  */
 
@@ -76,7 +76,7 @@ void memory_init(void)
 	U8 *highaddress = (U8 *)0x10008000;
 	int i;
 	MemBlock *hp;
-	U32 *test;
+	MemBlock memBlock;
 	
 	// Create ready and blocked queue
 	blocked_queue = &blk_q;
@@ -121,7 +121,6 @@ void memory_init(void)
 	
 	// Create heap (linked list) of memory
 	for(i = 0;i < NUM_MEM_BLK;i++) {
-		MemBlock memBlock;
 		memBlock.next_blk = (MemBlock *)((U8 *)hp + SIZE_MEM_BLK);
 		if (i == 0) {
 			(*first_mem_block) = memBlock;
@@ -129,6 +128,7 @@ void memory_init(void)
 		*hp = memBlock;	
 		hp = memBlock.next_blk;		
 	}
+	hp->next_blk = NULL;
 	heap_begin = p_end;
 }
 
@@ -158,7 +158,7 @@ U32 *alloc_stack(U32 size_b)
 void *k_request_memory_block(void) {
 	U32 * ret_val;
 	//_atomic_(0);
-	if (first_mem_block == NULL) { //Is this correct?
+	while (first_mem_block == NULL) { //Is this correct?
 		// Set that process state to BLOCKED
 		gp_current_process->m_state = BLK;
 		
@@ -166,10 +166,12 @@ void *k_request_memory_block(void) {
 		q_push(blocked_queue, gp_current_process);
 		
 		// Release processor
-		release_processor();
+		k_release_processor();
 	}
 	// Pop from heap
-	ret_val = h_pop();
+	if (first_mem_block != NULL) {
+		ret_val = h_pop();
+	}	
 	//_endatomic_();
 	return (void *) ret_val;
 }

@@ -15,11 +15,12 @@ U8* heap_begin = NULL;
 U32 * h_pop(void) {
 	U32* ret;
 	
-	if (first_mem_block == NULL){//crash
+	if (first_mem_block == NULL){
+		return NULL;
 	}
 	
 	ret = (U32 *)first_mem_block;
-	first_mem_block = first_mem_block->next_blk; 
+	first_mem_block = first_mem_block->next_blk;
 	
 	return ret;
 }

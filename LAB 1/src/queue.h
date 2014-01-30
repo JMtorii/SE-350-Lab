@@ -1,7 +1,7 @@
 /**
  * @file:   queue.h
  * @brief:  Queue implementation header file
- * @author: The coolest guys ever
+ * @author: TEAM BLACKJACK (021)
  * @date:   2014/01/22
  */
  
@@ -12,8 +12,8 @@
 #define QUEUE_H_
 
 typedef struct Node{
-		struct Node *next;
-	  PCB *value;
+	struct Node *next;
+	PCB *value;
 } Node;
 
 extern Node nodes[NUM_TEST_PROCS+1];

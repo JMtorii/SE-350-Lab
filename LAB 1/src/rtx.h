@@ -1,5 +1,5 @@
 /* @brief: rtx.h User API prototype, this is only an example
- * @author: Yiqing Huang
+ * @author: TEAM BLACKJACK
  * @date: 2014/01/17
  */
 #ifndef RTX_H_
@@ -8,7 +8,7 @@
 /* ----- Definitations ----- */
 #define RTX_ERR -1
 #define NULL 0
-#define NUM_TEST_PROCS 3
+#define NUM_TEST_PROCS 5
 /* Process Priority. The bigger the number is, the lower the priority is*/
 #define HIGH    0
 #define MEDIUM  1
@@ -49,5 +49,9 @@ extern int _release_memory_block(U32 p_func, void *p_mem_blk) __SVC_0;
 
 extern int k_set_process_priority(int process_id, int priority);
 #define set_process_priority(process_id, priority) k_set_process_priority(process_id, priority)
+
+extern int k_get_process_priority(int process_id);
+#define get_process_priority(process_id) k_get_process_priority(process_id)
+
 
 #endif /* !RTX_H_ */
