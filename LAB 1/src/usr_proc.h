@@ -9,6 +9,7 @@
 #define USR_PROC_H
 
 void set_test_procs(void);
+void print_test_results(void);
 void proc1(void);
 void proc2(void);
 void priority_test(void);

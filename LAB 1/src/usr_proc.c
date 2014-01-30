@@ -16,6 +16,7 @@
 
 /* initialization table item */
 PROC_INIT g_test_procs[NUM_TEST_PROCS];
+int test_results[NUM_TEST_PROCS];
 
 void set_test_procs() {
 	int i;
@@ -23,6 +24,7 @@ void set_test_procs() {
 		g_test_procs[i].m_pid=(U32)(i+1);
 		g_test_procs[i].m_priority=LOWEST;
 		g_test_procs[i].m_stack_size=0x100;
+		test_results[i] = 1;
 	}
   
 	g_test_procs[0].mpf_start_pc = &proc1;
@@ -30,8 +32,31 @@ void set_test_procs() {
 	g_test_procs[2].mpf_start_pc = &priority_test;
 	g_test_procs[3].mpf_start_pc = &memory_block_test;
 	g_test_procs[4].mpf_start_pc = &blocked_test;
+	
+	printf("\n\r");
+	printf("G021_test: START\r\n");
+	printf("G021_test: total %d tests\r\n",NUM_TEST_PROCS);
 }
 
+// Proc to print test results and terminate program
+void print_test_results() {
+	int i = 0;
+	int pass = 0;
+	for (i = 0;i < NUM_TEST_PROCS;i++) {
+		if (test_results[i] == 1) {
+			printf("G021_test: test %d OK\r\n",i+1);
+			pass++;
+		}
+		else {
+			printf("G021_test: test %d FAIL\r\n",i+1);
+		}
+	}
+	printf("G021_test: %d/%d tests OK\r\n",pass,NUM_TEST_PROCS);
+	printf("G021_test: %d/%d tests FAIL\r\n",NUM_TEST_PROCS-pass,NUM_TEST_PROCS);
+	printf("G021_test: END");
+	
+	while(1) { }
+}
 
 /**
  * @brief: a process that prints five uppercase letters
@@ -48,6 +73,13 @@ void proc1(void)
 			#ifdef DEBUG_0
 				printf("proc1: ret_val=%d\r\n", ret_val);
 			#endif /* DEBUG_0 */
+			
+			if (ret_val == -1) {
+				printf("G021_test: test %d FAIL\r\n",1);
+				test_results[0] = 0;
+			} else {
+				printf("G021_test: test %d OK\r\n",1);
+			}
 		}
 		uart0_put_char('A' + i%26);
 		i++;
@@ -67,9 +99,17 @@ void proc2(void)
 		if ( i != 0 && i%5 == 0 ) {
 			uart0_put_string("\n\r");
 			ret_val = release_processor();
+			
 			#ifdef DEBUG_0
 				printf("proc2: ret_val=%d\r\n", ret_val);
 			#endif /* DEBUG_0 */
+			
+			if (ret_val == -1) {
+				printf("G021_test: test %d FAIL\r\n",2);
+				test_results[1] = 0;
+			} else {
+				printf("G021_test: test %d OK\r\n",2);
+			}
 		}
 		uart0_put_char('0' + i%10);
 		i++;
@@ -98,6 +138,13 @@ void priority_test(void)
 		
 		set_process_priority(3,3);
 		ret_val = release_processor();
+		
+		if (ret_val == -1) {
+			printf("G021_test: test %d FAIL\r\n",3);
+			test_results[2] = 0;
+		} else {
+			printf("G021_test: test %d OK\r\n",3);
+		}
 	}
 }
 
@@ -135,6 +182,13 @@ void memory_block_test(void)
 		release_memory_block(tmp_int);
 		release_memory_block(tmp_string);
 		ret_val = release_processor();
+		
+		if (ret_val == -1) {
+			printf("G021_test: test %d FAIL\r\n",4);
+			test_results[3] = 0;
+		} else {
+			printf("G021_test: test %d OK\r\n",4);
+		}
 	}
 }
 
@@ -161,5 +215,15 @@ void blocked_test(void)
 		
 		//release_memory_block(tmp_int);
 		ret_val = release_processor();
+		if (ret_val == -1) {
+			printf("G021_test: test %d FAIL\r\n",5);
+			test_results[4] = 0;
+		} else {
+			printf("G021_test: test %d OK\r\n",5);
+		}
+		
+		if (i == 5) {
+			print_test_results();
+		}
 	}
 }
