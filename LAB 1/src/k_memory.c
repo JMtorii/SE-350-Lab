@@ -16,17 +16,15 @@ U32 *gp_stack; /* The last allocated stack low address. 8 bytes aligned */
                /* The first stack starts at the RAM high address */
 							 /* stack grows down. Fully decremental stack */
 
-Queue blk_q;
-Queue rdy_q;
-Queue *blocked_queue;
-Queue *ready_queue;
-Node nodes[NUM_TEST_PROCS+1];
+Queue blocked_queue[NUM_PRIORITIES];
+Queue ready_queue[NUM_PRIORITIES];
+
 
 /**
  * @brief: Initialize RAM as follows:
 
 0x10008000+---------------------------+ High Address
-          |    Proc 1 STACK           |
+          |    Proc 1 STACK    s       |
           |---------------------------|
           |    Proc 2 STACK           |
           |---------------------------|<--- gp_stack
@@ -78,20 +76,12 @@ void memory_init(void)
 	MemBlock *hp;
 	MemBlock memBlock;
 	
-	// Create ready and blocked queue
-	blocked_queue = &blk_q;
-	ready_queue = &rdy_q;
-	blocked_queue->first = NULL;
-	blocked_queue->last = NULL;
-	ready_queue->first = NULL;
-	ready_queue->last = NULL;
-	
-	// Create nodes for use in proc queues
-	for (i=0;i<NUM_TEST_PROCS+1;i++) {
-		nodes[i].value = NULL;
-		nodes[i].next = NULL;
+	// Initialize ready and blocked queue
+	for (i=0; i<NUM_PRIORITIES; i++) {
+		q_init(&blocked_queue[i]);
+		q_init(&ready_queue[i]);
 	}
-		
+
 	gp_current_process = NULL;
 	/* 4 bytes padding */
 	p_end += 4;
@@ -163,7 +153,7 @@ void *k_request_memory_block(void) {
 		gp_current_process->m_state = BLK;
 		
 		// Put PCB on blocked_resource q
-		q_push(blocked_queue, gp_current_process);
+		q_push(&blocked_queue[k_get_process_priority(gp_current_process->m_pid)], gp_current_process);
 		
 		// Release processor
 		k_release_processor();
@@ -188,8 +178,8 @@ int k_release_memory_block(void *p_mem_blk) {
 	
 	// If entry in blocked queue after memory is free, then put process back to ready queue
 	if (blocked_queue->first != NULL) {
-		tmp = q_pop(blocked_queue);
-		q_push(ready_queue, tmp);
+		tmp = q_pop_highest_priority(blocked_queue);
+		q_push(&ready_queue[k_get_process_priority(tmp->m_pid)], tmp);
 	}
 	//_endatomic_();
 	return RTX_OK;

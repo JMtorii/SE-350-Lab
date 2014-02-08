@@ -49,6 +49,7 @@ void process_init()
 		// Add test procs to pcbs
 		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid;
 		(gp_pcbs[i])->m_state = NEW;
+		(gp_pcbs[i])->prev = NULL;
 		
 		// Create stack pointer and alloc space
 		sp = alloc_stack((g_proc_table[i]).m_stack_size);
@@ -60,7 +61,7 @@ void process_init()
 		}
 		
 		// Push each pcb into ready_queue
-		q_push(ready_queue,gp_pcbs[i]);
+		q_push(&ready_queue[get_process_priority((gp_pcbs[i])->m_pid)],gp_pcbs[i]);
 		
 		// Assign memory address of stack pointer for each pcb
 		(gp_pcbs[i])->mp_sp = sp;
@@ -77,7 +78,7 @@ PCB *scheduler(void)
 {
 	// Get next pcb to execute and return
 	PCB* tmp_pcb;
-	tmp_pcb = q_pop(ready_queue);
+	tmp_pcb = q_pop_highest_priority(ready_queue);
 	
 	// Assign current process to execute to global var
 	gp_current_process = tmp_pcb; 
@@ -147,7 +148,7 @@ int k_release_processor(void)
 	}
 	// Else push old process back to ready queue
 	else {
-		q_push(ready_queue, p_pcb_old);
+		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
 	}
 	process_switch(p_pcb_old);
 	return RTX_OK;

@@ -13,7 +13,9 @@
 #define RTX_OK  0
 
 #define NULL 0
-#define NUM_TEST_PROCS 5
+#define NUM_TEST_PROCS 6
+
+#define NUM_PRIORITIES 5
 
 #ifdef DEBUG_0
 #define USR_SZ_STACK 0x200         /* user proc stack size 512B   */
@@ -33,11 +35,14 @@ typedef enum {NEW = 0, RDY, BLK, RUN, EXT} PROC_STATE_E;
   You may want to add your own member variables
   in order to finish P1 and the entire project 
 */
+
+
 typedef struct pcb 
 { 
 	U32 *mp_sp;		/* stack pointer of the process */
 	U32 m_pid;		/* process id */
-	PROC_STATE_E m_state;   /* state of the process */      
+	PROC_STATE_E m_state;   /* state of the process */  
+	struct pcb *prev;
 } PCB;
 
 /* initialization table item */

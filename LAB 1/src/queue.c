@@ -11,95 +11,51 @@
 #include "printf.h"
 #endif /* ! DEBUG_0 */
 
-// Pop returns the first PCB of highest priority (lowest int)
-PCB* q_pop(Queue* q) {
-	PCB* ret = NULL;
-	int highest_pri = 0;
-	int compare;
-	Node* iter = NULL;
-	Node* prev_iter = NULL;
-	
-	highest_pri = 4;
-	iter = q->first;
-	
-	// Nothing to pop
-	if (iter == NULL) {
-		return NULL;
-	} 
-	// Only one node in queue
-	else if (q->first == q->last) {
-		ret = q->first->value;
-		freeNode(q->first);
-		return ret;
-	}
-	
-	// Find the highest priority in the queue
-	while(iter != NULL) {
-		ret = iter->value;
-		compare = get_process_priority(iter->value->m_pid);
-		if (compare < highest_pri && compare != -1) {
-			highest_pri = compare;
-		}
-		iter = iter->next;
-	}	
-	iter = q->first;
-	prev_iter = NULL;
-	
-	// Pop the first element with the highest priority	
-	while(iter != NULL) {
-		if (get_process_priority(iter->value->m_pid) == highest_pri) {
-			ret = iter->value;
-			
-			// Node at beginning
-			if (iter == q->first) {
-				q->first = q->first->next;
-				if(q->first != NULL && q->first->next == NULL) {
-					q->last = q->first;
-				}
-			}
-			// Node at end
-			else if (iter == q->last) {
-				q->last = prev_iter;
-				q->last->next = NULL;
-			}
-			// Node in middle
-			else {
-				prev_iter->next = iter->next;
-			}
-			// Free deleted node
-			freeNode(iter);
-			return ret;
-		}
-		// Iterate through nodes until found
-		prev_iter = iter;
-		iter = iter->next;
-	}
-	return NULL;
+void q_init(Queue *q) {
+	q->first = NULL;
+	q->last = NULL;
 }
 
-// Pushes PCB to end, queue sorted by time inserted
-void q_push(Queue* q, PCB *val) {
-	Node *n = getFreeNode();
-	
-	// This should never be reached, no free nodes available
-	if (n == NULL) { return; }
+// Pop returns the last PCB 
+PCB* q_pop(Queue* q) {
+	PCB* ret;
+	if (q->last == NULL) {
+		return NULL; 
+	}
+	ret = q->last;
+	q->last = q->last->prev;
+	if (q->last == NULL) {
+		q->first = NULL;
+	}
+	return ret;
+}
 
-	n->next = NULL;
-	n->value = val;
+// Pops the last PCB of the highest priority
+PCB* q_pop_highest_priority(Queue q[]) {
+	PCB *ret;
+	int i;
+	for (i=0; i<NUM_PRIORITIES; i++){
+		ret = q_pop(&q[i]);
+		if (ret != NULL) {
+			return ret;
+		}
+	}
+	return NULL; // This should never be reached because we always have NULL process
+}
 
+// Pushes PCB to the front, queue sorted by time inserted
+void q_push(Queue* q, PCB *val) {	
   // Queue currently is not empty
-	if (q->last != NULL) {
-		q->last->next = n;
+	if (q->first != NULL) {
+		q->first->prev = val;
+	} else {
+		q->last = val;
 	}
-	q->last = n;
-	
-	// Queue is currently empty
-	if (q->first == NULL) {
-		q->first = n;
-	}
+	q->first = val;
 }
 
 // Prints PID contents of queue
+/*
 void q_print(Queue *q) {
 	Node* iter;
 	int i = 0;
@@ -113,32 +69,5 @@ void q_print(Queue *q) {
 		iter = iter->next;
 	}
 	printf("\r\nq_print complete:==============\r\n");
-}
+}*/
 
-// Returns a free node for use in queues
-Node *getFreeNode(void) {
-	int i;
-	for (i=0;i<NUM_TEST_PROCS+1;++i) {
-		if (nodes[i].value == NULL) {
-			return &nodes[i];
-		}
-	}
-	return NULL;
-}
-
-// Free contents of arg node
-void freeNode(Node *n) {
-	n->value = NULL;
-	n->next = NULL;
-}
-
-// Prints contents of all nodes
-void n_print() {
-	int i;
-	printf("\r\nNode contents print\r\n");
-	for (i = 0;i < NUM_TEST_PROCS+1;++i) {
-		printf("i: %d, &nodes: %x, &node_val: %x\r\n",i,&nodes[i],(nodes[i].value));
-		printf("PID Value: %d\r\n",nodes[i].value->m_pid);
-	}
-	printf("\r\n");
-}

@@ -11,25 +11,25 @@
 #ifndef QUEUE_H_
 #define QUEUE_H_
 
-typedef struct Node{
-	struct Node *next;
-	PCB *value;
-} Node;
+/*
+      ______		 ______
+first|______|<--|______|last
 
-extern Node nodes[NUM_TEST_PROCS+1];
+*/
 
 typedef struct Queue{
-	  Node* first;
-	  Node* last;		
+	  PCB* first;
+	  PCB* last;		
 } Queue;
 
 void n_print(void);
 
+void q_init(Queue *q);
 PCB* q_pop(Queue *q);
+PCB* q_pop_highest_priority(Queue q[]);
 void q_push(Queue *q, PCB *val);
 void q_print(Queue *q);
 
-Node *getFreeNode(void);
-void freeNode(Node *n);
+
 
 #endif
