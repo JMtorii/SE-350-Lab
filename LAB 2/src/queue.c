@@ -16,14 +16,14 @@ void q_init(Queue *q) {
 	q->last = NULL;
 }
 
-// Pop returns the last PCB 
-PCB* q_pop(Queue* q) {
-	PCB* ret;
+// Pop returns the last item in the queue 
+void* q_pop(Queue* q) {
+	void* ret;
 	if (q->last == NULL) {
 		return NULL; 
 	}
 	ret = q->last;
-	q->last = q->last->prev;
+	q->last = &*(q->last);	//first member of q->last which should be q->last->prev
 	if (q->last == NULL) {
 		q->first = NULL;
 	}
@@ -31,11 +31,11 @@ PCB* q_pop(Queue* q) {
 }
 
 // Pops the last PCB of the highest priority
-PCB* q_pop_highest_priority(Queue q[]) {
-	PCB *ret;
+void* q_pop_highest_priority(Queue q[]) {
+	void *ret;
 	int i;
 	for (i=0; i<NUM_PRIORITIES; i++){
-		ret = q_pop(&q[i]);
+		ret = (PCB*)q_pop(&q[i]);
 		if (ret != NULL) {
 			return ret;
 		}
@@ -43,11 +43,13 @@ PCB* q_pop_highest_priority(Queue q[]) {
 	return NULL; // This should never be reached because we always have NULL process
 }
 
-// Pushes PCB to the front, queue sorted by time inserted
-void q_push(Queue* q, PCB *val) {	
+// Pushes element to the front, queue sorted by time inserted
+void q_push(Queue* q, void *val) {	
   // Queue currently is not empty
 	if (q->first != NULL) {
-		q->first->prev = val;
+		//void* tmp_void_ptr;
+		//tmp_void_ptr = &*(q->first);
+		//tmp_void_ptr = val;
 	} else {
 		q->last = val;
 	}

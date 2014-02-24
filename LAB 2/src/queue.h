@@ -5,7 +5,6 @@
  * @date:   2014/01/22
  */
  
-#include "k_rtx.h"
 #include "k_process.h"
 
 #ifndef QUEUE_H_
@@ -18,16 +17,16 @@ first|______|<--|______|last
 */
 
 typedef struct Queue{
-	  PCB* first;
-	  PCB* last;		
+	  void* first;
+	  void* last;		
 } Queue;
 
 void n_print(void);
 
 void q_init(Queue *q);
-PCB* q_pop(Queue *q);
-PCB* q_pop_highest_priority(Queue q[]);
-void q_push(Queue *q, PCB *val);
+void* q_pop(Queue *q);
+void* q_pop_highest_priority(Queue q[]);
+void q_push(Queue *q, void *val);
 void q_print(Queue *q);
 
 

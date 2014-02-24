@@ -134,6 +134,11 @@ int k_release_processor(void)
 	PCB *p_pcb_old = NULL;
 	p_pcb_old = gp_current_process;
 	
+	// Push old process back to ready queue
+	if ( p_pcb_old != NULL ) {
+		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
+	}
+	
 	// Obtain next in execution
 	gp_current_process = scheduler();
 	
@@ -146,10 +151,7 @@ int k_release_processor(void)
   if ( p_pcb_old == NULL ) {
 		p_pcb_old = gp_current_process;
 	}
-	// Else push old process back to ready queue
-	else {
-		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
-	}
+	
 	process_switch(p_pcb_old);
 	return RTX_OK;
 }

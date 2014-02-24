@@ -4,6 +4,8 @@
  * @auther: TEAM BLACKJACK
  * @date:   2014/01/17
  */
+
+#include "queue.h"
  
 #ifndef K_RTX_H_
 #define K_RTX_H_
@@ -28,7 +30,7 @@ typedef unsigned char U8;
 typedef unsigned int U32;
 
 /* process states, note we only assume three states in this example */
-typedef enum {NEW = 0, RDY, BLK, RUN, EXT} PROC_STATE_E;  
+typedef enum {NEW = 0, RDY, BLK, BLK_ON_RCV, RUN, EXT} PROC_STATE_E;  
 
 /*
   PCB data structure definition.
@@ -39,10 +41,11 @@ typedef enum {NEW = 0, RDY, BLK, RUN, EXT} PROC_STATE_E;
 
 typedef struct pcb 
 { 
+	struct pcb *prev;
 	U32 *mp_sp;		/* stack pointer of the process */
 	U32 m_pid;		/* process id */
 	PROC_STATE_E m_state;   /* state of the process */  
-	struct pcb *prev;
+	Queue mailbox;
 } PCB;
 
 /* initialization table item */
@@ -58,5 +61,6 @@ typedef struct proc_init
 extern int k_release_processor(void);
 extern int __SVC_0 _release_processor(U32 p_func);
 #define release_processor() _release_processor((U32)k_release_processor)
+
 
 #endif // ! K_RTX_H_
