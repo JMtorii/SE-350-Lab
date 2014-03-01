@@ -6,6 +6,7 @@ k_process.o: C:\Software\Keil\ARM\CMSIS\Include\core_cmInstr.h
 k_process.o: C:\Software\Keil\ARM\CMSIS\Include\core_cmFunc.h
 k_process.o: C:\Software\Keil\ARM\Inc\NXP\LPC17xx\system_LPC17xx.h
 k_process.o: src\uart_polling.h
+k_process.o: src\uart_def.h
 k_process.o: src\k_process.h
 k_process.o: src\k_rtx.h
 k_process.o: src\queue.h

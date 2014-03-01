@@ -19,6 +19,10 @@
 PCB **gp_pcbs;                  /* array of pcbs */
 PCB *gp_current_process;
 
+U32 g_switch_flag = 0;          /* whether to continue to run the process before the UART receive interrupt */
+                                /* 1 means to switch to another process, 0 means to continue the current process */
+																/* this value will be set by UART handler */
+
 /* process initialization table */
 PROC_INIT g_proc_table[NUM_TEST_PROCS];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
@@ -78,7 +82,7 @@ PCB *scheduler(void)
 {
 	// Get next pcb to execute and return
 	PCB* tmp_pcb;
-	tmp_pcb = q_pop_highest_priority(ready_queue);
+	tmp_pcb = (PCB*)q_pop_highest_priority(ready_queue);
 	
 	// Assign current process to execute to global var
 	gp_current_process = tmp_pcb; 

@@ -41,7 +41,7 @@ typedef enum {NEW = 0, RDY, BLK, BLK_ON_RCV, RUN, EXT} PROC_STATE_E;
 
 typedef struct pcb 
 { 
-	struct pcb *prev;
+	void *prev;
 	U32 *mp_sp;		/* stack pointer of the process */
 	U32 m_pid;		/* process id */
 	PROC_STATE_E m_state;   /* state of the process */  

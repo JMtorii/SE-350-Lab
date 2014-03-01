@@ -1,0 +1,17 @@
+mqueue.o: src\mqueue.c
+mqueue.o: src\mqueue.h
+mqueue.o: src\envelope.h
+mqueue.o: src\k_process.h
+mqueue.o: src\k_rtx.h
+mqueue.o: src\mqueue.h
+mqueue.o: src\envelope.h
+mqueue.o: src\k_process.h
+mqueue.o: src\k_rtx.h
+mqueue.o: src\mqueue.h
+mqueue.o: src\envelope.h
+mqueue.o: src\queue.h
+mqueue.o: src\k_rtx.h
+mqueue.o: src\mqueue.h
+mqueue.o: src\envelope.h
+mqueue.o: src\printf.h
+mqueue.o: C:\Software\Keil\ARM\ARMCC\bin\..\include\stdarg.h

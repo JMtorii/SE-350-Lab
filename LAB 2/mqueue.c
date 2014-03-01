@@ -1,57 +1,42 @@
 /**
- * @file:   queue.c
- * @brief:  Implementation of queues
+ * @file:   mqueue.c
+ * @brief:  Implementation of message queues
  * @author: TEAM BLACKJACK (21)
  * @date:   2014/01/17
  */
 
-#include "queue.h"
+#include "mqueue.h"
 
 #ifdef DEBUG_0
 #include "printf.h"
 #endif /* ! DEBUG_0 */
 
-void q_init(Queue *q) {
+void mq_init(mQueue *q) {
 	q->first = NULL;
 	q->last = NULL;
 }
 
 // Pop returns the last item in the queue 
-void* q_pop(Queue* q) {
+void* mq_pop(mQueue* q) {
 	void* ret;
-	void** tmp;
 	if (q->last == NULL) {
 		return NULL; 
 	}
-	ret = q->last;
-	tmp = (void *)(q->last);
-	q->last = *tmp;	//q->last = q->last->prev;
+	
+	q->last = *(q->last);	//first member of q->last which should be q->last->prev
 	if (q->last == NULL) {
 		q->first = NULL;
 	}
 	return ret;
 }
 
-// Pops the last PCB of the highest priority
-void* q_pop_highest_priority(Queue q[]) {
-	void *ret;
-	int i;
-	for (i=0; i<NUM_PRIORITIES; i++){
-		ret = (PCB*)q_pop(&q[i]);
-		if (ret != NULL) {
-			return ret;
-		}
-	}
-	return NULL; // This should never be reached because we always have NULL process
-}
-
 // Pushes element to the front, queue sorted by time inserted
-void q_push(Queue* q, void *val) {	
+void mq_push(mQueue* q, void *val) {	
   // Queue currently is not empty
 	if (q->first != NULL) {
-		void** tmp;
-		tmp = (void *)(q->first);
-		*tmp = val; //q->first->prev = val
+		//void* tmp_void_ptr;
+		//tmp_void_ptr = &*(q->first);
+		//tmp_void_ptr = val;
 	} else {
 		q->last = val;
 	}

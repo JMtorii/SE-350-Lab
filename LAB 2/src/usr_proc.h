@@ -8,6 +8,8 @@
 #ifndef USR_PROC_H_
 #define USR_PROC_H
 
+extern int g_timer_count;
+
 void set_test_procs(void);
 void print_test_results(void);
 void proc1(void);

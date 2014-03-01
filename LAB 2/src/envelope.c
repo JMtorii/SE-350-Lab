@@ -56,7 +56,7 @@ Envelope* receive_message(void) {
 		gp_current_process->m_state = BLK_ON_RCV;
 		release_processor();
 	}
-	env = q_pop(&(gp_current_process->mailbox));
+	env = (Envelope*)q_pop(&(gp_current_process->mailbox));
 	//atomic(off)
 	return env;
 	
@@ -66,8 +66,22 @@ Envelope* receive_message_nonblocking(void) {
 	
 	Envelope* env;
 	//atomic(on)
-	env = q_pop(&(gp_current_process->mailbox));
+	env = (Envelope*)q_pop(&(gp_current_process->mailbox));
 	//atomic(off)
 	return env;
 	
+}
+
+int delayed_send(int receiving_pid, Envelope* env, int delay) {
+	int start_time = g_timer_count;
+	while (1) {
+		if (g_timer_count - start_time >= delay) {
+			send_message(receiving_pid, env);
+			return RTX_OK;
+		}
+		else {
+			release_processor();
+		}
+	}
+	//return RTX_ERR;
 }

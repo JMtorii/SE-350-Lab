@@ -18,7 +18,10 @@
 #ifdef DEBUG_0
 #include "uart_polling.h"
 #include "printf.h"
+#include "timer.h"
 #endif /* DEBUG_0 */
+
+extern volatile uint32_t g_timer_count;
 
 int main() 
 {	
@@ -27,10 +30,36 @@ int main()
 #ifdef DEBUG_0
 	init_printf(NULL, putc);
 #endif /* DEBUG_0 */
-	
+	timer_init(0);
 	/* start the RTX and built-in processes */
 	rtx_init();  
   
 	/* We should never reach here!!! */
 	return RTX_ERR;  
 }
+
+/* Timer
+	volatile uint8_t sec = 0;
+
+	SystemInit();
+	__disable_irq();
+	timer_init(0); // initialize timer 0 
+ 
+	  uart polling is used in this example only to help
+	  demonstrate timer interrupt programming.
+	  In your final project, polling is NOT ALLOWED in i-processes.
+	  Refer to the UART_irq example for interrupt driven UART.
+
+	uart0_init();
+
+	__enable_irq();
+
+	while (1) {
+		// g_timer_count gets updated every 1ms
+		if (g_timer_count == 1000) { 
+			uart0_put_char('0'+ sec);
+			sec = (++sec)%10;
+			g_timer_count = 0; // reset the counter
+		}     
+	}
+*/

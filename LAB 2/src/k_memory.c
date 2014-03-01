@@ -178,7 +178,7 @@ int k_release_memory_block(void *p_mem_blk) {
 	
 	// If entry in blocked queue after memory is free, then put process back to ready queue
 	if (blocked_queue->first != NULL) {
-		tmp = q_pop_highest_priority(blocked_queue);
+		tmp = (PCB*)q_pop_highest_priority(blocked_queue);
 		q_push(&ready_queue[k_get_process_priority(tmp->m_pid)], tmp);
 	}
 	//_endatomic_();

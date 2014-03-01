@@ -55,7 +55,7 @@ void print_test_results() {
 	printf("G021_test: %d/%d tests FAIL\r\n",NUM_TEST_PROCS-pass,NUM_TEST_PROCS);
 	printf("G021_test: END");
 	
-	while(1) { }
+	
 }
 
 /**
@@ -68,7 +68,7 @@ void proc1(void)
 	int ret_val = 10;
 	while (1) {
 		if ( i != 0 && i%5 == 0 ) {
-			uart0_put_string("\n\r");
+			uart1_put_string("\n\r");
 			ret_val = release_processor();
 			#ifdef DEBUG_0
 				printf("proc1: ret_val=%d\r\n", ret_val);
@@ -81,7 +81,7 @@ void proc1(void)
 				printf("G021_test: test %d OK\r\n",1);
 			}
 		}
-		uart0_put_char('A' + i%26);
+		uart1_put_char('A' + i%26);
 		i++;
 	}
 }
@@ -97,7 +97,7 @@ void proc2(void)
 	
 	while (1) {
 		if ( i != 0 && i%5 == 0 ) {
-			uart0_put_string("\n\r");
+			uart1_put_string("\n\r");
 			ret_val = release_processor();
 			
 			#ifdef DEBUG_0
@@ -111,7 +111,7 @@ void proc2(void)
 				printf("G021_test: test %d OK\r\n",2);
 			}
 		}
-		uart0_put_char('0' + i%10);
+		uart1_put_char('0' + i%10);
 		i++;
 	}
 }
@@ -138,7 +138,7 @@ void priority_test(void)
 		
 		set_process_priority(3,3);
 		ret_val = release_processor();
-		
+		printf("Timer result: %d \r\n",g_timer_count);
 		if (ret_val == -1) {
 			printf("G021_test: test %d FAIL\r\n",3);
 			test_results[2] = 0;

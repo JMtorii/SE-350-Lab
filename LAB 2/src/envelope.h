@@ -13,9 +13,10 @@
 #include "k_process.h"
 
 extern PCB *gp_current_process;
+extern int g_timer_count;
 
 typedef struct Envelope {
-	struct Envelope* prev_msg;
+	void* prev_msg;
 	int sender_pid;
 	int destination_pid;
 	int mtype; /* user defined message type */
@@ -26,6 +27,10 @@ void create_envelope(Envelope *env, int sender_pid, int destination_pid, int mty
 
 void send_message(int receiving_pid, Envelope* env);
 
+int delayed_send(int receiving_pid, Envelope* env, int delay);
+
 Envelope* receive_message(void);
+
+Envelope* receive_message_nonblocking(void);
 
 #endif
