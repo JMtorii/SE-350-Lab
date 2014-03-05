@@ -16,6 +16,7 @@ U32 *gp_stack; /* The last allocated stack low address. 8 bytes aligned */
                /* The first stack starts at the RAM high address */
 							 /* stack grows down. Fully decremental stack */
 
+Queue blocked_rcv_queue[NUM_PRIORITIES];
 Queue blocked_queue[NUM_PRIORITIES];
 Queue ready_queue[NUM_PRIORITIES];
 
@@ -80,6 +81,7 @@ void memory_init(void)
 	for (i=0; i<NUM_PRIORITIES; i++) {
 		q_init(&blocked_queue[i]);
 		q_init(&ready_queue[i]);
+		q_init(&blocked_rcv_queue[i]);
 	}
 
 	gp_current_process = NULL;

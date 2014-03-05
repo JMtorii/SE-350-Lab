@@ -138,10 +138,20 @@ int k_release_processor(void)
 	PCB *p_pcb_old = NULL;
 	p_pcb_old = gp_current_process;
 	
+	printf("############# Printing current process ############### \r\n");
+	printf("PID current proc: %d\r\n",gp_current_process->m_pid);
+	printf("############# Printing ready queue ################## \r\n");
+	q_print_rdy_process();
+	printf("############# Printing blocked queue ################ \r\n");
+	q_print_blk_mem_process();
+	
 	// Push old process back to ready queue
 	if ( p_pcb_old != NULL ) {
 		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
-	}
+		q_print_rdy_process();
+  }
+	
+	
 	
 	// Obtain next in execution
 	gp_current_process = scheduler();
@@ -192,6 +202,7 @@ int k_set_process_priority(int process_id, int priority) {
 	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			g_proc_table[i].m_priority = priority;
+			// TO-DO remove from old priority queue and add to new
 			return RTX_OK;
 		}
 	}

@@ -28,7 +28,10 @@ void* q_pop(Queue *q);
 void* q_pop_highest_priority(Queue q[]);
 void q_push(Queue *q, void *val);
 void q_print(Queue *q);
-
-
+void q_print_process(Queue *q,int priority);
+void q_print_rdy_process(void);
+void q_print_blk_mem_process(void);
+void q_print_blk_rcv_process(void);
+void q_remove_pid(int pid);
 
 #endif

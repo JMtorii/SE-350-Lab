@@ -421,6 +421,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\main_svc.c</FilePath>
             </File>
+            <File>
+              <FileName>uart_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\uart_irq.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -462,9 +467,9 @@
               <FilePath>.\src\envelope.c</FilePath>
             </File>
             <File>
-              <FileName>mqueue.c</FileName>
+              <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\mqueue.c</FilePath>
+              <FilePath>.\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>

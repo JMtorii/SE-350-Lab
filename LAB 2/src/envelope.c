@@ -34,6 +34,7 @@ void send_message(int receiving_pid, Envelope* env) {
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
 	q_push(&(receiving_proc->mailbox), env);
 	if (receiving_proc->m_state == BLK_ON_RCV) {
+		q_remove_pid(receiving_proc->m_pid);
 		receiving_proc->m_state = RDY;
     q_push(&ready_queue[get_process_priority(receiving_proc->m_pid)],receiving_proc);
   }
@@ -54,6 +55,7 @@ Envelope* receive_message(void) {
 	//atomic(on)
 	while( gp_current_process->mailbox.first == NULL) {
 		gp_current_process->m_state = BLK_ON_RCV;
+		q_push(&blocked_rcv_queue[get_process_priority(gp_current_process->m_pid)],gp_current_process);
 		release_processor();
 	}
 	env = (Envelope*)q_pop(&(gp_current_process->mailbox));

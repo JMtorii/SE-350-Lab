@@ -55,7 +55,6 @@ void print_test_results() {
 	printf("G021_test: %d/%d tests FAIL\r\n",NUM_TEST_PROCS-pass,NUM_TEST_PROCS);
 	printf("G021_test: END");
 	
-	
 }
 
 /**

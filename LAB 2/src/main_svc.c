@@ -18,7 +18,7 @@
 #ifdef DEBUG_0
 #include "uart_polling.h"
 #include "printf.h"
-#include "timer.h"
+//#include "timer.h"
 #endif /* DEBUG_0 */
 
 extern volatile uint32_t g_timer_count;
@@ -30,7 +30,7 @@ int main()
 #ifdef DEBUG_0
 	init_printf(NULL, putc);
 #endif /* DEBUG_0 */
-	timer_init(0);
+	//timer_init(0);
 	/* start the RTX and built-in processes */
 	rtx_init();  
   
