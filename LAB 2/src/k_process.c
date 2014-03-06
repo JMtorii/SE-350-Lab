@@ -19,7 +19,7 @@
 PCB **gp_pcbs;                  /* array of pcbs */
 PCB *gp_current_process;
 
-U32 g_switch_flag = 0;          /* whether to continue to run the process before the UART receive interrupt */
+U32 g_switch_flag = 1;          /* whether to continue to run the process before the UART receive interrupt */
                                 /* 1 means to switch to another process, 0 means to continue the current process */
 																/* this value will be set by UART handler */
 
@@ -111,7 +111,7 @@ int process_switch(PCB *p_pcb_old)
 		__set_MSP((U32) gp_current_process->mp_sp);
 		__rte();  // pop exception stack frame from the stack for a new processes
 	} 
-	
+		
 	/* The following will only execute if the if block above is FALSE */
 	if (gp_current_process != p_pcb_old) {
 		if (state == RDY){ 		
@@ -124,6 +124,11 @@ int process_switch(PCB *p_pcb_old)
 			return RTX_ERR;
 		} 
 	}
+	
+	if (get_num_mem_blk() == 0) {
+		printf("Glorified breakpoint.");
+	}
+	
 	return RTX_OK;
 }
 
@@ -138,20 +143,21 @@ int k_release_processor(void)
 	PCB *p_pcb_old = NULL;
 	p_pcb_old = gp_current_process;
 	
-	printf("############# Printing current process ############### \r\n");
-	printf("PID current proc: %d\r\n",gp_current_process->m_pid);
+	
+	//printf("############# Printing current process ############### \r\n");
+	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
 	printf("############# Printing ready queue ################## \r\n");
 	q_print_rdy_process();
 	printf("############# Printing blocked queue ################ \r\n");
 	q_print_blk_mem_process();
+	//print_num_mem_blk();
 	
 	// Push old process back to ready queue
-	if ( p_pcb_old != NULL ) {
+	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
 		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
-		q_print_rdy_process();
+		//q_print_rdy_process();
   }
-	
-	
+
 	
 	// Obtain next in execution
 	gp_current_process = scheduler();
@@ -167,7 +173,10 @@ int k_release_processor(void)
 		p_pcb_old = gp_current_process;
 	}
 
+	
+	
 	process_switch(p_pcb_old);
+
 	return RTX_OK;
 }
 

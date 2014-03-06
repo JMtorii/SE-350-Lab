@@ -16,18 +16,27 @@ U32 * h_pop(void) {
 	U32* ret;
 	
 	if (first_mem_block == NULL){
+		printf("ERROR: OUT OF MEMORY\r\n");
 		return NULL;
 	}
 	
 	ret = (U32 *)first_mem_block;
-	first_mem_block = first_mem_block->next_blk;
+	if (first_mem_block->next_blk != NULL) {
+		first_mem_block = first_mem_block->next_blk;
+	}
+	else {
+		first_mem_block = NULL;
+	}	
 	
+	print_num_mem_blk();
 	return ret;
 }
 
 void h_push(U32 * mem_blk) {
 	((MemBlock *)mem_blk)->next_blk = first_mem_block;
 	first_mem_block = (MemBlock *)mem_blk;  
+	
+	print_num_mem_blk();
 }
 
 

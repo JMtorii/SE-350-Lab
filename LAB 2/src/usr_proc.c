@@ -122,10 +122,10 @@ void priority_test(void)
 {	
 	int ret_val = 50;
 	int i = 0;
-	set_process_priority(1,1);
+	//set_process_priority(5,1);
 	
 	while(1) {	
-		for (i = 0;i < 4;i++) {
+		for (i = 0;i < 3;i++) {
 			set_process_priority(3,i);
 			#ifdef DEBUG_0
 				printf("PRIORITY SET! %d\r\n",get_process_priority(3));
@@ -158,6 +158,7 @@ void memory_block_test(void)
 	char* tmp_string;
 	
 	while(1) {
+		printf("Iterating through proc 4 with %d\r\n", i);
 		tmp_int = request_memory_block();
 		tmp_string = request_memory_block();
 		i++;
@@ -201,7 +202,23 @@ void blocked_test(void)
 	int* tmp_int;
 	
 	while(1) {
+		printf("HERE proc4\r\n");
 		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
+		
+		/*tmp_int = request_memory_block();
+		tmp_int = request_memory_block();*/
+		
 		i++;
 		*tmp_int = i;
 		if (i > 1337) {

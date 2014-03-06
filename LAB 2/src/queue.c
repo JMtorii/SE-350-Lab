@@ -75,7 +75,8 @@ void q_print_process(Queue *q,int priority) {
 	}
 	if (iter != NULL) {
 		printf("Index[%d], pid: %d, priority: %d\r\n", i, iter->m_pid, priority);
-	}
+
+}
 }
 
 void q_print_rdy_process(void) {
@@ -92,6 +93,7 @@ void q_print_blk_mem_process(void) {
 	int i;
 	printf("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
+	  printf("Priority %d:\r\n",i);
 		q_print_process(&blocked_queue[i],i);
 	}
 	printf("\r\nBlocked on mem queue print complete:================\r\n");

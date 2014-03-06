@@ -149,6 +149,7 @@ U32 *alloc_stack(U32 size_b)
 // Request a memory block from heap
 void *k_request_memory_block(void) {
 	U32 * ret_val;
+	printf("HERE\r\n");
 	//_atomic_(0);
 	while (first_mem_block == NULL) { //Is this correct?
 		// Set that process state to BLOCKED
@@ -158,12 +159,16 @@ void *k_request_memory_block(void) {
 		q_push(&blocked_queue[k_get_process_priority(gp_current_process->m_pid)], gp_current_process);
 		
 		// Release processor
+			
 		k_release_processor();
+			
+	printf("Moonshine.");
 	}
 	// Pop from heap
 	if (first_mem_block != NULL) {
 		ret_val = h_pop();
 	}	
+	
 	//_endatomic_();
 	return (void *) ret_val;
 }
@@ -181,8 +186,41 @@ int k_release_memory_block(void *p_mem_blk) {
 	// If entry in blocked queue after memory is free, then put process back to ready queue
 	if (blocked_queue->first != NULL) {
 		tmp = (PCB*)q_pop_highest_priority(blocked_queue);
+		tmp->m_state = RDY;
 		q_push(&ready_queue[k_get_process_priority(tmp->m_pid)], tmp);
 	}
 	//_endatomic_();
 	return RTX_OK;
+}
+
+void print_num_mem_blk(void) {
+	int i;
+	MemBlock *iter;
+	
+	i=0;
+	iter=first_mem_block;
+	while(iter != NULL) {
+		++i;
+		iter = iter->next_blk;
+	}
+	if (i == 1) {
+int k=i;i=k;}
+	printf("Number of MemBlocks: %d\r\n", i);
+}
+
+int get_num_mem_blk(void) {
+	int i;
+		MemBlock *iter;
+	
+	i=0;
+	iter=first_mem_block;
+	while(iter != NULL) {
+		++i;
+		iter = iter->next_blk;
+	}
+	if (i == 1) {
+		int k=i;
+		i=k;
+	}
+	return i;
 }

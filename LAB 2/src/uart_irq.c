@@ -203,7 +203,7 @@ void c_UART0_IRQHandler(void)
 		g_send_char = 1;
 		
 		/* setting the g_switch_flag */
-		if ( g_char_in == 'S' ) {
+		if ( g_char_in == 's' ) {
 			g_switch_flag = 1; 
 		} else {
 			g_switch_flag = 0;
@@ -240,5 +240,4 @@ void c_UART0_IRQHandler(void)
 		return;
 	}	
 	
-	while(1) {}
 }
