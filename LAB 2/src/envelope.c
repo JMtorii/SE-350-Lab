@@ -15,8 +15,8 @@ void create_envelope(Envelope *env, int sender_pid, int destination_pid, int mty
 	env->prev_msg = NULL;
 	env->sender_pid = sender_pid;
 	env->destination_pid = destination_pid;
-	env->mtype = mtype;
-	env->mtext = mtext;
+	env->msg.mtype = mtype;
+	env->msg.mtext = mtext;
 }
 
 void send_message(int receiving_pid, Envelope* env) {
@@ -86,4 +86,19 @@ int delayed_send(int receiving_pid, Envelope* env, int delay) {
 		}
 	}
 	//return RTX_ERR;
+}
+
+int get_num_msg(PCB * pcb) {
+	Envelope* env;
+	int ret;
+	env = pcb->mailbox.last;
+	if (env == NULL) {
+		return 0;
+	}
+	while (env != pcb->mailbox.first) {
+		++ret;
+		env = (Envelope*)(env->prev_msg);
+	}
+	++ret;
+	return ret;
 }

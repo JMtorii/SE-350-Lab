@@ -216,8 +216,8 @@ void blocked_test(void)
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
 		
-		/*tmp_int = request_memory_block();
-		tmp_int = request_memory_block();*/
+		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();
 		
 		i++;
 		*tmp_int = i;

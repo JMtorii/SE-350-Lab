@@ -15,12 +15,17 @@
 extern PCB *gp_current_process;
 extern int g_timer_count;
 
+typedef struct Message {
+	int mtype; /* user defined message type */
+	char *mtext; /* body of the message */
+} Message;
+
 typedef struct Envelope {
 	void* prev_msg;
 	int sender_pid;
 	int destination_pid;
-	int mtype; /* user defined message type */
-	char *mtext; /* body of the message */
+	int timestamp;
+	Message msg;
 } Envelope;
 
 void create_envelope(Envelope *env, int sender_pid, int destination_pid, int mtype, char* mtext);
@@ -32,5 +37,7 @@ int delayed_send(int receiving_pid, Envelope* env, int delay);
 Envelope* receive_message(void);
 
 Envelope* receive_message_nonblocking(void);
+
+int get_num_msg(PCB * pcb);
 
 #endif

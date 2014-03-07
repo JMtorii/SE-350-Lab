@@ -16,6 +16,9 @@
 #define LOW     2
 #define LOWEST  3
 
+#define DEFAULT 0
+#define KCD_REG 1
+#define CRT_DISP 2
 /* ----- Types ----- */
 typedef unsigned int U32;
 

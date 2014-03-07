@@ -10,6 +10,7 @@
 #include <system_LPC17xx.h>
 #include "uart_polling.h"
 #include "k_process.h"
+#include "envelope.h"
 
 #ifdef DEBUG_0
 #include "printf.h"
@@ -246,4 +247,52 @@ void null (void) {
 		#endif 
 		ret_val = release_processor();
 	}
+}
+
+void KCD (void) {			//pid 12
+	int ret_val = 0;
+	int this_pid = 12;
+	PCB* this_pcb = get_pcb_from_pid(this_pid);
+	
+	while (1) {
+		while(get_num_msg(this_pcb) > 0) { // assuming we ONLY recieve KCD_REG mail
+			Envelope* env;
+			Message* msg;
+			env = q_pop(&(this_pcb->mailbox));
+			msg = &(env->msg);
+			if (msg->mtype == 1) {
+				
+			}
+			//else {
+			//	q_push(this_pcb->mailbox, env);
+			//}
+		}
+		ret_val = k_release_processor();
+	}
+}
+
+void CRT (void) {			//pid 13
+	int ret_val = 0;
+	int this_pid = 13;
+	PCB* this_pcb = get_pcb_from_pid(this_pid);
+	
+	while (1) {
+		while(get_num_msg(this_pcb) > 0) {
+			Envelope* env;
+			Message* msg;
+			
+			env = q_pop(&(this_pcb->mailbox));
+			msg = &(env->msg);
+			if (msg->mtype == 2) {
+				char* iter = msg->mtext;
+				while (msg->mtext != '\0' && msg->mtext != NULL) {//is null check required?
+					printf("%c", iter);
+					++iter;
+				}
+			}// does not respond to any other msg type
+			k_release_memory_block(env);
+		}
+		
+		ret_val = k_release_processor();
+	}	
 }

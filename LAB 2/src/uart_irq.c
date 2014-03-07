@@ -18,6 +18,7 @@ uint8_t *gp_buffer = g_buffer;
 uint8_t g_send_char = 0;
 uint8_t g_char_in;
 uint8_t g_char_out;
+int atomicflag;
 
 extern uint32_t g_switch_flag;
 
@@ -207,7 +208,8 @@ void c_UART0_IRQHandler(void)
 			g_switch_flag = 1; 
 		} else {
 			g_switch_flag = 0;
-		}
+		}		
+		
 	} else if (IIR_IntId & IIR_THRE) {
 	/* THRE Interrupt, transmit holding register becomes empty */
 
@@ -240,4 +242,12 @@ void c_UART0_IRQHandler(void)
 		return;
 	}	
 	
+}
+
+void atomic(int flag) {
+	if (flag == 0) {
+		NVIC_DisableIRQ(UART0_IRQn);
+	} else {
+		NVIC_EnableIRQ(UART0_IRQn);
+	}
 }
