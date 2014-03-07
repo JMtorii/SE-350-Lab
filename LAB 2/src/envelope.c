@@ -92,13 +92,17 @@ int get_num_msg(PCB * pcb) {
 	Envelope* env;
 	int ret;
 	env = pcb->mailbox.last;
+	printf("HERE3\r\n");
 	if (env == NULL) {
 		return 0;
 	}
+	printf("HERE4\r\n");
 	while (env != pcb->mailbox.first) {
 		++ret;
 		env = (Envelope*)(env->prev_msg);
 	}
+	printf("HERE5\r\n");
 	++ret;
+	printf("%d\r\n", ret);
 	return ret;
 }

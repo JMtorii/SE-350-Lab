@@ -25,7 +25,7 @@ U32 g_switch_flag = 1;          /* whether to continue to run the process before
 																/* this value will be set by UART handler */
 
 /* process initialization table */
-PROC_INIT g_proc_table[NUM_TEST_PROCS];
+PROC_INIT g_proc_table[NUM_TEST_PROCS+2];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
 
 /**
@@ -49,7 +49,7 @@ void process_init()
 	}
 	
 	/* initilize exception stack frame (i.e. initial context) for each process */
-	for ( i = 0; i < NUM_TEST_PROCS+1; i++ ) {
+	for ( i = 0; i < NUM_TEST_PROCS+2; i++ ) {
 		int j;
 		// Add test procs to pcbs
 		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid;
@@ -159,7 +159,6 @@ int k_release_processor(void)
 		//q_print_rdy_process();
   }
 
-	
 	// Obtain next in execution
 	gp_current_process = scheduler();
 	
@@ -173,8 +172,6 @@ int k_release_processor(void)
   if ( p_pcb_old == NULL ) {
 		p_pcb_old = gp_current_process;
 	}
-
-	
 	
 	process_switch(p_pcb_old);
 
@@ -189,7 +186,7 @@ int get_process_priority(int process_id) {
 // Obtain process priority of process with arg pid
 int k_get_process_priority(int process_id) {
 	int i;
-	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+2;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			return g_proc_table[i].m_priority;
 		}
@@ -209,7 +206,7 @@ int k_set_process_priority(int process_id, int priority) {
 	if (process_id == 0) {
 		return RTX_ERR;
 	}
-	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+2;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			g_proc_table[i].m_priority = priority;
 			// TO-DO remove from old priority queue and add to new
@@ -221,7 +218,7 @@ int k_set_process_priority(int process_id, int priority) {
 
 PCB* get_pcb_from_pid(int pid) {
 	int i;
-	for (i = 0;i<NUM_TEST_PROCS+1;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+2;++i) {
 		if ((gp_pcbs[i])->m_pid == pid) {
 			return gp_pcbs[i];
 		}
@@ -235,6 +232,11 @@ void add_null_process(void) {
 	g_proc_table[0].m_stack_size = 0x100;
 	g_proc_table[0].m_priority = 4;
 	g_proc_table[0].mpf_start_pc = &null;
+	
+	g_proc_table[6].m_pid = (U32)13;
+	g_proc_table[6].m_stack_size = 0x100;
+	g_proc_table[6].m_priority = 3;
+	g_proc_table[6].mpf_start_pc = &CRT;
 }
 
 // Proc for what the null process does
@@ -290,9 +292,10 @@ void CRT (void) {			//pid 13
 					++iter;
 				}
 			}// does not respond to any other msg type
+			
 			k_release_memory_block(env);
 		}
-		
-		ret_val = k_release_processor();
+		printf("HERE10\r\n");
+		ret_val = release_processor();
 	}	
 }

@@ -90,10 +90,11 @@ void memory_init(void)
 
 	//Allocate memory for pcb pointers
 	gp_pcbs = (PCB **)p_end;
-	p_end += (NUM_TEST_PROCS+1) * sizeof(PCB *);
+	p_end += (NUM_TEST_PROCS+2) * sizeof(PCB *);
   
-	for ( i = 0; i < NUM_TEST_PROCS + 1; i++ ) {
+	for ( i = 0; i < NUM_TEST_PROCS + 2; i++ ) {
 		gp_pcbs[i] = (PCB *)p_end;
+		q_init(&gp_pcbs[i]->mailbox);
 		p_end += sizeof(PCB); 
 	}
 	
@@ -109,7 +110,8 @@ void memory_init(void)
 	hp = first_mem_block;
 	
 	// Calculate number of memory blocks using end addresses of stack and pcb
-	NUM_MEM_BLK = (highaddress - p_end) * 3/4 / SIZE_MEM_BLK;
+	//NUM_MEM_BLK = (highaddress - p_end) * 3/4 / SIZE_MEM_BLK;
+	NUM_MEM_BLK = 0;
 	
 	// Create heap (linked list) of memory
 	for(i = 0;i < NUM_MEM_BLK;i++) {

@@ -31,6 +31,8 @@ PCB* get_pcb_from_pid(int pid);
 
 void add_null_process(void);
 void null(void);
+void KCD (void);
+void CRT (void);
 
 extern U32 *alloc_stack(U32 size_b);   /* allocate stack for a process */
 extern void __rte(void);               /* pop exception stack frame */
