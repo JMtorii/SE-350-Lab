@@ -15,9 +15,13 @@
 #define RTX_OK  0
 
 #define NULL 0
-#define NUM_TEST_PROCS 5
+#define NUM_TEST_PROCS 7
 
 #define NUM_PRIORITIES 5
+
+#define DEFAULT 0
+#define KCD_REG 1
+#define CRT_DISP 2
 
 #ifdef DEBUG_0
 #define USR_SZ_STACK 0x200         /* user proc stack size 512B   */

@@ -29,7 +29,7 @@ int get_process_priority(int process_id);
 int set_process_priority(int process_id, int priority);
 PCB* get_pcb_from_pid(int pid);
 
-void add_null_process(void);
+void add_system_processes(void);
 void null(void);
 void KCD (void);
 void CRT (void);

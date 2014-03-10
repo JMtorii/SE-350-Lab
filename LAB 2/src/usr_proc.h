@@ -17,5 +17,7 @@ void proc2(void);
 void priority_test(void);
 void memory_block_test(void);
 void blocked_test(void);
+void message_send_test(void);
+void message_receive_test(void);
 
 #endif /* USR_PROC_H_ */

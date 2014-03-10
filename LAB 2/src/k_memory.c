@@ -60,7 +60,7 @@ Queue ready_queue[NUM_PRIORITIES];
           |                           |
           |                           |
           |---------------------------|
-					|Pointer                    |
+		  |Pointer                    |
           |---------------------------|
           |                           |
           |                           |
@@ -110,8 +110,8 @@ void memory_init(void)
 	hp = first_mem_block;
 	
 	// Calculate number of memory blocks using end addresses of stack and pcb
-	//NUM_MEM_BLK = (highaddress - p_end) * 3/4 / SIZE_MEM_BLK;
-	NUM_MEM_BLK = 0;
+	NUM_MEM_BLK = (highaddress - p_end) * 3/4 / SIZE_MEM_BLK;
+	//NUM_MEM_BLK = 0;
 	
 	// Create heap (linked list) of memory
 	for(i = 0;i < NUM_MEM_BLK;i++) {
@@ -163,8 +163,6 @@ void *k_request_memory_block(void) {
 		// Release processor
 			
 		k_release_processor();
-			
-	printf("Moonshine.");
 	}
 	// Pop from heap
 	if (first_mem_block != NULL) {

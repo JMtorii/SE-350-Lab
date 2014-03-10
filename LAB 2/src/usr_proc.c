@@ -25,13 +25,18 @@ void set_test_procs() {
 		g_test_procs[i].m_priority=LOWEST;
 		g_test_procs[i].m_stack_size=0x100;
 		test_results[i] = 1;
+		if (i == 5 || i == 6 ) {
+		  g_test_procs[i].m_priority=0;
+	  }
 	}
-  
+
 	g_test_procs[0].mpf_start_pc = &proc1;
 	g_test_procs[1].mpf_start_pc = &proc2;
 	g_test_procs[2].mpf_start_pc = &priority_test;
 	g_test_procs[3].mpf_start_pc = &memory_block_test;
 	g_test_procs[4].mpf_start_pc = &blocked_test;
+	g_test_procs[5].mpf_start_pc = &message_send_test;
+	g_test_procs[6].mpf_start_pc = &message_receive_test;
 	
 	printf("\n\r");
 	printf("G021_test: START\r\n");
@@ -203,6 +208,7 @@ void blocked_test(void)
 	
 	while(1) {
 		printf("HERE proc4\r\n");
+		/*tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
@@ -215,9 +221,7 @@ void blocked_test(void)
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
-		
-		tmp_int = request_memory_block();
-		tmp_int = request_memory_block();
+		tmp_int = request_memory_block();*/
 		
 		i++;
 		*tmp_int = i;
@@ -241,5 +245,59 @@ void blocked_test(void)
 		if (i == 5) {
 			print_test_results();
 		}
+	}
+}
+	
+void message_send_test(void) {
+	int ret_val = 80;
+	
+	while(1) {
+		typedef struct msg {
+			int mtype;
+			char *mtext;
+		} msg;
+		
+		msg* testMessage = (msg*)request_memory_block();
+		testMessage->mtype = 0;
+		testMessage->mtext = "MSG is my favourite vitamin.";
+		
+		printf("Preparing to send message...\r\n");
+		send_message(7, testMessage);
+		printf("Message sent!\r\n");
+		
+		#ifdef DEBUG_0
+			printf("proc6: ret_val=%d\r\n\r\n", ret_val);
+		#endif /* DEBUG_0 */
+		
+		ret_val = release_processor();
+	}
+}
+	
+void message_receive_test(void) {
+	int ret_val = 90;
+	
+	while(1) {
+	  int i = 0;
+		int sender_id;
+		
+		typedef struct msg {
+			int mtype;
+			char *mtext;
+		} msg;
+	
+		msg* rcvMessage;
+
+		rcvMessage = (msg*)(receive_message(&sender_id));
+		printf("SenderID: %d Message:",sender_id);
+		while (rcvMessage->mtext[i] != '\0') {
+			printf("%c",rcvMessage->mtext[i++]);
+		}
+		release_memory_block(rcvMessage);
+		
+		#ifdef DEBUG_0
+			printf("proc7: ret_val=%d\r\n\r\n", ret_val);
+		#endif /* DEBUG_0 */
+		
+		ret_val = release_processor();
 	}
 }

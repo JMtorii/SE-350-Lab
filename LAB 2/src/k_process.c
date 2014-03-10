@@ -38,7 +38,7 @@ void process_init()
 	U32 *sp;
   
   /* fill out the initialization table */
-	add_null_process();
+	add_system_processes();
 
 	set_test_procs();	
 	for ( i = 0; i < NUM_TEST_PROCS; i++ ) {
@@ -124,10 +124,6 @@ int process_switch(PCB *p_pcb_old)
 			gp_current_process = p_pcb_old; // revert back to the old proc on error
 			return RTX_ERR;
 		} 
-	}
-	
-	if (get_num_mem_blk() == 0) {
-		printf("Glorified breakpoint.");
 	}
 	
 	return RTX_OK;
@@ -227,16 +223,16 @@ PCB* get_pcb_from_pid(int pid) {
 }
 
 // Proc to add null process
-void add_null_process(void) {
+void add_system_processes(void) {
 	g_proc_table[0].m_pid = (U32)0;
 	g_proc_table[0].m_stack_size = 0x100;
 	g_proc_table[0].m_priority = 4;
 	g_proc_table[0].mpf_start_pc = &null;
 	
-	g_proc_table[6].m_pid = (U32)13;
-	g_proc_table[6].m_stack_size = 0x100;
-	g_proc_table[6].m_priority = 3;
-	g_proc_table[6].mpf_start_pc = &CRT;
+	g_proc_table[NUM_TEST_PROCS+1].m_pid = (U32)13;
+	g_proc_table[NUM_TEST_PROCS+1].m_stack_size = 0x100;
+	g_proc_table[NUM_TEST_PROCS+1].m_priority = 3;
+	g_proc_table[NUM_TEST_PROCS+1].mpf_start_pc = &CRT;
 }
 
 // Proc for what the null process does
@@ -298,4 +294,25 @@ void CRT (void) {			//pid 13
 		printf("HERE10\r\n");
 		ret_val = release_processor();
 	}	
+}
+
+void Timer_i (void) {
+	int ret_val = 0;
+	int this_pid = 14;
+	PCB* this_pcb = get_pcb_from_pid(this_pid);
+
+	while (1) {
+
+	}
+
+}
+
+void UART_i (void) {
+	int ret_val = 0;
+	int this_pid = 15;
+	PCB* this_pcb = get_pcb_from_pid(this_pid);
+
+	while (1) {
+
+	}
 }

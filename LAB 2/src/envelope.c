@@ -11,15 +11,34 @@
 #include "printf.h"
 #endif /* ! DEBUG_0 */
 
-void create_envelope(Envelope *env, int sender_pid, int destination_pid, int mtype, char *mtext) {
+void *create_envelope(void *msg, int sender_pid, int destination_pid) {
+	int mtype;
+	char *mtext;
+	Envelope *env;
+	
+	mtype = ((Message*)msg)->mtype;
+	mtext = ((Message*)msg)->mtext;
+	
+	env = (Envelope*)k_request_memory_block();
+	
+	//overwrite memblock of user envelope and wrap in our envelope
 	env->prev_msg = NULL;
 	env->sender_pid = sender_pid;
 	env->destination_pid = destination_pid;
+	env->timestamp = g_timer_count;
+	env->delay = 0;
 	env->msg.mtype = mtype;
 	env->msg.mtext = mtext;
+	
+	// deallocating old "msg" here
+	// TODO: verify whether this should be done here,
+	// or by the sending process after the message is no longer needed
+	k_release_memory_block(msg); 
+	
+	return env;
 }
 
-void send_message(int receiving_pid, Envelope* env) {
+void send_message(int receiving_pid, void* msg) {
 	/*atomic ( on ) ;
 	set sender_procid , destination_procid ;
 	pcb_t *receiving_proc = get_pcb_from_pid ( receiving_pid ) ;
@@ -30,18 +49,14 @@ void send_message(int receiving_pid, Envelope* env) {
 	}
 	atomic ( off ) ;*/
 	
-	//atomic(on);
+	int this_pid = gp_current_process->m_pid;
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
-	q_push(&(receiving_proc->mailbox), env);
-	if (receiving_proc->m_state == BLK_ON_RCV) {
-		q_remove_pid(receiving_proc->m_pid);
-		receiving_proc->m_state = RDY;
-    q_push(&ready_queue[get_process_priority(receiving_proc->m_pid)],receiving_proc);
-  }
-	//atomic(off);
+	void* env = create_envelope(msg, this_pid, receiving_proc->m_pid);
+
+	send_envelope(receiving_proc, env);
 }
 
-Envelope* receive_message(void) {
+void* receive_message(int* sender_id) {
 	/*atomic ( on ) ;
 	while ( current_process msg_queue is empty ) {
 		set current_process state to BLOCKED_ON_RECEIVE ;
@@ -52,6 +67,7 @@ Envelope* receive_message(void) {
 	return env ;*/
 	
 	Envelope* env;
+	Message* returnMessage;
 	//atomic(on)
 	while( gp_current_process->mailbox.first == NULL) {
 		gp_current_process->m_state = BLK_ON_RCV;
@@ -59,9 +75,13 @@ Envelope* receive_message(void) {
 		release_processor();
 	}
 	env = (Envelope*)q_pop(&(gp_current_process->mailbox));
+	*sender_id = env->sender_pid;
+	printf("PID in env: %d, PID return: %d\r\n",env->sender_pid,*sender_id);
 	//atomic(off)
-	return env;
-	
+	returnMessage = (Message *)k_request_memory_block();
+	*returnMessage = env->msg;
+	k_release_memory_block(env);
+	return (void *)returnMessage;
 }
 
 Envelope* receive_message_nonblocking(void) {
@@ -74,18 +94,27 @@ Envelope* receive_message_nonblocking(void) {
 	
 }
 
-int delayed_send(int receiving_pid, Envelope* env, int delay) {
-	int start_time = g_timer_count;
-	while (1) {
-		if (g_timer_count - start_time >= delay) {
-			send_message(receiving_pid, env);
-			return RTX_OK;
-		}
-		else {
-			release_processor();
-		}
+int delayed_send(int receiving_pid, void* msg, int delay) {
+
+	int this_pid = gp_current_process->m_pid;
+	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
+	void* env = create_envelope(msg, this_pid, receiving_proc->m_pid);
+	
+	PCB *timer_i = get_pcb_from_pid(14);
+
+	send_envelope(timer_i, env);
+	return RTX_OK;
+}
+
+void send_envelope(PCB *receiving_proc, Envelope *env) {
+	//atomic(on);
+	q_push(&(receiving_proc->mailbox), env);
+	if (receiving_proc->m_state == BLK_ON_RCV) {
+		q_remove_pid(receiving_proc->m_pid);
+		receiving_proc->m_state = RDY;
+		q_push(&ready_queue[get_process_priority(receiving_proc->m_pid)],receiving_proc);
 	}
-	//return RTX_ERR;
+	//atomic(off);
 }
 
 int get_num_msg(PCB * pcb) {
