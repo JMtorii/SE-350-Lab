@@ -262,7 +262,8 @@ void message_send_test(void) {
 		testMessage->mtext = "MSG is my favourite vitamin.";
 		
 		printf("Preparing to send message...\r\n");
-		send_message(7, testMessage);
+		//send_message(7, testMessage);
+		delayed_send(7, testMessage, 200);
 		printf("Message sent!\r\n");
 		
 		#ifdef DEBUG_0

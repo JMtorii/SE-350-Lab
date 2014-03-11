@@ -80,6 +80,9 @@ void* receive_message(int* sender_id) {
 	//atomic(off)
 	returnMessage = (Message *)k_request_memory_block();
 	*returnMessage = env->msg;
+	
+	printf("Received at: %d\r\n", g_timer_count);
+	
 	k_release_memory_block(env);
 	return (void *)returnMessage;
 }
@@ -99,9 +102,11 @@ int delayed_send(int receiving_pid, void* msg, int delay) {
 	int this_pid = gp_current_process->m_pid;
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
 	void* env = create_envelope(msg, this_pid, receiving_proc->m_pid);
-	
 	PCB *timer_i = get_pcb_from_pid(14);
-
+	((Envelope *)env)->delay = delay;
+	
+	printf("Current Time: %d, Delay: %d\r\n", g_timer_count, delay);
+	
 	send_envelope(timer_i, env);
 	return RTX_OK;
 }

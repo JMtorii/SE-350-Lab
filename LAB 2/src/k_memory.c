@@ -90,9 +90,9 @@ void memory_init(void)
 
 	//Allocate memory for pcb pointers
 	gp_pcbs = (PCB **)p_end;
-	p_end += (NUM_TEST_PROCS+2) * sizeof(PCB *);
+	p_end += (NUM_TEST_PROCS+3) * sizeof(PCB *);
   
-	for ( i = 0; i < NUM_TEST_PROCS + 2; i++ ) {
+	for ( i = 0; i < NUM_TEST_PROCS + 3; i++ ) {
 		gp_pcbs[i] = (PCB *)p_end;
 		q_init(&gp_pcbs[i]->mailbox);
 		p_end += sizeof(PCB); 

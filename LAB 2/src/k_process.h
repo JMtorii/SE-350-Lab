@@ -28,11 +28,14 @@ int k_set_process_priority(int process_id, int priority);
 int get_process_priority(int process_id);
 int set_process_priority(int process_id, int priority);
 PCB* get_pcb_from_pid(int pid);
+int k_release_from_iprocess(void);
+int k_release_into_iprocess(PCB* iprocess);
 
 void add_system_processes(void);
 void null(void);
 void KCD (void);
 void CRT (void);
+void Timer_i(void);
 
 extern U32 *alloc_stack(U32 size_b);   /* allocate stack for a process */
 extern void __rte(void);               /* pop exception stack frame */
@@ -41,5 +44,6 @@ extern Queue blocked_queue[NUM_PRIORITIES];
 extern Queue ready_queue[NUM_PRIORITIES];
 extern Queue blocked_rcv_queue[NUM_PRIORITIES];
 extern void print_num_mem_blk(void);
+extern volatile unsigned int g_timer_count;
 
 #endif /* ! K_PROCESS_H_ */

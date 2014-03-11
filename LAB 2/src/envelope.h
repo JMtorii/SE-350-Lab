@@ -13,7 +13,7 @@
 #include "k_process.h"
 
 extern PCB *gp_current_process;
-extern int g_timer_count;
+extern volatile unsigned int g_timer_count;
 
 typedef struct Message {
 	int mtype; /* user defined message type */

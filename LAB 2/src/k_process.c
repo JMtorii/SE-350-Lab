@@ -25,7 +25,7 @@ U32 g_switch_flag = 1;          /* whether to continue to run the process before
 																/* this value will be set by UART handler */
 
 /* process initialization table */
-PROC_INIT g_proc_table[NUM_TEST_PROCS+2];
+PROC_INIT g_proc_table[NUM_TEST_PROCS+3];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
 
 /**
@@ -49,7 +49,7 @@ void process_init()
 	}
 	
 	/* initilize exception stack frame (i.e. initial context) for each process */
-	for ( i = 0; i < NUM_TEST_PROCS+2; i++ ) {
+	for ( i = 0; i < NUM_TEST_PROCS+3; i++ ) {
 		int j;
 		// Add test procs to pcbs
 		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid;
@@ -182,7 +182,7 @@ int get_process_priority(int process_id) {
 // Obtain process priority of process with arg pid
 int k_get_process_priority(int process_id) {
 	int i;
-	for (i = 0;i<NUM_TEST_PROCS+2;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+3;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			return g_proc_table[i].m_priority;
 		}
@@ -202,7 +202,7 @@ int k_set_process_priority(int process_id, int priority) {
 	if (process_id == 0) {
 		return RTX_ERR;
 	}
-	for (i = 0;i<NUM_TEST_PROCS+2;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+3;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			g_proc_table[i].m_priority = priority;
 			// TO-DO remove from old priority queue and add to new
@@ -214,12 +214,75 @@ int k_set_process_priority(int process_id, int priority) {
 
 PCB* get_pcb_from_pid(int pid) {
 	int i;
-	for (i = 0;i<NUM_TEST_PROCS+2;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+3;++i) {
 		if ((gp_pcbs[i])->m_pid == pid) {
 			return gp_pcbs[i];
 		}
 	}
 	return NULL;
+}
+
+int k_release_from_iprocess(void)
+{
+	PCB *p_pcb_old = NULL;
+	p_pcb_old = gp_current_process;
+	
+	// Set pointer to last executed pcb
+	printf("iProcess exiting \r\n");
+	//printf("############# Printing current process ############### \r\n");
+	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
+	printf("############# Printing ready queue ################## \r\n");
+	q_print_rdy_process();
+	printf("############# Printing blocked queue ################ \r\n");
+	q_print_blk_mem_process();
+	//print_num_mem_blk();
+
+	// Obtain next in execution
+	gp_current_process = scheduler();
+	
+	
+	// Init for if no current processes
+  if ( p_pcb_old == NULL ) {
+		p_pcb_old = gp_current_process;
+	}
+	
+	process_switch(p_pcb_old);
+
+	return RTX_OK;
+}
+
+int k_release_into_iprocess(PCB* iprocess)
+{
+	PCB *p_pcb_old = NULL;
+	p_pcb_old = gp_current_process;
+	
+	// Set pointer to last executed pcb
+	printf("iProcess beginning \r\n");
+	//printf("############# Printing current process ############### \r\n");
+	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
+	printf("############# Printing ready queue ################## \r\n");
+	q_print_rdy_process();
+	printf("############# Printing blocked queue ################ \r\n");
+	q_print_blk_mem_process();
+	//print_num_mem_blk();
+
+	// Obtain next in execution
+	gp_current_process = iprocess;
+	
+	// Push old process back to ready queue
+	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
+		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
+		//q_print_rdy_process();
+  }
+	
+	// Init for if no current processes
+  if ( p_pcb_old == NULL ) {
+		p_pcb_old = gp_current_process;
+	}
+	
+	process_switch(p_pcb_old);
+
+	return RTX_OK;
 }
 
 // Proc to add null process
@@ -233,6 +296,11 @@ void add_system_processes(void) {
 	g_proc_table[NUM_TEST_PROCS+1].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+1].m_priority = 3;
 	g_proc_table[NUM_TEST_PROCS+1].mpf_start_pc = &CRT;
+	
+	g_proc_table[NUM_TEST_PROCS+2].m_pid = (U32)14;
+	g_proc_table[NUM_TEST_PROCS+2].m_stack_size = 0x100;
+	g_proc_table[NUM_TEST_PROCS+2].m_priority = -1;
+	g_proc_table[NUM_TEST_PROCS+2].mpf_start_pc = &Timer_i;
 }
 
 // Proc for what the null process does
@@ -300,11 +368,20 @@ void Timer_i (void) {
 	int ret_val = 0;
 	int this_pid = 14;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
-
-	while (1) {
-
+	
+	Envelope *env = this_pcb->mailbox.last;
+	while (env != NULL) {
+		int time_to_send;
+		PCB* send_to;
+		time_to_send = env->delay + env->timestamp;
+		if (time_to_send >= g_timer_count) {
+			send_to = get_pcb_from_pid(env->destination_pid);
+			send_envelope(send_to, env);
+		}
+		env = (Envelope *)(env->prev_msg);
 	}
-
+	
+	k_release_from_iprocess();
 }
 
 void UART_i (void) {

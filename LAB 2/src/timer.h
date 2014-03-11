@@ -6,6 +6,9 @@
 #ifndef _TIMER_H_
 #define _TIMER_H_
 
+#include "k_rtx.h"
+
+extern PCB* get_pcb_from_pid(int pid);
 extern uint32_t timer_init ( uint8_t n_timer );  /* initialize timer n_timer */
 
 #endif /* ! _TIMER_H_ */
