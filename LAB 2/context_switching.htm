@@ -3,7 +3,7 @@
 <title>Static Call Graph - [N:\SE 350\LAB 2\context_switching.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image N:\SE 350\LAB 2\context_switching.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Mon Mar 10 20:37:39 2014
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Mon Mar 10 20:59:59 2014
 <BR><P>
 <H3>Maximum Stack Usage =        248 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -246,7 +246,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_lpc17xx.o(RESET)
 </UL>
 <P><STRONG><a name="[e]"></a>TIMER0_IRQHandler</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, timer.o(.emb_text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = TIMER0_IRQHandler &rArr; c_TIMER0_IRQHandler &rArr; k_release_into_iprocess &rArr; q_print_rdy_process &rArr; q_print_process &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
+<BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = TIMER0_IRQHandler &rArr; c_TIMER0_IRQHandler &rArr; k_release_into_iprocess &rArr; q_print_rdy_process &rArr; q_print_process &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_TIMER0_IRQHandler
 </UL>
@@ -717,7 +717,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_init
 </UL>
 
-<P><STRONG><a name="[5e]"></a>process_init</STRONG> (Thumb, 242 bytes, Stack size 24 bytes, k_process.o(.text))
+<P><STRONG><a name="[5e]"></a>process_init</STRONG> (Thumb, 266 bytes, Stack size 24 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = process_init &rArr; q_push &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
 </UL>
 <BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
@@ -734,11 +734,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usr_proc.o(.text)
 </UL>
-<P><STRONG><a name="[76]"></a>set_process_priority</STRONG> (Thumb, 16 bytes, Stack size 12 bytes, k_process.o(.text), UNUSED)
+<P><STRONG><a name="[76]"></a>set_process_priority</STRONG> (Thumb, 240 bytes, Stack size 12 bytes, k_process.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_set_process_priority
 </UL>
 
-<P><STRONG><a name="[77]"></a>k_release_into_iprocess</STRONG> (Thumb, 338 bytes, Stack size 16 bytes, k_process.o(.text))
+<P><STRONG><a name="[77]"></a>k_release_into_iprocess</STRONG> (Thumb, 88 bytes, Stack size 16 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = k_release_into_iprocess &rArr; q_print_rdy_process &rArr; q_print_process &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_rdy_process
@@ -928,8 +928,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[4a]"></a>c_TIMER0_IRQHandler</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, timer.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = c_TIMER0_IRQHandler &rArr; k_release_into_iprocess &rArr; q_print_rdy_process &rArr; q_print_process &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
+<P><STRONG><a name="[4a]"></a>c_TIMER0_IRQHandler</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, timer.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = c_TIMER0_IRQHandler &rArr; k_release_into_iprocess &rArr; q_print_rdy_process &rArr; q_print_process &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
 </UL>
 <BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_release_into_iprocess
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid

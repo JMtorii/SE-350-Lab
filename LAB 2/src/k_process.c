@@ -56,6 +56,10 @@ void process_init()
 		(gp_pcbs[i])->m_state = NEW;
 		(gp_pcbs[i])->prev = NULL;
 		
+		if ((g_proc_table[i]).m_pid >= 14) {
+			(gp_pcbs[i])->m_state = RDY;
+		}
+		
 		// Create stack pointer and alloc space
 		sp = alloc_stack((g_proc_table[i]).m_stack_size);
 		
