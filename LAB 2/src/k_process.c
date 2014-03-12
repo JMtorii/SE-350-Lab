@@ -117,8 +117,9 @@ int process_switch(PCB *p_pcb_old)
 		}
 		gp_current_process->m_state = RUN;
 		__set_MSP((U32) gp_current_process->mp_sp);
-		uart1_put_string("sWITCHED \r\n");
+	  uart1_put_string("sWITCHED \r\n");
 		__rte();  // pop exception stack frame from the stack for a new processes
+
 	} 
 		
 	/* The following will only execute if the if block above is FALSE */
@@ -134,7 +135,11 @@ int process_switch(PCB *p_pcb_old)
 			return RTX_ERR;
 		} 
 	}
-	
+	if (p_pcb_old->m_pid < 14 && gp_current_process->m_pid >= 14) {
+		atomic(0);
+	} else {
+		atomic(1);
+	}
 	return RTX_OK;
 }
 

@@ -109,7 +109,6 @@ __asm void TIMER0_IRQHandler(void)
 	BL c_TIMER0_IRQHandler
 	BL k_release_into_iprocess
 	POP{r4-r11, pc}
-	BL atomic_toggle
 } 
 /**
  * @brief: c TIMER0 IRQ Handler

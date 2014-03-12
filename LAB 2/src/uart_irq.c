@@ -248,9 +248,11 @@ void atomic(int flag) {
 	if (flag == 0) {
 		NVIC_DisableIRQ(UART0_IRQn);
 		NVIC_DisableIRQ(TIMER0_IRQn);
+		atomicflag = 1;
 	} else {
 		NVIC_EnableIRQ(UART0_IRQn);
 		NVIC_EnableIRQ(TIMER0_IRQn);
+		atomicflag = 0;
 	}
 }
 
