@@ -26,7 +26,7 @@ U32 g_switch_flag = 1;          /* whether to continue to run the process before
 																/* this value will be set by UART handler */
 
 /* process initialization table */
-PROC_INIT g_proc_table[NUM_TEST_PROCS+3];
+PROC_INIT g_proc_table[NUM_TEST_PROCS+NUM_SYS_PROCS];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
 
 /**
@@ -51,7 +51,7 @@ void process_init()
 	}
 	
 	/* initilize exception stack frame (i.e. initial context) for each process */
-	for ( i = 0; i < NUM_TEST_PROCS+3; i++ ) {
+	for ( i = 0; i < NUM_TEST_PROCS+NUM_SYS_PROCS; i++ ) {
 		int j;
 		// Add test procs to pcbs
 		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid;
@@ -134,11 +134,11 @@ int process_switch(PCB *p_pcb_old)
 		} 
 	}
 
-	/*if (gp_current_process->m_pid >= 14) {
-		atomic(0);
+	if (gp_current_process->m_pid >= 14) {
+		atomic_on();
 	} else {
-		atomic(1);
-	}*/
+		atomic_off();
+	}
 	return RTX_OK;
 }
 
@@ -150,7 +150,7 @@ int get_process_priority(int process_id) {
 // Obtain process priority of process with arg pid
 int k_get_process_priority(int process_id) {
 	int i;
-	for (i = 0;i<NUM_TEST_PROCS+3;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+NUM_SYS_PROCS;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			return g_proc_table[i].m_priority;
 		}
@@ -170,7 +170,7 @@ int k_set_process_priority(int process_id, int priority) {
 	if (process_id == 0) {
 		return RTX_ERR;
 	}
-	for (i = 0;i<NUM_TEST_PROCS+3;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+NUM_SYS_PROCS;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			g_proc_table[i].m_priority = priority;
 			// TO-DO remove from old priority queue and add to new
@@ -182,7 +182,7 @@ int k_set_process_priority(int process_id, int priority) {
 
 PCB* get_pcb_from_pid(int pid) {
 	int i;
-	for (i = 0;i<NUM_TEST_PROCS+3;++i) {
+	for (i = 0;i<NUM_TEST_PROCS+NUM_SYS_PROCS;++i) {
 		if ((gp_pcbs[i])->m_pid == pid) {
 			return gp_pcbs[i];
 		}
@@ -305,6 +305,11 @@ void add_system_processes(void) {
 	g_proc_table[NUM_TEST_PROCS+2].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+2].m_priority = -1;
 	g_proc_table[NUM_TEST_PROCS+2].mpf_start_pc = &Timer_i;
+	
+	g_proc_table[NUM_TEST_PROCS+3].m_pid = (U32)15;
+	g_proc_table[NUM_TEST_PROCS+3].m_stack_size = 0x100;
+	g_proc_table[NUM_TEST_PROCS+3].m_priority = -1;
+	g_proc_table[NUM_TEST_PROCS+3].mpf_start_pc = &UART_i;
 }
 
 // Proc for what the null process does

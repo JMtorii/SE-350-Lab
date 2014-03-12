@@ -25,7 +25,7 @@ void set_test_procs() {
 		g_test_procs[i].m_priority=LOWEST;
 		g_test_procs[i].m_stack_size=0x100;
 		test_results[i] = 1;
-		if (i == 5 || i == 6 ) {
+		if (i == 5 || i == 6  || i == 3 || i == 4) {
 		  g_test_procs[i].m_priority=4;
 	  }
 	}

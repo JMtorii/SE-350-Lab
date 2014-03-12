@@ -36,6 +36,7 @@ void null(void);
 void KCD (void);
 void CRT (void);
 void Timer_i(void);
+void UART_i(void);
 
 extern U32 *alloc_stack(U32 size_b);   /* allocate stack for a process */
 extern void __rte(void);               /* pop exception stack frame */

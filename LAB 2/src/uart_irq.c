@@ -250,14 +250,14 @@ void c_UART0_IRQHandler(void)
 		gp_current_process = get_pcb_from_pid(15);
 }
 
-void atomic_off(void) {
-	  atomicflag = 0;
+void atomic_on(void) {
+	  atomicflag = 1;
 		NVIC_DisableIRQ(UART0_IRQn);
 		NVIC_DisableIRQ(TIMER0_IRQn);
 }
 
-void atomic_on(void) {
-	  atomicflag = 1;
+void atomic_off(void) {
+	  atomicflag = 0;
 		NVIC_EnableIRQ(UART0_IRQn);
 		NVIC_EnableIRQ(TIMER0_IRQn);
 }

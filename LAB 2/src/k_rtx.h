@@ -16,6 +16,7 @@
 
 #define NULL 0
 #define NUM_TEST_PROCS 7
+#define NUM_SYS_PROCS 4
 
 #define NUM_PRIORITIES 5
 
