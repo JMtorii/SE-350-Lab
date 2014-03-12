@@ -18,7 +18,7 @@ uint8_t *gp_buffer = g_buffer;
 uint8_t g_send_char = 0;
 uint8_t g_char_in;
 uint8_t g_char_out;
-int atomicflag;
+int atomicflag = 0;
 
 extern uint32_t g_switch_flag;
 
@@ -251,5 +251,17 @@ void atomic(int flag) {
 	} else {
 		NVIC_EnableIRQ(UART0_IRQn);
 		NVIC_EnableIRQ(TIMER0_IRQn);
+	}
+}
+
+void atomic_toggle(void) {
+	if (atomicflag == 0) {
+		NVIC_DisableIRQ(UART0_IRQn);
+		NVIC_DisableIRQ(TIMER0_IRQn);
+		atomicflag = 1;
+	} else {
+		NVIC_EnableIRQ(UART0_IRQn);
+		NVIC_EnableIRQ(TIMER0_IRQn);
+		atomicflag = 0;
 	}
 }

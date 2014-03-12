@@ -29,11 +29,11 @@ typedef struct Envelope {
 	Message msg;
 } Envelope;
 
-void send_message(int receiving_pid, void* env);
+void k_send_message(int receiving_pid, void* env);
 
-int delayed_send(int receiving_pid, void* env, int delay);
+int k_delayed_send(int receiving_pid, void* env, int delay);
 
-void* receive_message(int *sender_id);
+void* k_receive_message(int *sender_id);
 
 Envelope* receive_message_nonblocking(void);
 

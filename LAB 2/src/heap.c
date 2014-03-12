@@ -9,7 +9,7 @@
 //}
 MemBlock *first_mem_block = NULL;
 int NUM_MEM_BLK = 0;
-int SIZE_MEM_BLK = 1024; //128bytes * 8
+int SIZE_MEM_BLK = 4096; //128bytes * 8
 U8* heap_begin = NULL;
 
 U32 * h_pop(void) {

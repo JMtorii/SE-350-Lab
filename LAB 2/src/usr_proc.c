@@ -26,7 +26,7 @@ void set_test_procs() {
 		g_test_procs[i].m_stack_size=0x100;
 		test_results[i] = 1;
 		if (i == 5 || i == 6 ) {
-		  g_test_procs[i].m_priority=0;
+		  g_test_procs[i].m_priority=4;
 	  }
 	}
 
@@ -220,8 +220,8 @@ void blocked_test(void)
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
-		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();*/
+		tmp_int = request_memory_block(); 	
 		
 		i++;
 		*tmp_int = i;

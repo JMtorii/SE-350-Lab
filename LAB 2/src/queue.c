@@ -68,19 +68,21 @@ void q_print_process(Queue *q,int priority) {
 	int i = 0;
 	iter = (PCB *)(q->last);
 	
-	while (iter != (PCB *)(q->first)) {
-		printf("Index[%d], pid: %d, priority: %d\r\n", i, iter->m_pid, priority);
+	while (iter != (PCB *)(q->first) && iter != NULL) {
+		//printf("Index[%d], pid: %d, priority: %d\r\n", i, iter->m_pid, priority);
 		iter = iter->prev;
 		i++;
 	}
 	if (iter != NULL) {
-		printf("Index[%d], pid: %d, priority: %d\r\n", i, iter->m_pid, priority);
-
-}
+		//printf("Index[%d], pid: %d, priority: %d\r\n", i, iter->m_pid, priority);
+  }
 }
 
 void q_print_rdy_process(void) {
 	int i;
+	if (get_num_mem_blk() == 0) {
+		i = 0;
+	}
 	printf("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
 		printf("Priority %d:\r\n",i);

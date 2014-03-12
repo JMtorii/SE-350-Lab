@@ -29,7 +29,7 @@ int get_process_priority(int process_id);
 int set_process_priority(int process_id, int priority);
 PCB* get_pcb_from_pid(int pid);
 int k_release_from_iprocess(void);
-int k_release_into_iprocess(PCB* iprocess);
+int k_release_into_iprocess(void);
 
 void add_system_processes(void);
 void null(void);

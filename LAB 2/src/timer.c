@@ -101,20 +101,27 @@ uint32_t timer_init(uint8_t n_timer)
 __asm void TIMER0_IRQHandler(void)
 {
 	PRESERVE8
+	IMPORT atomic_toggle
+	BL atomic_toggle
 	IMPORT c_TIMER0_IRQHandler
+	IMPORT k_release_into_iprocess
 	PUSH{r4-r11, lr}
 	BL c_TIMER0_IRQHandler
+	BL k_release_into_iprocess
 	POP{r4-r11, pc}
+	BL atomic_toggle
 } 
 /**
  * @brief: c TIMER0 IRQ Handler
  */
 void c_TIMER0_IRQHandler(void)
 {
+	//atomic(0);
 	/* ack inttrupt, see section  21.6.1 on pg 493 of LPC17XX_UM */
 	LPC_TIM0->IR = BIT(0);  
 	g_timer_count++;
-	
+	p_pcb_old = gp_current_process;
+	gp_current_process = get_pcb_from_pid(14);
 	//uart_put_string(1, "The pid of process 14 is: " + get_pcb_from_pid(14)->m_pid);
-	k_release_into_iprocess(get_pcb_from_pid(14));
+	//k_release_into_iprocess(get_pcb_from_pid(14));
 }

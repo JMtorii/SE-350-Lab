@@ -38,7 +38,7 @@ void *create_envelope(void *msg, int sender_pid, int destination_pid) {
 	return env;
 }
 
-void send_message(int receiving_pid, void* msg) {
+void k_send_message(int receiving_pid, void* msg) {
 	/*atomic ( on ) ;
 	set sender_procid , destination_procid ;
 	pcb_t *receiving_proc = get_pcb_from_pid ( receiving_pid ) ;
@@ -56,7 +56,7 @@ void send_message(int receiving_pid, void* msg) {
 	send_envelope(receiving_proc, env);
 }
 
-void* receive_message(int* sender_id) {
+void* k_receive_message(int* sender_id) {
 	/*atomic ( on ) ;
 	while ( current_process msg_queue is empty ) {
 		set current_process state to BLOCKED_ON_RECEIVE ;
@@ -97,7 +97,7 @@ Envelope* receive_message_nonblocking(void) {
 	
 }
 
-int delayed_send(int receiving_pid, void* msg, int delay) {
+int k_delayed_send(int receiving_pid, void* msg, int delay) {
 
 	int this_pid = gp_current_process->m_pid;
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);

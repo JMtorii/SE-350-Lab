@@ -19,6 +19,7 @@
 /* ----- Global Variables ----- */
 PCB **gp_pcbs;                  /* array of pcbs */
 PCB *gp_current_process;
+PCB *p_pcb_old;
 
 U32 g_switch_flag = 1;          /* whether to continue to run the process before the UART receive interrupt */
                                 /* 1 means to switch to another process, 0 means to continue the current process */
@@ -37,6 +38,7 @@ void process_init()
 	int i;
 	U32 *sp;
   
+	p_pcb_old = NULL;
   /* fill out the initialization table */
 	add_system_processes();
 
@@ -55,10 +57,10 @@ void process_init()
 		(gp_pcbs[i])->m_pid = (g_proc_table[i]).m_pid;
 		(gp_pcbs[i])->m_state = NEW;
 		(gp_pcbs[i])->prev = NULL;
-		
+		/*
 		if ((g_proc_table[i]).m_pid >= 14) {
-			(gp_pcbs[i])->m_state = RDY;
-		}
+			(gp_pcbs[i])->m_state = NEW;
+		}*/
 		
 		// Create stack pointer and alloc space
 		sp = alloc_stack((g_proc_table[i]).m_stack_size);
@@ -70,8 +72,9 @@ void process_init()
 		}
 		
 		// Push each pcb into ready_queue
-		q_push(&ready_queue[get_process_priority((gp_pcbs[i])->m_pid)],gp_pcbs[i]);
-		
+		if (g_test_procs[i].m_priority != -1) {
+			q_push(&ready_queue[get_process_priority((gp_pcbs[i])->m_pid)],gp_pcbs[i]);
+		}
 		// Assign memory address of stack pointer for each pcb
 		(gp_pcbs[i])->mp_sp = sp;
 	}
@@ -114,6 +117,7 @@ int process_switch(PCB *p_pcb_old)
 		}
 		gp_current_process->m_state = RUN;
 		__set_MSP((U32) gp_current_process->mp_sp);
+		uart1_put_string("sWITCHED \r\n");
 		__rte();  // pop exception stack frame from the stack for a new processes
 	} 
 		
@@ -123,6 +127,7 @@ int process_switch(PCB *p_pcb_old)
 			p_pcb_old->m_state = RDY; 
 			p_pcb_old->mp_sp = (U32 *) __get_MSP(); // save the old process's sp
 			gp_current_process->m_state = RUN;
+			uart1_put_string("sWITCHED \r\n");
 			__set_MSP((U32) gp_current_process->mp_sp); //switch to the new proc's stack    
 		} else {
 			gp_current_process = p_pcb_old; // revert back to the old proc on error
@@ -141,16 +146,16 @@ int process_switch(PCB *p_pcb_old)
 int k_release_processor(void)
 {
 	// Set pointer to last executed pcb
-	PCB *p_pcb_old = NULL;
+	p_pcb_old = NULL;
 	p_pcb_old = gp_current_process;
 	
 	
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
-	printf("############# Printing ready queue ################## \r\n");
-	q_print_rdy_process();
-	printf("############# Printing blocked queue ################ \r\n");
-	q_print_blk_mem_process();
+	//printf("############# Printing ready queue ################## \r\n");
+	//q_print_rdy_process();
+	//printf("############# Printing blocked queue ################ \r\n");
+	//q_print_blk_mem_process();
 	//print_num_mem_blk();
 	
 	// Push old process back to ready queue
@@ -227,51 +232,43 @@ PCB* get_pcb_from_pid(int pid) {
 }
 
 int k_release_from_iprocess(void)
-{
-	PCB *p_pcb_old = NULL;
-	p_pcb_old = gp_current_process;
-	
+{	
 	// Set pointer to last executed pcb
-	printf("iProcess exiting \r\n");
+	//printf("iProcess exiting \r\n");
+	uart1_put_string("iProcess exiting \r\n");
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
-	printf("############# Printing ready queue ################## \r\n");
-	q_print_rdy_process();
-	printf("############# Printing blocked queue ################ \r\n");
-	q_print_blk_mem_process();
+	//printf("############# Printing ready queue ################## \r\n");
+	//q_print_rdy_process();
+	//printf("############# Printing blocked queue ################ \r\n");
+	//q_print_blk_mem_process();
 	//print_num_mem_blk();
 
+	p_pcb_old = gp_current_process;
+	
 	// Obtain next in execution
 	gp_current_process = scheduler();
-	
 	
 	// Init for if no current processes
   if ( p_pcb_old == NULL ) {
 		p_pcb_old = gp_current_process;
 	}
-	
 	process_switch(p_pcb_old);
-
 	return RTX_OK;
 }
 
-int k_release_into_iprocess(PCB* iprocess)
-{
-	PCB *p_pcb_old = NULL;
-	p_pcb_old = gp_current_process;
-	
+int k_release_into_iprocess(void)
+{	
 	// Set pointer to last executed pcb
-	printf("iProcess beginning \r\n");
+	//printf("iProcess beginning \r\n");
+	uart1_put_string("iProcess beginning \r\n");
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
-	printf("############# Printing ready queue ################## \r\n");
-	q_print_rdy_process();
-	printf("############# Printing blocked queue ################ \r\n");
-	q_print_blk_mem_process();
+	//printf("############# Printing ready queue ################## \r\n");
+	//q_print_rdy_process();
+	//printf("############# Printing blocked queue ################ \r\n");
+	//q_print_blk_mem_process();
 	//print_num_mem_blk();
-
-	// Obtain next in execution
-	gp_current_process = iprocess;
 	
 	// Push old process back to ready queue
 	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
@@ -385,7 +382,7 @@ void Timer_i (void) {
 		env = (Envelope *)(env->prev_msg);
 	}
 	
-	k_release_from_iprocess();
+	release_from_iprocess();
 }
 
 void UART_i (void) {
