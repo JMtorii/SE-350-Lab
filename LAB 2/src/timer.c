@@ -103,27 +103,25 @@ __asm void TIMER0_IRQHandler(void)
 	PRESERVE8
 	PUSH{r4-r11, lr}
 	IMPORT atomic_toggle
-	BL atomic_toggle
 	IMPORT c_TIMER0_IRQHandler
 	IMPORT k_release_into_iprocess
+	BL atomic_toggle
 	BL c_TIMER0_IRQHandler
-	BL k_release_into_iprocess
+  BL k_release_into_iprocess
+	BL atomic_toggle
 	POP{r4-r11, pc}
 } 
+
 /**
  * @brief: c TIMER0 IRQ Handler
  */
 void c_TIMER0_IRQHandler(void)
 {
-	//atomic(0);
 	/* ack inttrupt, see section  21.6.1 on pg 493 of LPC17XX_UM */
 	LPC_TIM0->IR = BIT(0);  
 	g_timer_count++;
-	// Switch current process with timer iprocess
-	/*p_pcb_old = gp_current_process;
-	gp_current_process = get_pcb_from_pid(14);
-	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
-		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
-  }*/
 	
+	// Switch to timer iprocess context
+	p_pcb_old = gp_current_process;
+	gp_current_process = get_pcb_from_pid(14);
 }

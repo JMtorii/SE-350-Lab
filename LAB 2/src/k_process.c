@@ -141,51 +141,6 @@ int process_switch(PCB *p_pcb_old)
 	return RTX_OK;
 }
 
-/**
- * @brief release_processor(). 
- * @return RTX_ERR on error and zero on success
- * POST: gp_current_process gets updated to next to run process
- */
-int k_release_processor(void)
-{
-	// Set pointer to last executed pcb
-	p_pcb_old = NULL;
-	p_pcb_old = gp_current_process;
-	
-	
-	//printf("############# Printing current process ############### \r\n");
-	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
-	//printf("############# Printing ready queue ################## \r\n");
-	//q_print_rdy_process();
-	//printf("############# Printing blocked queue ################ \r\n");
-	//q_print_blk_mem_process();
-	//print_num_mem_blk();
-	
-	// Push old process back to ready queue
-	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
-		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
-		//q_print_rdy_process();
-  }
-
-	// Obtain next in execution
-	gp_current_process = scheduler();
-	
-	// Nothing to do
-	if ( gp_current_process == NULL  ) {
-		gp_current_process = p_pcb_old;
-		return RTX_ERR;
-	}
-	
-	// Init for if no current processes
-  if ( p_pcb_old == NULL ) {
-		p_pcb_old = gp_current_process;
-	}
-	
-	process_switch(p_pcb_old);
-
-	return RTX_OK;
-}
-
 // Wrapper to obtain process priority of process with arg pid
 int get_process_priority(int process_id) {
 	return k_get_process_priority(process_id);
@@ -232,6 +187,50 @@ PCB* get_pcb_from_pid(int pid) {
 		}
 	}
 	return NULL;
+}
+
+/**
+ * @brief release_processor(). 
+ * @return RTX_ERR on error and zero on success
+ * POST: gp_current_process gets updated to next to run process
+ */
+int k_release_processor(void)
+{
+	// Set pointer to last executed pcb
+	p_pcb_old = NULL;
+	p_pcb_old = gp_current_process;
+	
+	
+	//printf("############# Printing current process ############### \r\n");
+	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
+	//printf("############# Printing ready queue ################## \r\n");
+	//q_print_rdy_process();
+	//printf("############# Printing blocked queue ################ \r\n");
+	//q_print_blk_mem_process();
+	//print_num_mem_blk();
+	
+	// Push old process back to ready queue
+	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
+		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
+		//q_print_rdy_process();
+  }
+
+	// Obtain next in execution
+	gp_current_process = scheduler();
+	
+	// Nothing to do
+	if ( gp_current_process == NULL  ) {
+		gp_current_process = p_pcb_old;
+		return RTX_ERR;
+	}
+	
+	// Init for if no current processes
+  if ( p_pcb_old == NULL ) {
+		p_pcb_old = gp_current_process;
+	}
+	
+	process_switch(p_pcb_old);
+	return RTX_OK;
 }
 
 int k_release_from_iprocess(void)
@@ -373,18 +372,20 @@ void Timer_i (void) {
 	int this_pid = 14;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 	
-	Envelope *env = this_pcb->mailbox.last;
-	while (env != NULL) {
-		int time_to_send;
-		PCB* send_to;
-		time_to_send = env->delay + env->timestamp;
-		if (time_to_send >= g_timer_count) {
-			send_to = get_pcb_from_pid(env->destination_pid);
-			send_envelope(send_to, env);
+	while (1) {
+		Envelope *env = this_pcb->mailbox.last;
+		while (env != NULL) {
+			int time_to_send;
+			PCB* send_to;
+			time_to_send = env->delay + env->timestamp;
+			if (time_to_send >= g_timer_count) {
+				send_to = get_pcb_from_pid(env->destination_pid);
+				send_envelope(send_to, env);
+			}
+			env = (Envelope *)(env->prev_msg);
 		}
-		env = (Envelope *)(env->prev_msg);
+		release_from_iprocess();
 	}
-	release_from_iprocess();
 }
 
 void UART_i (void) {
