@@ -33,9 +33,9 @@ __asm void SVC_Handler (void)
  
   LDM  R0, {R0-R3, R12}; Read R0-R3, R12 from stack. 
                        ; NOTE R0 contains the sp before this instruction
-
   PUSH {R4-R11, LR}    ; Save other registers for preemption caused by i-procs
-  BLX  R12             ; Call SVC C Function, 
+
+	BLX  R12             ; Call SVC C Function, 
                        ; R12 contains the corresponding 
                        ; C kernel functions entry point
                        ; R0-R3 contains the kernel function input parameter (See AAPCS)
