@@ -71,7 +71,7 @@ uint32_t timer_init(uint8_t n_timer)
 	pTimer->PR = 12499;  
 
 	/* Step 4.2: MR setting, see section 21.6.7 on pg496 of LPC17xx_UM. */
-	pTimer->MR0 = 1;
+	pTimer->MR0 = 31;
 
 	/* Step 4.3: MCR setting, see table 429 on pg496 of LPC17xx_UM.
 	   Interrupt on MR0: when MR0 mathches the value in the TC, 

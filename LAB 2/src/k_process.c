@@ -134,11 +134,11 @@ int process_switch(PCB *p_pcb_old)
 		} 
 	}
 
-	if (gp_current_process->m_pid >= 14) {
+	/*if (gp_current_process->m_pid >= 14) {
 		atomic_on();
 	} else {
 		atomic_off();
-	}
+	}*/
 	return RTX_OK;
 }
 
@@ -238,7 +238,7 @@ int k_release_from_iprocess(void)
 {	
 	// Set pointer to last executed pcb
 	//printf("iProcess exiting \r\n");
-	uart1_put_string("iProcess exiting \r\n");
+	//uart1_put_string("iProcess exiting \r\n");
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
 	//printf("############# Printing ready queue ################## \r\n");
@@ -264,7 +264,7 @@ int k_release_into_iprocess(void)
 {	
 	// Set pointer to last executed pcb
 	//printf("iProcess beginning \r\n");
-	uart1_put_string("iProcess beginning \r\n");
+	//uart1_put_string("iProcess beginning \r\n");
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
 	//printf("############# Printing ready queue ################## \r\n");
@@ -380,7 +380,7 @@ void Timer_i (void) {
 	
 	while (1) {
 		Envelope *env = this_pcb->mailbox.last;
-		uart0_put_string("We are in the timer_i process\r\n");
+		//uart0_put_string("We are in the timer_i process\r\n");
 		while (env != NULL) {
 			int time_to_send;
 			PCB* send_to;
@@ -412,19 +412,18 @@ void UART_i (void) {
 		LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
 		
 	#ifdef DEBUG_0
-		uart1_put_string("Entering c_UART0_IRQHandler\n\r");
+		uart0_put_string("Entering c_UART0_IRQHandler\n\r");
 	#endif // DEBUG_0
 
 		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR
-	
-	#if 0		
+			
 		if (IIR_IntId & IIR_RDA) { // Receive Data Avaialbe
 			/* read UART. Read RBR will clear the interrupt */
 			g_char_in = pUart->RBR;
 	#ifdef DEBUG_0
-			uart1_put_string("Reading a char = ");
-			uart1_put_char(g_char_in);
-			uart1_put_string("\n\r");
+			uart0_put_string("Reading a char = ");
+			uart0_put_char(g_char_in);
+			uart0_put_string("\n\r");
 	#endif // DEBUG_0
 			g_buffer[12] = g_char_in; // nasty hack
 			g_send_char = 1;
@@ -443,18 +442,18 @@ void UART_i (void) {
 			if (*gp_buffer != '\0' ) {
 				g_char_out = *gp_buffer;
 	#ifdef DEBUG_0
-				//uart1_put_string("Writing a char = ");
-				//uart1_put_char(g_char_out);
-				//uart1_put_string("\n\r");
+				uart0_put_string("Writing a char = ");
+				uart0_put_char(g_char_out);
+				uart0_put_string("\n\r");
 				
 				// you could use the printf instead
-				printf("Writing a char = %c \n\r", g_char_out);
+				//printf("Writing a char = %c \n\r", g_char_out);
 	#endif // DEBUG_0			
 				pUart->THR = g_char_out;
 				gp_buffer++;
 			} else {
 	#ifdef DEBUG_0
-				uart1_put_string("Finish writing. Turning off IER_THRE\n\r");
+				uart0_put_string("Finish writing. Turning off IER_THRE\n\r");
 	#endif // DEBUG_0
 				pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 				pUart->THR = '\0';
@@ -464,12 +463,12 @@ void UART_i (void) {
 					
 		} else {  /* not implemented yet */
 	#ifdef DEBUG_0
-				uart1_put_string("Should not get here!\n\r");
+				uart0_put_string("Should not get here!\n\r");
 	#endif // DEBUG_0
 			//return;
 		}	
-		#endif
-		uart0_put_string("THIS WORKS\r\n");
+
+		//uart0_put_string("THIS WORKS\r\n");
 		release_from_iprocess();
 	}
 }

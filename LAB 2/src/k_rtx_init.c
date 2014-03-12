@@ -21,7 +21,6 @@ void k_rtx_init(void)
         process_init();
         __enable_irq();
 	
-				//debug disable
 				//NVIC_DisableIRQ(UART0_IRQn); // Remove this when timer interrupts work
 	
 				uart1_put_string("Type 'S' in COM0 terminal to switch between proc1 and proc2 or wait for them to switch between themselves\n\r");
