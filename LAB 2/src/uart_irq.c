@@ -12,13 +12,7 @@
 #include "printf.h"
 #endif
 
-
-uint8_t g_buffer[]= "You Typed a Q\n\r";
-uint8_t *gp_buffer = g_buffer;
-uint8_t g_send_char = 0;
-uint8_t g_char_in;
-uint8_t g_char_out;
-int atomicflag = 0;
+int atomicflag = 1;
 
 extern uint32_t g_switch_flag;
 
@@ -165,19 +159,19 @@ int uart_irq_init(int n_uart) {
 __asm void UART0_IRQHandler(void)
 {
 	PRESERVE8
-	IMPORT c_UART0_IRQHandler
-	IMPORT k_release_processor
 	PUSH{r4-r11, lr}
+	IMPORT atomic_on
+  IMPORT atomic_off	
+  IMPORT c_UART0_IRQHandler
+	IMPORT k_release_into_iprocess
+	BL atomic_on
 	BL c_UART0_IRQHandler
-	LDR R4, =__cpp(&g_switch_flag)
-	LDR R4, [R4]
-	MOV R5, #0     
-	CMP R4, R5
-	BEQ  RESTORE    ; if g_switch_flag == 0, then restore the process that was interrupted
-	BL k_release_processor  ; otherwise (i.e g_switch_flag == 1, then switch to the other process)
-RESTORE
+  BL k_release_into_iprocess
+  BL atomic_off
 	POP{r4-r11, pc}
 } 
+
+#if 0
 /**
  * @brief: c UART0 IRQ Handler
  */
@@ -241,29 +235,29 @@ void c_UART0_IRQHandler(void)
 #endif // DEBUG_0
 		return;
 	}	
+}
+#endif
+
+/**
+ * @brief: c UART0 IRQ Handler
+ */
+void c_UART0_IRQHandler(void)
+{
+		//NOTE: interrupt acknowledged by process 
 	
+		// Switch to uart0 iprocess context
+		p_pcb_old = gp_current_process;
+		gp_current_process = get_pcb_from_pid(15);
 }
 
-void atomic(int flag) {
-	if (flag == 0) {
+void atomic_off(void) {
+	  atomicflag = 0;
 		NVIC_DisableIRQ(UART0_IRQn);
 		NVIC_DisableIRQ(TIMER0_IRQn);
-		atomicflag = 1;
-	} else {
-		NVIC_EnableIRQ(UART0_IRQn);
-		NVIC_EnableIRQ(TIMER0_IRQn);
-		atomicflag = 0;
-	}
 }
 
-void atomic_toggle(void) {
-	if (atomicflag == 0) {
-		NVIC_DisableIRQ(UART0_IRQn);
-		NVIC_DisableIRQ(TIMER0_IRQn);
-		atomicflag = 1;
-	} else {
+void atomic_on(void) {
+	  atomicflag = 1;
 		NVIC_EnableIRQ(UART0_IRQn);
 		NVIC_EnableIRQ(TIMER0_IRQn);
-		atomicflag = 0;
-	}
 }

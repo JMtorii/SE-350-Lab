@@ -68,7 +68,7 @@ uint32_t timer_init(uint8_t n_timer)
 	   TC (Timer Counter) toggles b/w 0 and 1 every 12500 PCLKs
 	   see MR setting below 
 	*/
-	pTimer->PR = 12499;  
+	pTimer->PR = 1249999;  
 
 	/* Step 4.2: MR setting, see section 21.6.7 on pg496 of LPC17xx_UM. */
 	pTimer->MR0 = 1;
@@ -102,13 +102,14 @@ __asm void TIMER0_IRQHandler(void)
 {
 	PRESERVE8
 	PUSH{r4-r11, lr}
-	IMPORT atomic_toggle
+	IMPORT atomic_on
+  IMPORT atomic_off
 	IMPORT c_TIMER0_IRQHandler
 	IMPORT k_release_into_iprocess
-	BL atomic_toggle
+	BL atomic_on
 	BL c_TIMER0_IRQHandler
   BL k_release_into_iprocess
-	BL atomic_toggle
+	BL atomic_off
 	POP{r4-r11, pc}
 } 
 

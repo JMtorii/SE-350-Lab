@@ -9,6 +9,7 @@
 
 /* typedefs */
 #include <stdint.h>	
+#include "k_rtx.h"
 #include "uart_def.h"
 
 /* The following macros are from NXP uart.h */
@@ -53,7 +54,10 @@
    See table 279, pg306 LPC17xx_UM
 */
 //#define UART_8N1  0x83
-						 
+
+extern PCB* get_pcb_from_pid(int pid);
+extern PCB *p_pcb_old;
+extern PCB *gp_current_process;
 
 #define uart0_irq_init() uart_irq_init(0)
 #define uart1_irq_init() uart_irq_init(1)       

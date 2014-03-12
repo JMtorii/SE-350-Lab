@@ -133,11 +133,12 @@ int process_switch(PCB *p_pcb_old)
 			return RTX_ERR;
 		} 
 	}
-	if (gp_current_process->m_pid >= 14) {
+
+	/*if (gp_current_process->m_pid >= 14) {
 		atomic(0);
 	} else {
 		atomic(1);
-	}
+	}*/
 	return RTX_OK;
 }
 
@@ -391,9 +392,73 @@ void Timer_i (void) {
 void UART_i (void) {
 	int ret_val = 0;
 	int this_pid = 15;
+	uint8_t g_char_in;
+	uint8_t g_char_out;
+	uint8_t g_buffer[]= "You Typed a Q\n\r";
+	uint8_t *gp_buffer = g_buffer;
+	uint8_t g_send_char = 0;
+	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 
 	while (1) {
+		uint8_t IIR_IntId;	    // Interrupt ID from IIR 		 
+		LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
+		
+	#ifdef DEBUG_0
+		uart1_put_string("Entering c_UART0_IRQHandler\n\r");
+	#endif // DEBUG_0
 
+		/* Reading IIR automatically acknowledges the interrupt */
+		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR 
+		if (IIR_IntId & IIR_RDA) { // Receive Data Avaialbe
+			/* read UART. Read RBR will clear the interrupt */
+			g_char_in = pUart->RBR;
+	#ifdef DEBUG_0
+			uart1_put_string("Reading a char = ");
+			uart1_put_char(g_char_in);
+			uart1_put_string("\n\r");
+	#endif // DEBUG_0
+			g_buffer[12] = g_char_in; // nasty hack
+			g_send_char = 1;
+			
+			/* setting the g_switch_flag */
+			if ( g_char_in == 's' ) {
+				g_switch_flag = 1; 
+			} else {
+				g_switch_flag = 0;
+			}		
+			
+		} else if (IIR_IntId & IIR_THRE) {
+		/* THRE Interrupt, transmit holding register becomes empty */
+
+			if (*gp_buffer != '\0' ) {
+				g_char_out = *gp_buffer;
+	#ifdef DEBUG_0
+				//uart1_put_string("Writing a char = ");
+				//uart1_put_char(g_char_out);
+				//uart1_put_string("\n\r");
+				
+				// you could use the printf instead
+				printf("Writing a char = %c \n\r", g_char_out);
+	#endif // DEBUG_0			
+				pUart->THR = g_char_out;
+				gp_buffer++;
+			} else {
+	#ifdef DEBUG_0
+				uart1_put_string("Finish writing. Turning off IER_THRE\n\r");
+	#endif // DEBUG_0
+				pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
+				pUart->THR = '\0';
+				g_send_char = 0;
+				gp_buffer = g_buffer;		
+			}
+					
+		} else {  /* not implemented yet */
+	#ifdef DEBUG_0
+				uart1_put_string("Should not get here!\n\r");
+	#endif // DEBUG_0
+			//return;
+		}	
+		release_from_iprocess();
 	}
 }
