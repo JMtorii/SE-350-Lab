@@ -298,7 +298,7 @@ void add_system_processes(void) {
 	
 	g_proc_table[NUM_TEST_PROCS+1].m_pid = (U32)13;
 	g_proc_table[NUM_TEST_PROCS+1].m_stack_size = 0x100;
-	g_proc_table[NUM_TEST_PROCS+1].m_priority = 3;
+	g_proc_table[NUM_TEST_PROCS+1].m_priority = 4;
 	g_proc_table[NUM_TEST_PROCS+1].mpf_start_pc = &CRT;
 	
 	g_proc_table[NUM_TEST_PROCS+2].m_pid = (U32)14;
@@ -380,6 +380,7 @@ void Timer_i (void) {
 	
 	while (1) {
 		Envelope *env = this_pcb->mailbox.last;
+		uart0_put_string("We are in the timer_i process\r\n");
 		while (env != NULL) {
 			int time_to_send;
 			PCB* send_to;
@@ -406,6 +407,7 @@ void UART_i (void) {
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 
 	while (1) {
+		
 		uint8_t IIR_IntId;	    // Interrupt ID from IIR 		 
 		LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
 		
@@ -413,8 +415,9 @@ void UART_i (void) {
 		uart1_put_string("Entering c_UART0_IRQHandler\n\r");
 	#endif // DEBUG_0
 
-		/* Reading IIR automatically acknowledges the interrupt */
-		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR 
+		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR
+	
+	#if 0		
 		if (IIR_IntId & IIR_RDA) { // Receive Data Avaialbe
 			/* read UART. Read RBR will clear the interrupt */
 			g_char_in = pUart->RBR;
@@ -427,11 +430,12 @@ void UART_i (void) {
 			g_send_char = 1;
 			
 			/* setting the g_switch_flag */
+			/*
 			if ( g_char_in == 's' ) {
 				g_switch_flag = 1; 
 			} else {
 				g_switch_flag = 0;
-			}		
+			}	*/	
 			
 		} else if (IIR_IntId & IIR_THRE) {
 		/* THRE Interrupt, transmit holding register becomes empty */
@@ -464,6 +468,8 @@ void UART_i (void) {
 	#endif // DEBUG_0
 			//return;
 		}	
+		#endif
+		uart0_put_string("THIS WORKS\r\n");
 		release_from_iprocess();
 	}
 }

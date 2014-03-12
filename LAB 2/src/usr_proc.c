@@ -142,7 +142,7 @@ void priority_test(void)
 		
 		set_process_priority(3,3);
 		ret_val = release_processor();
-		printf("Timer result: %d \r\n",g_timer_count);
+		//printf("Timer result: %d \r\n",g_timer_count);
 		if (ret_val == -1) {
 			printf("G021_test: test %d FAIL\r\n",3);
 			test_results[2] = 0;
@@ -221,7 +221,7 @@ void blocked_test(void)
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();
 		tmp_int = request_memory_block();*/
-		tmp_int = request_memory_block(); 	
+		//tmp_int = request_memory_block(); 	
 		
 		i++;
 		*tmp_int = i;
