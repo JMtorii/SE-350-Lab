@@ -151,7 +151,6 @@ U32 *alloc_stack(U32 size_b)
 // Request a memory block from heap
 void *k_request_memory_block(void) {
 	U32 * ret_val;
-	printf("HERE\r\n");
 	//_atomic_(0);
 	while (first_mem_block == NULL) { //Is this correct?
 		// Set that process state to BLOCKED
@@ -205,7 +204,7 @@ void print_num_mem_blk(void) {
 	}
 	if (i == 1) {
 int k=i;i=k;}
-	printf("Number of MemBlocks: %d\r\n", i);
+	//printf("Number of MemBlocks: %d\r\n", i);
 }
 
 int get_num_mem_blk(void) {

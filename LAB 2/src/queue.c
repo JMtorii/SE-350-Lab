@@ -63,18 +63,42 @@ void q_push(Queue* q, void *val) {
 }
 
 // Prints PID contents of a single queue
-void q_print_process(Queue *q,int priority) {
+void q_print_process(Queue *q, int priority) {
 	PCB *iter;
 	int i = 0;
+	char pid_buffer[8];
+	char pri_buffer[8];
+	char ind_buffer[8];
+	
 	iter = (PCB *)(q->last);
 	
+	itoa(priority, pri_buffer);
+	
 	while (iter != (PCB *)(q->first) && iter != NULL) {
-		//printf("Index[%d], pid: %d, priority: %d\r\n", i, iter->m_pid, priority);
+		
+		itoa(i, ind_buffer);
+		itoa(iter->m_pid, pid_buffer);
+		
+		uart0_put_string("Index[");
+		uart0_put_string((unsigned char*)ind_buffer);
+		uart0_put_string("], pid: ");
+		uart0_put_string((unsigned char*)pid_buffer);
+		uart0_put_string(", priority: ");
+		uart0_put_string((unsigned char*)pri_buffer);
+		uart0_put_string("\r\n");
+		
 		iter = iter->prev;
 		i++;
 	}
 	if (iter != NULL) {
-		//printf("Index[%d], pid: %d, priority: %d\r\n", i, iter->m_pid, priority);
+		
+		uart0_put_string("Index[");
+		uart0_put_string((unsigned char*)ind_buffer);
+		uart0_put_string("], pid: ");
+		uart0_put_string((unsigned char*)pid_buffer);
+		uart0_put_string(", priority: ");
+		uart0_put_string((unsigned char*)pri_buffer);
+		uart0_put_string("\r\n");
   }
 }
 
@@ -85,35 +109,40 @@ void q_print_rdy_process(void) {
 		i = 0;
 	}
 	
-	uart1_put_string("\r\nContents of q:\r\n==============\r\n");
+	uart0_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
-		uart1_put_string("Priority: ");
+		
+		uart0_put_string("Priority: ");
 		itoa(i, buffer);
-		uart1_put_string((unsigned char*)buffer);
-		uart1_put_string("\r\n");
-		//printf("Priority %d:\r\n",i);
+		uart0_put_string((unsigned char*)buffer);
+		uart0_put_string("\r\n");
 		q_print_process(&ready_queue[i],i);
 	}
-	uart1_put_string("\r\nReady queue print complete:================\r\n");
+	uart0_put_string("\r\nReady queue print complete:================\r\n");
 }
 
 void q_print_blk_mem_process(void) {
 	int i;
-	printf("\r\nContents of q:\r\n==============\r\n");
+	char buffer[8];
+	
+  uart0_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
-	  printf("Priority %d:\r\n",i);
+	  uart0_put_string("Priority: ");
+		itoa(i, buffer);
+		uart0_put_string((unsigned char*)buffer);
+		uart0_put_string("\r\n");
 		q_print_process(&blocked_queue[i],i);
 	}
-	printf("\r\nBlocked on mem queue print complete:================\r\n");
+	uart0_put_string("\r\nReady queue print complete:================\r\n");
 }
 
 void q_print_blk_rcv_process(void) {
 	int i;
-	printf("\r\nContents of q:\r\n==============\r\n");
+	uart0_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
 		q_print_process(&blocked_rcv_queue[i],i);
 	}
-	printf("\r\nBlocked on rcv queue print complete:================\r\n");
+	uart0_put_string("\r\nBlocked on rcv queue print complete:================\r\n");
 }
 
 void q_remove_pid(int pid) {

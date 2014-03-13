@@ -134,11 +134,6 @@ int process_switch(PCB *p_pcb_old)
 		} 
 	}
 
-	/*if (gp_current_process->m_pid >= 14) {
-		atomic_on();
-	} else {
-		atomic_off();
-	}*/
 	return RTX_OK;
 }
 
@@ -205,7 +200,7 @@ int k_release_processor(void)
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
 	//printf("############# Printing ready queue ################## \r\n");
-	q_print_rdy_process();
+	//q_print_rdy_process();
 	//printf("############# Printing blocked queue ################ \r\n");
 	//q_print_blk_mem_process();
 	//print_num_mem_blk();
@@ -428,14 +423,14 @@ void UART_i (void) {
 			g_buffer[12] = g_char_in; // nasty hack
 			g_send_char = 1;
 			
-			/* setting the g_switch_flag */
-			/*
-			if ( g_char_in == 's' ) {
-				g_switch_flag = 1; 
-			} else {
-				g_switch_flag = 0;
-			}	*/	
-			
+			if ( g_char_in == 'r' ) {
+				 q_print_rdy_process();
+			} else if ( g_char_in == 'm' ) {
+				q_print_blk_mem_process();
+			} else if	( g_char_in == 'c' ) {
+				q_print_blk_rcv_process();
+			}	
+						
 		} else if (IIR_IntId & IIR_THRE) {
 		/* THRE Interrupt, transmit holding register becomes empty */
 
