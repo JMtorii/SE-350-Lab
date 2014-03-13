@@ -6,6 +6,7 @@
  */
  
 #include "k_process.h"
+#include "uart_polling.h"
 
 #ifndef QUEUE_H_
 #define QUEUE_H_

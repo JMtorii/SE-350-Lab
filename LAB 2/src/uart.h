@@ -63,6 +63,9 @@ extern PCB *gp_current_process;
 #define uart1_irq_init() uart_irq_init(1)       
      
 /* initialize the n_uart to use interrupt */
-int uart_irq_init(int n_uart);		
+int uart_irq_init(int n_uart);
+
+// Convert int to char array
+char* itoa(int i, char b[]);
 
 #endif /* ! UART_IRQ_H_ */

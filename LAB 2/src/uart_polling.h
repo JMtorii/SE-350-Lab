@@ -25,5 +25,6 @@ int uart_get_char(int n_uart);  /* read a char from the n_uart */
 int uart_put_char(int n_uart, unsigned char c);   /* write a char   to n_uart */
 int uart_put_string(int n_uart, unsigned char *s);/* write a string to n_uart */
 void putc(void *p, char c);     /* call back function for printf, use uart1 */
+char* itoa(int i, char b[]);
 
 #endif /* ! UART_POLLING_H_ */

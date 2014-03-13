@@ -80,15 +80,21 @@ void q_print_process(Queue *q,int priority) {
 
 void q_print_rdy_process(void) {
 	int i;
+	char buffer[8];
 	if (get_num_mem_blk() == 0) {
 		i = 0;
 	}
-	printf("\r\nContents of q:\r\n==============\r\n");
+	
+	uart1_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
-		printf("Priority %d:\r\n",i);
+		uart1_put_string("Priority: ");
+		itoa(i, buffer);
+		uart1_put_string((unsigned char*)buffer);
+		uart1_put_string("\r\n");
+		//printf("Priority %d:\r\n",i);
 		q_print_process(&ready_queue[i],i);
 	}
-	printf("\r\nReady queue print complete:================\r\n");
+	uart1_put_string("\r\nReady queue print complete:================\r\n");
 }
 
 void q_print_blk_mem_process(void) {

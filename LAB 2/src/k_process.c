@@ -205,7 +205,7 @@ int k_release_processor(void)
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
 	//printf("############# Printing ready queue ################## \r\n");
-	//q_print_rdy_process();
+	q_print_rdy_process();
 	//printf("############# Printing blocked queue ################ \r\n");
 	//q_print_blk_mem_process();
 	//print_num_mem_blk();
