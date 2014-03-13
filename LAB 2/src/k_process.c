@@ -379,7 +379,7 @@ void KCD (void) {			//pid 12
 	int commandIndex = 0;
 	
 	while (1) {
-		/*
+		
 		if(next_command_char != '\r') {
 			// no backspace support
 			// real programmers never make mistakes
@@ -412,7 +412,7 @@ void KCD (void) {			//pid 12
 		}
 		
 		// release processor, retreat into the background
-		set_process_priority(12, 4);*/
+		set_process_priority(12, 4);
 		ret_val = release_processor();
 	}
 }

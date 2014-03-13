@@ -33,16 +33,16 @@ void set_test_procs() {
 		
 		// Testing with different priorities on processes
 		if (i == 3) {  // Memory blocks test
-			g_test_procs[i].m_priority=0;
+			g_test_procs[i].m_priority=3 ;
   	}
 		if (i == 4) {  // Memory blocking processes
 			g_test_procs[i].m_priority=4;
   	}
 		if (i == 5) { // Send message process
-			g_test_procs[i].m_priority=4;
+			g_test_procs[i].m_priority=3;
 		}
 		if (i == 6) { // Recieve message process	
-			g_test_procs[i].m_priority=4;
+			g_test_procs[i].m_priority=3;
 		}
 	}
 
