@@ -73,7 +73,7 @@ void process_init()
 		
 		// Push each pcb into ready_queue
 		if (g_test_procs[i].m_priority != -1) {
-			q_push(&ready_queue[get_process_priority((gp_pcbs[i])->m_pid)],gp_pcbs[i]);
+			q_push(&ready_queue[k_get_process_priority((gp_pcbs[i])->m_pid)],gp_pcbs[i]);
 		}
 		// Assign memory address of stack pointer for each pcb
 		(gp_pcbs[i])->mp_sp = sp;
@@ -137,11 +137,6 @@ int process_switch(PCB *p_pcb_old)
 	return RTX_OK;
 }
 
-// Wrapper to obtain process priority of process with arg pid
-int get_process_priority(int process_id) {
-	return k_get_process_priority(process_id);
-}
-
 // Obtain process priority of process with arg pid
 int k_get_process_priority(int process_id) {
 	int i;
@@ -154,9 +149,9 @@ int k_get_process_priority(int process_id) {
 }
 
 // Wrapper to set priority of process with arg PID
-int set_process_priority(int process_id, int priority) {
+/*int set_process_priority(int process_id, int priority) {
 	return k_set_process_priority(process_id, priority);
-}
+}*/
 
 // Set priority of process with arg PID
 int k_set_process_priority(int process_id, int priority) {
@@ -168,7 +163,7 @@ int k_set_process_priority(int process_id, int priority) {
 	for (i = 0;i<NUM_TEST_PROCS+NUM_SYS_PROCS;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
 			g_proc_table[i].m_priority = priority;
-			// TO-DO remove from old priority queue and add to new
+			q_update_priority(process_id, priority);
 			return RTX_OK;
 		}
 	}
@@ -207,7 +202,7 @@ int k_release_processor(void)
 	
 	// Push old process back to ready queue
 	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
-		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
+		q_push(&ready_queue[k_get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
 		//q_print_rdy_process();
   }
 
@@ -270,7 +265,7 @@ int k_release_into_iprocess(void)
 	
 	// Push old process back to ready queue
 	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
-		q_push(&ready_queue[get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
+		q_push(&ready_queue[k_get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
 		//q_print_rdy_process();
   }
 	
@@ -330,18 +325,21 @@ void KCD (void) {			//pid 12
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 	
 	while (1) {
-		while(get_num_msg(this_pcb) > 0) { // assuming we ONLY recieve KCD_REG mail
-			Envelope* env;
-			Message* msg;
-			env = q_pop(&(this_pcb->mailbox));
-			msg = &(env->msg);
-			if (msg->mtype == 1) {
-				
-			}
-			//else {
-			//	q_push(this_pcb->mailbox, env);
-			//}
+		char newchar = '%';
+		char input[256];
+		
+		uart0_put_string("Enter command: ");
+		while(newchar != '\n') {
+			// read in a character, add it to input
+			
 		}
+		
+		// attempt to interpret command in input buffer
+		
+		
+		
+		// release processor, retreat into the background
+		set_process_priority(12, 4);
 		ret_val = k_release_processor();
 	}
 }
@@ -434,7 +432,9 @@ void UART_i (void) {
 				q_print_blk_mem_process();
 			} else if	( g_char_in == 'c' ) {
 				q_print_blk_rcv_process();
-			}	
+			}	else if ( g_char_in == '%' ) {
+				set_process_priority(12, 0);
+			}
 						
 		} else if (IIR_IntId & IIR_THRE) {
 		/* THRE Interrupt, transmit holding register becomes empty */

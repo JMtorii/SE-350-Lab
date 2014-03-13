@@ -25,7 +25,7 @@ void set_test_procs() {
 		g_test_procs[i].m_priority=LOWEST;
 		g_test_procs[i].m_stack_size=0x100;
 		test_results[i] = 1;
-		if (i == 5 || i == 6  || i == 3 || i == 4) {
+		if (i == 5 || i == 6  || i == 3 || i == 4 || i == 2) {
 		  g_test_procs[i].m_priority=4;
 	  }
 	}
@@ -130,7 +130,7 @@ void priority_test(void)
 	//set_process_priority(5,1);
 	
 	while(1) {	
-		for (i = 0;i < 3;i++) {
+		for (i = 1;i < 3;i++) {
 			set_process_priority(3,i);
 			#ifdef DEBUG_0
 				printf("PRIORITY SET! %d\r\n",get_process_priority(3));

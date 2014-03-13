@@ -79,4 +79,12 @@ extern int k_release_into_iprocess(void);
 extern int __SVC_0 _release_into_iprocess(U32 p_func);
 #define release_into_iprocess() _release_into_iprocess((U32)k_release_into_iprocess)
 
+extern int k_set_process_priority(int process_id, int priority);
+extern int __SVC_0 _set_process_priority(U32 p_func, int process_id, int priority);
+#define set_process_priority(process_id, priority) _set_process_priority((U32)k_set_process_priority, process_id, priority)
+
+extern int k_get_process_priority(int process_id);
+extern int  __SVC_0 _get_process_priority(U32 p_func, int process_id);
+#define get_process_priority(process_id) _get_process_priority((U32)k_get_process_priority, process_id)
+
 #endif // ! K_RTX_H_

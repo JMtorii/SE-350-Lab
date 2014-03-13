@@ -26,8 +26,8 @@ PCB *scheduler(void);                  /* pick the pid of the next to run proces
 int k_release_processor(void);           /* kernel release_process function */
 int k_get_process_priority(int process_id);
 int k_set_process_priority(int process_id, int priority);
-int get_process_priority(int process_id);
-int set_process_priority(int process_id, int priority);
+//int get_process_priority(int process_id);
+//int set_process_priority(int process_id, int priority);
 PCB* get_pcb_from_pid(int pid);
 int k_release_from_iprocess(void);
 int k_release_into_iprocess(void);

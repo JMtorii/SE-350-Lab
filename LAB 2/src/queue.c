@@ -74,7 +74,7 @@ void q_print_process(Queue *q, int priority) {
 	
 	itoa(priority, pri_buffer);
 	
-	while (iter != (PCB *)(q->first) && iter != NULL) {
+	while (iter != NULL) {
 		
 		itoa(i, ind_buffer);
 		itoa(iter->m_pid, pid_buffer);
@@ -90,16 +90,6 @@ void q_print_process(Queue *q, int priority) {
 		iter = iter->prev;
 		i++;
 	}
-	if (iter != NULL) {
-		
-		uart0_put_string("Index[");
-		uart0_put_string((unsigned char*)ind_buffer);
-		uart0_put_string("], pid: ");
-		uart0_put_string((unsigned char*)pid_buffer);
-		uart0_put_string(", priority: ");
-		uart0_put_string((unsigned char*)pri_buffer);
-		uart0_put_string("\r\n");
-  }
 }
 
 void q_print_rdy_process(void) {
@@ -158,6 +148,36 @@ void q_remove_pid(int pid) {
 				}
 				else if (iter == blocked_rcv_queue[i].first) {
 					blocked_rcv_queue[i].first = next;
+				}
+				else {
+					next->prev = iter->prev;
+				}
+				return;
+			}
+			next = iter;
+			iter = iter->prev;
+		}
+	}
+	return;
+}
+
+void q_update_priority (int pid, int priority) {
+	int i;
+	PCB *iter, *next;
+	for (i=0;i<NUM_PRIORITIES;++i) {
+		next = NULL;
+		iter = ready_queue[i].last;
+		while (iter != NULL) {
+			if (iter->m_pid == pid) {
+				// add to correct queue
+				q_push(&ready_queue[priority], iter);
+				
+				// remove from other queue
+				if (iter == ready_queue[i].last) {
+					ready_queue[i].last = iter->prev;
+				}
+				else if (iter == ready_queue[i].first) {
+					ready_queue[i].first = next;
 				}
 				else {
 					next->prev = iter->prev;

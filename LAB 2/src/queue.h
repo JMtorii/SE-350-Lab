@@ -34,5 +34,6 @@ void q_print_rdy_process(void);
 void q_print_blk_mem_process(void);
 void q_print_blk_rcv_process(void);
 void q_remove_pid(int pid);
+void q_update_priority(int pid, int priority);
 
 #endif
