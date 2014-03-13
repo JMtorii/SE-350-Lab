@@ -167,7 +167,7 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>78</LineNumber>
+          <LineNumber>437</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -176,14 +176,14 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>N:\SE 350\LAB 2\src\envelope.c</Filename>
+          <Filename>N:\SE350\SE-350-Lab\SE-350-Lab\LAB 2\src\k_process.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>102</LineNumber>
+          <LineNumber>514</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -192,14 +192,14 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>N:\SE 350\LAB 2\src\envelope.c</Filename>
+          <Filename>N:\SE350\SE-350-Lab\SE-350-Lab\LAB 2\src\k_process.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>181</LineNumber>
+          <LineNumber>171</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -208,23 +208,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>N:\SE 350\LAB 2\src\k_memory.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>120</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>N:\SE 350\LAB 2\src\k_process.c</Filename>
+          <Filename>N:\SE350\SE-350-Lab\SE-350-Lab\LAB 2\src\queue.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -233,89 +217,44 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>tmp_string</ItemText>
+          <ItemText>G_PROC_TABLE</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>*tmp_string</ItemText>
+          <ItemText>(PCB *)ready_queue[3].last</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>*first_mem_block</ItemText>
+          <ItemText>(PCB *)ready_queue[4].first</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>heap_begin</ItemText>
+          <ItemText>atomicflag</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>*tmp_string</ItemText>
+          <ItemText>(PCB *)ready_queue[4].last</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>(null)</ItemText>
+          <ItemText>i</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>clear_list</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>ready_queue</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>gp_current_process-&gt;m_pid</ItemText>
-        </Ww>
-        <Ww>
-          <count>9</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>atomic</ItemText>
-        </Ww>
-        <Ww>
-          <count>10</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>atomicflag</ItemText>
-        </Ww>
-        <Ww>
-          <count>11</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>G_PROC_TABLE</ItemText>
-        </Ww>
-        <Ww>
-          <count>12</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>*sender_id</ItemText>
-        </Ww>
-        <Ww>
-          <count>13</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>env-&gt;sender_pid</ItemText>
-        </Ww>
-        <Ww>
-          <count>14</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>sender_id</ItemText>
-        </Ww>
-        <Ww>
-          <count>15</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>p_pcb_old-&gt;m_pid</ItemText>
+          <ItemText>(PCB *)ready_queue[4].first</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>1</SubType>
-          <ItemText>0x00000FE8</ItemText>
+          <ItemText>0x100004E4</ItemText>
         </Mm>
       </MemoryWindow1>
       <MemoryWindow2>
@@ -331,7 +270,7 @@
         <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>1</aSer1>
-        <aSer2>1</aSer2>
+        <aSer2>0</aSer2>
         <aPa>0</aPa>
         <viewmode>1</viewmode>
         <vrSel>0</vrSel>
@@ -371,10 +310,10 @@
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>39</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>77</TopLine>
-      <CurrentLine>78</CurrentLine>
+      <TopLine>246</TopLine>
+      <CurrentLine>257</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\startup_LPC17xx.s</PathWithFileName>
       <FilenameWithoutPath>startup_LPC17xx.s</FilenameWithoutPath>
@@ -409,11 +348,11 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>3</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>100</TopLine>
+      <TopLine>102</TopLine>
       <CurrentLine>112</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\uart_polling.c</PathWithFileName>
@@ -427,10 +366,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>16</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>137</TopLine>
-      <CurrentLine>145</CurrentLine>
+      <TopLine>207</TopLine>
+      <CurrentLine>236</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\printf.c</PathWithFileName>
       <FilenameWithoutPath>printf.c</FilenameWithoutPath>
@@ -443,9 +382,9 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>11</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>21</TopLine>
+      <TopLine>19</TopLine>
       <CurrentLine>26</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\main_svc.c</PathWithFileName>
@@ -459,10 +398,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>15</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>167</TopLine>
-      <CurrentLine>180</CurrentLine>
+      <TopLine>152</TopLine>
+      <CurrentLine>162</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\uart_irq.c</PathWithFileName>
       <FilenameWithoutPath>uart_irq.c</FilenameWithoutPath>
@@ -485,8 +424,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>20</TopLine>
-      <CurrentLine>49</CurrentLine>
+      <TopLine>14</TopLine>
+      <CurrentLine>38</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\HAL.c</PathWithFileName>
       <FilenameWithoutPath>HAL.c</FilenameWithoutPath>
@@ -501,8 +440,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>7</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\k_rtx_init.c</PathWithFileName>
       <FilenameWithoutPath>k_rtx_init.c</FilenameWithoutPath>
@@ -515,10 +454,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>1</ColumnNumber>
+      <ColumnNumber>70</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>183</TopLine>
-      <CurrentLine>209</CurrentLine>
+      <TopLine>157</TopLine>
+      <CurrentLine>179</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\k_memory.c</PathWithFileName>
       <FilenameWithoutPath>k_memory.c</FilenameWithoutPath>
@@ -531,10 +470,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>52</ColumnNumber>
+      <ColumnNumber>20</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>14</TopLine>
-      <CurrentLine>29</CurrentLine>
+      <TopLine>385</TopLine>
+      <CurrentLine>424</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\k_process.c</PathWithFileName>
       <FilenameWithoutPath>k_process.c</FilenameWithoutPath>
@@ -547,10 +486,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>2</ColumnNumber>
+      <ColumnNumber>22</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>12</TopLine>
-      <CurrentLine>38</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>13</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\heap.c</PathWithFileName>
       <FilenameWithoutPath>heap.c</FilenameWithoutPath>
@@ -563,10 +502,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>62</ColumnNumber>
+      <ColumnNumber>12</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>70</TopLine>
-      <CurrentLine>77</CurrentLine>
+      <TopLine>165</TopLine>
+      <CurrentLine>192</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\queue.c</PathWithFileName>
       <FilenameWithoutPath>queue.c</FilenameWithoutPath>
@@ -579,10 +518,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>20</ColumnNumber>
+      <ColumnNumber>40</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>46</TopLine>
-      <CurrentLine>50</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\envelope.c</PathWithFileName>
       <FilenameWithoutPath>envelope.c</FilenameWithoutPath>
@@ -597,8 +536,8 @@
       <Focus>0</Focus>
       <ColumnNumber>4</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>56</TopLine>
-      <CurrentLine>63</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\timer.c</PathWithFileName>
       <FilenameWithoutPath>timer.c</FilenameWithoutPath>
@@ -619,10 +558,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>274</TopLine>
-      <CurrentLine>294</CurrentLine>
+      <TopLine>67</TopLine>
+      <CurrentLine>54</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\src\usr_proc.c</PathWithFileName>
       <FilenameWithoutPath>usr_proc.c</FilenameWithoutPath>

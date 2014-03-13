@@ -262,25 +262,30 @@ void add_system_processes(void) {
 	g_proc_table[0].m_priority = 4;
 	g_proc_table[0].mpf_start_pc = &null;
 	
-	g_proc_table[NUM_TEST_PROCS+1].m_pid = (U32)12;
+	g_proc_table[NUM_TEST_PROCS+1].m_pid = (U32)11;
 	g_proc_table[NUM_TEST_PROCS+1].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+1].m_priority = 4;
-	g_proc_table[NUM_TEST_PROCS+1].mpf_start_pc = &KCD;
+	g_proc_table[NUM_TEST_PROCS+1].mpf_start_pc = &WallClock_p;
 	
-	g_proc_table[NUM_TEST_PROCS+2].m_pid = (U32)13;
+	g_proc_table[NUM_TEST_PROCS+2].m_pid = (U32)12;
 	g_proc_table[NUM_TEST_PROCS+2].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+2].m_priority = 4;
-	g_proc_table[NUM_TEST_PROCS+2].mpf_start_pc = &CRT;
+	g_proc_table[NUM_TEST_PROCS+2].mpf_start_pc = &KCD;
 	
-	g_proc_table[NUM_TEST_PROCS+3].m_pid = (U32)14;
+	g_proc_table[NUM_TEST_PROCS+3].m_pid = (U32)13;
 	g_proc_table[NUM_TEST_PROCS+3].m_stack_size = 0x100;
-	g_proc_table[NUM_TEST_PROCS+3].m_priority = -1;
-	g_proc_table[NUM_TEST_PROCS+3].mpf_start_pc = &Timer_i;
+	g_proc_table[NUM_TEST_PROCS+3].m_priority = 4;
+	g_proc_table[NUM_TEST_PROCS+3].mpf_start_pc = &CRT;
 	
-	g_proc_table[NUM_TEST_PROCS+4].m_pid = (U32)15;
+	g_proc_table[NUM_TEST_PROCS+4].m_pid = (U32)14;
 	g_proc_table[NUM_TEST_PROCS+4].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+4].m_priority = -1;
-	g_proc_table[NUM_TEST_PROCS+4].mpf_start_pc = &UART_i;
+	g_proc_table[NUM_TEST_PROCS+4].mpf_start_pc = &Timer_i;
+	
+	g_proc_table[NUM_TEST_PROCS+5].m_pid = (U32)15;
+	g_proc_table[NUM_TEST_PROCS+5].m_stack_size = 0x100;
+	g_proc_table[NUM_TEST_PROCS+5].m_priority = -1;
+	g_proc_table[NUM_TEST_PROCS+5].mpf_start_pc = &UART_i;
 }
 
 // Proc for what the null process does
@@ -298,17 +303,26 @@ void null (void) {
 void WallClock_p(void) {
 	int ret_val = 0;
 	int this_pid = 11;
+	uint32_t start_time = 0; // start time in ms
 	int hours;
 	int minutes;
 	int seconds;
-	//TODOTODOTODO
-	//INCLUDE IN G_PROC_TABLE AND .H FILE
+
 	while (1) {
-		if (current_command == "WT") {
+		/*uart0_put_string("\r\nIn wall clock!\r\n");
+		uart0_put_string("Current command: ");
+		uart0_put_string(current_command);
+		uart0_put_string("\r\n");*/
+		
+		if (current_command[1] == 'R' && current_command[2] == 0) {
+			uart0_put_string("Resetting wall clock...\r\n");
 			// reset the wall clock and display it on the CRT
+			start_time = g_timer_count;
 		}
-		else if (current_command == "WT") {
-			// terminates the wall clock
+		else if (current_command[1] == 'T' && current_command[2] == 0) {
+			uart0_put_string("Terminating wall clock...\r\n");
+			// terminates the wall clock (stop printing to CRT)
+			start_time = 0;
 		}
 		else {
 			int error = 1;
@@ -329,7 +343,9 @@ void WallClock_p(void) {
 												seconds += 10*(((int)'0')+current_command[9]);
 													if (current_command[10] <= '9' && current_command[10] >= '0') {
 														seconds += (((int)'0')+current_command[10]);
-														if (current_command[11] == '\0') {
+														if (current_command[11] == 0) {
+															uart0_put_string("Setting wall clock time...\r\n");
+															
 															// start CRT
 															error = 0;
 														}
@@ -351,10 +367,9 @@ void WallClock_p(void) {
 			}
 		}
 		
+		set_process_priority(11, 4);
 		ret_val = release_processor();
 	}
-	
-	return;
 }
 
 void KCD (void) {			//pid 12
@@ -366,8 +381,11 @@ void KCD (void) {			//pid 12
 	while (1) {
 		/*
 		if(next_command_char != '\r') {
+			// no backspace support
+			// real programmers never make mistakes
+			
 			// read in a character, add it to input
-			input[commandIndex++] = next_command_char;
+			current_command[commandIndex++] = next_command_char;
 			uart0_put_char(next_command_char);
 			
 			// abort if we try to enter a command that's too long
@@ -380,19 +398,15 @@ void KCD (void) {			//pid 12
 			int i = 0;
 			
 			// attempt to interpret command in input buffer
-			if (next_command[0] == 'W' || next_command[0] == 'w') {
-				current_command = next_command;
+			if (current_command[0] == 'W') {
 				set_process_priority(11, 0);
 			}
 			else {
 				uart0_put_string("\r\n\"");
-				uart0_put_string((unsigned char*)next_command);
+				uart0_put_string((unsigned char*)current_command);
 				uart0_put_string("\" is not a recognized command.  Please try again.\r\n");
 			}
-			// clear the command buffer
-			for (i = 0; i < 256; ++i) {
-				next_command[i] = 0; 
-			}
+
 			in_command_mode = 0;
 			commandIndex = 0;
 		}
@@ -507,7 +521,14 @@ void UART_i (void) {
 				} else if	( g_char_in == 'c' ) {
 					q_print_blk_rcv_process();
 				}	else if ( g_char_in == '%' ) {
+					int i = 0;
+					// clear the command buffer
+					for (i = 0; i < 256; ++i) {
+						current_command[i] = 0; 
+					}
+					// enter command mode
 					in_command_mode = 1;
+					// show the prompt
 					uart0_put_string("%");
 				}
 			}	
