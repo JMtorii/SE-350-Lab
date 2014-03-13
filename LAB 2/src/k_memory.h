@@ -11,6 +11,7 @@
 #include "k_rtx.h"
 #include "heap.h"
 #include "queue.h"
+#include "uart_polling.h"
 
 /* ----- Definitions ----- */
 #define RAM_END_ADDR 0x10008000

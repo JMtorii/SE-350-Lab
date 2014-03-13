@@ -1,4 +1,4 @@
-/**
+	/**
  * @file:   Heap.h
  * @brief:  Heap implementation header file
  * @author: TEAM BLACKJACK
@@ -35,7 +35,5 @@ typedef struct Heap{
 
 U32* h_pop(void);
 void h_push(U32 * mem_blk);
-
-// TODO: Stuff here.
 
 #endif

@@ -47,15 +47,16 @@ void* q_pop_highest_priority(Queue q[]) {
 
 // Pushes element to the front, queue sorted by time inserted
 void q_push(Queue* q, void *val) {	
-	void** tmp2;
-	//printf("PUSH: %d\r\n",((PCB*)val)->m_pid);
-	tmp2 = (void *)(val);
-	*tmp2 = NULL;
+	void** val_prev;
+
+	val_prev = (void *)(val);
+	*val_prev = NULL;
+	
   // Queue currently is not empty
 	if (q->first != NULL) {
-		void** tmp;
-		tmp = (void *)(q->first);
-		*tmp = val; //q->first->prev = val
+		void** q_first_prev;
+		q_first_prev = (void *)(q->first);
+		*q_first_prev = val; //q->first->prev = val
 	} else {
 		q->last = val;
 	}

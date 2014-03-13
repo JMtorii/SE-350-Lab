@@ -151,7 +151,7 @@ U32 *alloc_stack(U32 size_b)
 // Request a memory block from heap
 void *k_request_memory_block(void) {
 	U32 * ret_val;
-	//_atomic_(0);
+	atomic_on();
 	while (first_mem_block == NULL) { //Is this correct?
 		// Set that process state to BLOCKED
 		gp_current_process->m_state = BLK;
@@ -160,35 +160,42 @@ void *k_request_memory_block(void) {
 		q_push(&blocked_queue[k_get_process_priority(gp_current_process->m_pid)], gp_current_process);
 		
 		// Release processor
-			
+		atomic_off();
 		k_release_processor();
 	}
 	// Pop from heap
 	if (first_mem_block != NULL) {
 		ret_val = h_pop();
 	}	
-	
-	//_endatomic_();
+	atomic_off();
 	return (void *) ret_val;
 }
 
 // Release a memory block to be used by a process
 int k_release_memory_block(void *p_mem_blk) {
 	PCB* tmp;
-	//_atomic_(0);
+	int i;
+  int blocked_flag = 0;
+	
+	atomic_on();
+	
 	if (p_mem_blk < heap_begin || p_mem_blk > heap_begin+NUM_MEM_BLK*SIZE_MEM_BLK) {
 		return RTX_ERR;
 	}
+	
 	// Push memory block back into heap
 	h_push(p_mem_blk);
 	
-	// If entry in blocked queue after memory is free, then put process back to ready queue
-	if (blocked_queue->first != NULL) {
-		tmp = (PCB*)q_pop_highest_priority(blocked_queue);
-		tmp->m_state = RDY;
-		q_push(&ready_queue[k_get_process_priority(tmp->m_pid)], tmp);
-	}
-	//_endatomic_();
+	// If there is an entry in blocked queue after memory is free, then put process back to ready queue
+	for (i = 0;i <= 4;++i) {
+		if (blocked_queue[i].first != NULL) {
+			tmp = (PCB*)q_pop_highest_priority(blocked_queue);
+			tmp->m_state = RDY;
+			q_push(&ready_queue[k_get_process_priority(tmp->m_pid)], tmp);
+			break;
+		}
+	}	
+	atomic_off();
 	return RTX_OK;
 }
 
@@ -203,7 +210,8 @@ void print_num_mem_blk(void) {
 		iter = iter->next_blk;
 	}
 	if (i == 1) {
-int k=i;i=k;}
+		int k=i;i=k;
+	}
 	//printf("Number of MemBlocks: %d\r\n", i);
 }
 

@@ -26,10 +26,10 @@ typedef struct Envelope {
 	int destination_pid;
 	int timestamp;
 	int delay;
-	Message msg;
+	Message* msg;
 } Envelope;
 
-void k_send_message(int receiving_pid, void* env);
+int k_send_message(int receiving_pid, void* env);
 
 int k_delayed_send(int receiving_pid, void* env, int delay);
 
@@ -37,7 +37,7 @@ void* k_receive_message(int *sender_id);
 
 Envelope* receive_message_nonblocking(void);
 
-void *create_envelope(void *msg, int sender_pid, int destination_pid);
+void *create_envelope(Envelope* env, void *msg, int sender_pid, int destination_pid);
 
 void send_envelope(PCB *receiving_proc, Envelope *env);
 

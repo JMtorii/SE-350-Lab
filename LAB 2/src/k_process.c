@@ -79,7 +79,7 @@ void process_init()
 		}
 		
 		// Push each pcb into ready_queue
-		if (g_test_procs[i].m_priority != -1) {
+		if (g_proc_table[i].m_priority != -1) {
 			q_push(&ready_queue[k_get_process_priority((gp_pcbs[i])->m_pid)],gp_pcbs[i]);
 		}
 		// Assign memory address of stack pointer for each pcb
@@ -119,19 +119,22 @@ int process_switch(PCB *p_pcb_old)
 	
 	if (state == NEW) {
 		if (gp_current_process != p_pcb_old && p_pcb_old->m_state != NEW) {
-			p_pcb_old->m_state = RDY;
+			if (p_pcb_old->m_state == RUN) {
+				p_pcb_old->m_state = RDY; 
+			}
 			p_pcb_old->mp_sp = (U32 *) __get_MSP();
 		}
 		gp_current_process->m_state = RUN;
 		__set_MSP((U32) gp_current_process->mp_sp);
 		__rte();  // pop exception stack frame from the stack for a new processes
-
 	} 
 		
 	/* The following will only execute if the if block above is FALSE */
 	if (gp_current_process != p_pcb_old) {
 		if (state == RDY){ 		
-			p_pcb_old->m_state = RDY; 
+			if (p_pcb_old->m_state == RUN) {
+				p_pcb_old->m_state = RDY; 
+			}
 			p_pcb_old->mp_sp = (U32 *) __get_MSP(); // save the old process's sp
 			gp_current_process->m_state = RUN;
 			__set_MSP((U32) gp_current_process->mp_sp); //switch to the new proc's stack    
@@ -197,19 +200,10 @@ int k_release_processor(void)
 	// Set pointer to last executed pcb
 	p_pcb_old = NULL;
 	p_pcb_old = gp_current_process;
-	
-	//printf("############# Printing current process ############### \r\n");
-	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
-	//printf("############# Printing ready queue ################## \r\n");
-	//q_print_rdy_process();
-	//printf("############# Printing blocked queue ################ \r\n");
-	//q_print_blk_mem_process();
-	//print_num_mem_blk();
-	
+		
 	// Push old process back to ready queue
-	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
+	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK && p_pcb_old->m_state != BLK_ON_RCV) {
 		q_push(&ready_queue[k_get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
-		//q_print_rdy_process();
   }
 
 	// Obtain next in execution
@@ -232,17 +226,6 @@ int k_release_processor(void)
 
 int k_release_from_iprocess(void)
 {	
-	// Set pointer to last executed pcb
-	//printf("iProcess exiting \r\n");
-	//uart1_put_string("iProcess exiting \r\n");
-	//printf("############# Printing current process ############### \r\n");
-	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
-	//printf("############# Printing ready queue ################## \r\n");
-	//q_print_rdy_process();
-	//printf("############# Printing blocked queue ################ \r\n");
-	//q_print_blk_mem_process();
-	//print_num_mem_blk();
-
 	p_pcb_old = gp_current_process;
 	
 	// Obtain next in execution
@@ -258,30 +241,17 @@ int k_release_from_iprocess(void)
 
 int k_release_into_iprocess(void)
 {	
-	// Set pointer to last executed pcb
-	//printf("iProcess beginning \r\n");
-	//uart1_put_string("iProcess beginning \r\n");
-	//printf("############# Printing current process ############### \r\n");
-	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
-	//printf("############# Printing ready queue ################## \r\n");
-	//q_print_rdy_process();
-	//printf("############# Printing blocked queue ################ \r\n");
-	//q_print_blk_mem_process();
-	//print_num_mem_blk();
-	
+
 	// Push old process back to ready queue
-	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK) {
+	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK && p_pcb_old->m_state != BLK_ON_RCV) {
 		q_push(&ready_queue[k_get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
-		//q_print_rdy_process();
   }
 	
 	// Init for if no current processes
   if ( p_pcb_old == NULL ) {
 		p_pcb_old = gp_current_process;
 	}
-	
 	process_switch(p_pcb_old);
-
 	return RTX_OK;
 }
 
@@ -318,8 +288,8 @@ void null (void) {
 	int ret_val = 30;
 	while (1) {
 		#ifdef DEBUG_0
-			printf("[proc0]: ret_val=%d\r\n", ret_val);
-			printf("NULL PROCESS!!\r\n", ret_val);
+			uart1_put_string("[proc0]: ret_val=%d\r\n");
+			uart1_put_string("NULL PROCESS!!\r\n");
 		#endif 
 		ret_val = release_processor();
 	}
@@ -394,7 +364,7 @@ void KCD (void) {			//pid 12
 	int commandIndex = 0;
 	
 	while (1) {
-		
+		/*
 		if(next_command_char != '\r') {
 			// read in a character, add it to input
 			input[commandIndex++] = next_command_char;
@@ -428,7 +398,7 @@ void KCD (void) {			//pid 12
 		}
 		
 		// release processor, retreat into the background
-		set_process_priority(12, 4);
+		set_process_priority(12, 4);*/
 		ret_val = release_processor();
 	}
 }
@@ -439,6 +409,7 @@ void CRT (void) {			//pid 13
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 	
 	while (1) {
+		/*
 		while(get_num_msg(this_pcb) > 0) {
 			Envelope* env;
 			Message* msg;
@@ -455,7 +426,7 @@ void CRT (void) {			//pid 13
 			
 			k_release_memory_block(env);
 		}
-		printf("HERE10\r\n");
+		printf("HERE10\r\n");*/
 		ret_val = release_processor();
 	}	
 }
@@ -472,11 +443,15 @@ void Timer_i (void) {
 			int time_to_send;
 			PCB* send_to;
 			time_to_send = env->delay + env->timestamp;
-			if (time_to_send >= g_timer_count) {
+			if (time_to_send <= g_timer_count) {
 				send_to = get_pcb_from_pid(env->destination_pid);
-				send_envelope(send_to, env);
+				// Pop mail and send
+ 				q_pop(&(this_pcb->mailbox));
+  			send_envelope(send_to, env);
+ 				env = this_pcb->mailbox.last;
+				continue;
 			}
-			env = (Envelope *)(env->prev_msg);
+			break;
 		}
 		release_from_iprocess();
 	}
