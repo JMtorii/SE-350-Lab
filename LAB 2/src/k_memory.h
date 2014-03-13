@@ -19,7 +19,7 @@
 /* This symbol is defined in the scatter file (see RVCT Linker User Guide) */  
 extern unsigned int Image$$RW_IRAM1$$ZI$$Limit; 
 extern PCB **gp_pcbs;
-extern PROC_INIT g_proc_table[NUM_TEST_PROCS];
+extern PROC_INIT g_proc_table[NUM_TEST_PROCS+NUM_SYS_PROCS];
 extern PCB *gp_current_process;
 
 /* ----- Functions ------ */
@@ -28,5 +28,6 @@ U32 *alloc_stack(U32 size_b);
 void *k_request_memory_block(void);
 int k_release_memory_block(void *);
 void print_num_mem_blk(void);
+int get_num_mem_blk(void);
 
 #endif /* ! K_MEM_H_ */

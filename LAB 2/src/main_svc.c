@@ -18,7 +18,6 @@
 #ifdef DEBUG_0
 #include "uart_polling.h"
 #include "printf.h"
-//#include "timer.h"
 #endif /* DEBUG_0 */
 
 extern volatile unsigned int g_timer_count;

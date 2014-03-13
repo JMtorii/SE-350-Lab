@@ -11,6 +11,7 @@
 
 #include "k_rtx.h"
 #include "queue.h"
+#include "k_memory.h"
 
 /* ----- Definitions ----- */
 

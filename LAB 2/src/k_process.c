@@ -380,7 +380,7 @@ void Timer_i (void) {
 	
 	while (1) {
 		Envelope *env = this_pcb->mailbox.last;
-		//uart0_put_string("We are in the timer_i process\r\n");
+		uart1_put_string("We are in the timer_i process\r\n");
 		while (env != NULL) {
 			int time_to_send;
 			PCB* send_to;
@@ -412,7 +412,7 @@ void UART_i (void) {
 		LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
 		
 	#ifdef DEBUG_0
-		uart0_put_string("Entering c_UART0_IRQHandler\n\r");
+		//uart0_put_string("Entering c_UART0_IRQHandler\n\r");
 	#endif // DEBUG_0
 
 		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR
@@ -463,7 +463,7 @@ void UART_i (void) {
 					
 		} else {  /* not implemented yet */
 	#ifdef DEBUG_0
-				uart0_put_string("Should not get here!\n\r");
+				//uart0_put_string("Should not get here!\n\r");
 	#endif // DEBUG_0
 			//return;
 		}	

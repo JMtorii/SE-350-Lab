@@ -40,6 +40,10 @@ extern void k_rtx_init(void);
 #define rtx_init() _rtx_init((U32)k_rtx_init)
 extern void __SVC_0 _rtx_init(U32 p_func);
 
+extern unsigned int k_timer_init(unsigned char n_timer);
+#define timer_init(n_timer) _timer_init((U32)k_timer_init, n_timer)
+extern int __SVC_0 _timer_init(U32 p_func, unsigned char n_timer);
+
 extern int k_release_from_iprocess(void);
 #define release_from_iprocess() _release_from_iprocess((U32)k_release_from_iprocess)
 extern int __SVC_0 _release_from_iprocess(U32 p_func);

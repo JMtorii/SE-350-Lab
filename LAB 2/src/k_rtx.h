@@ -75,4 +75,8 @@ extern int k_release_into_iprocess(void);
 extern int __SVC_0 _release_into_iprocess(U32 p_func);
 #define release_into_iprocess() _release_into_iprocess((U32)k_release_into_iprocess)
 
+extern int k_release_into_iprocess(void);
+extern int __SVC_0 _release_into_iprocess(U32 p_func);
+#define release_into_iprocess() _release_into_iprocess((U32)k_release_into_iprocess)
+
 #endif // ! K_RTX_H_
