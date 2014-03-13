@@ -29,6 +29,9 @@ U32 g_switch_flag = 1;          /* whether to continue to run the process before
 char next_command_char;
 int in_command_mode = 0;
 
+// Current command sent to a process
+char current_command[256];
+
 /* process initialization table */
 PROC_INIT g_proc_table[NUM_TEST_PROCS+NUM_SYS_PROCS];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
@@ -322,11 +325,72 @@ void null (void) {
 	}
 }
 
+void WallClock_p(void) {
+	int ret_val = 0;
+	int this_pid = 11;
+	int hours;
+	int minutes;
+	int seconds;
+	//TODOTODOTODO
+	//INCLUDE IN G_PROC_TABLE AND .H FILE
+	while (1) {
+		if (current_command == "WT") {
+			// reset the wall clock and display it on the CRT
+		}
+		else if (current_command == "WT") {
+			// terminates the wall clock
+		}
+		else {
+			int error = 1;
+			// Real men don't need sprintf.
+			if (current_command[1] == 'S' && current_command[2] == ' ') {
+				// attempt to parse a time
+				if (current_command[3] <= '9' && current_command[3] >= '0') {
+					hours = 10*(((int)'0')+current_command[3]);
+					if (current_command[4] <= '9' && current_command[4] >= '0') {
+						hours += (((int)'0')+current_command[4]);
+						if (current_command[5] == ':') {
+							if (current_command[6] <= '9' && current_command[6] >= '0') {
+								minutes += 10*(((int)'0')+current_command[6]);
+									if (current_command[7] <= '9' && current_command[7] >= '0') {
+										minutes += (((int)'0')+current_command[7]);
+										if (current_command[8] == ':') {
+											if (current_command[9] <= '9' && current_command[9] >= '0') {
+												seconds += 10*(((int)'0')+current_command[9]);
+													if (current_command[10] <= '9' && current_command[10] >= '0') {
+														seconds += (((int)'0')+current_command[10]);
+														if (current_command[11] == '\0') {
+															// start CRT
+															error = 0;
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+			
+			// if incorrect input, complain about the bad command
+			if (error) {
+				uart0_put_string("\r\n\"");
+				uart0_put_string((unsigned char*)current_command);
+				uart0_put_string("\" is not a valid wall clock command.  Please try again.\r\n");
+			}
+		}
+		
+		ret_val = release_processor();
+	}
+	
+	return;
+}
+
 void KCD (void) {			//pid 12
 	int ret_val = 0;
 	int this_pid = 12;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
-	char input[256];
 	int commandIndex = 0;
 	
 	while (1) {
@@ -342,19 +406,25 @@ void KCD (void) {			//pid 12
 				in_command_mode = 0;
 			}
 		}
-		else {
+		else if (next_command_char != '\n') {
 			int i = 0;
 			
 			// attempt to interpret command in input buffer
-			uart0_put_string("\r\n");
-			uart0_put_string((unsigned char*)input);
-			uart0_put_string(" is not a recognized command.  Please try again.\r\n");
-			
+			if (next_command[0] == 'W' || next_command[0] == 'w') {
+				current_command = next_command;
+				set_process_priority(11, 0);
+			}
+			else {
+				uart0_put_string("\r\n\"");
+				uart0_put_string((unsigned char*)next_command);
+				uart0_put_string("\" is not a recognized command.  Please try again.\r\n");
+			}
 			// clear the command buffer
 			for (i = 0; i < 256; ++i) {
-				input[i] = 0; 
+				next_command[i] = 0; 
 			}
 			in_command_mode = 0;
+			commandIndex = 0;
 		}
 		
 		// release processor, retreat into the background
@@ -449,9 +519,9 @@ void UART_i (void) {
 				//q_print_blk_mem_process();
 			} else {
 				#ifdef DEBUG_0
-				uart0_put_string("Reading a char = ");
-				uart0_put_char(g_char_in);
-				uart0_put_string("\n\r");
+				//uart0_put_string("Reading a char = ");
+				//uart0_put_char(g_char_in);
+				//uart0_put_string("\n\r");
 				#endif // DEBUG_0
 				
 				// If not in command mode, look for commands
@@ -463,7 +533,7 @@ void UART_i (void) {
 					q_print_blk_rcv_process();
 				}	else if ( g_char_in == '%' ) {
 					in_command_mode = 1;
-					uart0_put_string("Enter command:\r\n%");
+					uart0_put_string("%");
 				}
 			}	
 		} else if (IIR_IntId & IIR_THRE) {
