@@ -25,6 +25,10 @@ U32 g_switch_flag = 1;          /* whether to continue to run the process before
                                 /* 1 means to switch to another process, 0 means to continue the current process */
 																/* this value will be set by UART handler */
 
+// Holds keyboard characters for KCD when relevant
+char next_command_char;
+int in_command_mode = 0;
+
 /* process initialization table */
 PROC_INIT g_proc_table[NUM_TEST_PROCS+NUM_SYS_PROCS];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
@@ -156,14 +160,14 @@ int k_get_process_priority(int process_id) {
 // Set priority of process with arg PID
 int k_set_process_priority(int process_id, int priority) {
 	int i;
-	//Disallow changing null process or iprocess priorities
-	if (process_id == 0) {
+	//TODO Disallow changing null process or iprocess priorities
+	if (process_id == 0 || priority == -1) {
 		return RTX_ERR;
 	}
 	for (i = 0;i<NUM_TEST_PROCS+NUM_SYS_PROCS;++i) {
 		if (g_proc_table[i].m_pid == process_id) {
-			g_proc_table[i].m_priority = priority;
 			q_update_priority(process_id, priority);
+			g_proc_table[i].m_priority = priority;
 			return RTX_OK;
 		}
 	}
@@ -190,7 +194,6 @@ int k_release_processor(void)
 	// Set pointer to last executed pcb
 	p_pcb_old = NULL;
 	p_pcb_old = gp_current_process;
-	
 	
 	//printf("############# Printing current process ############### \r\n");
 	//printf("PID current proc: %d\r\n",gp_current_process->m_pid);
@@ -323,24 +326,40 @@ void KCD (void) {			//pid 12
 	int ret_val = 0;
 	int this_pid = 12;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
+	char input[256];
+	int commandIndex = 0;
 	
 	while (1) {
-		char newchar = '%';
-		char input[256];
 		
-		uart0_put_string("Enter command: ");
-		while(newchar != '\n') {
+		if(next_command_char != '\r') {
 			// read in a character, add it to input
+			input[commandIndex++] = next_command_char;
+			uart0_put_char(next_command_char);
 			
+			// abort if we try to enter a command that's too long
+			if(commandIndex > 255) {
+				uart0_put_string("\r\n");
+				in_command_mode = 0;
+			}
 		}
-		
-		// attempt to interpret command in input buffer
-		
-		
+		else {
+			int i = 0;
+			
+			// attempt to interpret command in input buffer
+			uart0_put_string("\r\n");
+			uart0_put_string((unsigned char*)input);
+			uart0_put_string("\r\n");
+			
+			// clear the command buffer
+			for (i = 0; i < 256; ++i) {
+				input[i] = 0; 
+			}
+			in_command_mode = 0;
+		}
 		
 		// release processor, retreat into the background
 		set_process_priority(12, 4);
-		ret_val = k_release_processor();
+		ret_val = release_processor();
 	}
 }
 
@@ -418,24 +437,35 @@ void UART_i (void) {
 		if (IIR_IntId & IIR_RDA) { // Receive Data Avaialbe
 			/* read UART. Read RBR will clear the interrupt */
 			g_char_in = pUart->RBR;
-	#ifdef DEBUG_0
-			uart0_put_string("Reading a char = ");
-			uart0_put_char(g_char_in);
-			uart0_put_string("\n\r");
-	#endif // DEBUG_0
 			g_buffer[12] = g_char_in; // nasty hack
 			g_send_char = 1;
 			
-			if ( g_char_in == 'r' ) {
-				 q_print_rdy_process();
-			} else if ( g_char_in == 'm' ) {
-				q_print_blk_mem_process();
-			} else if	( g_char_in == 'c' ) {
-				q_print_blk_rcv_process();
-			}	else if ( g_char_in == '%' ) {
+			// If we're in command mode, send keystrokes to process
+			if (in_command_mode) {
+				next_command_char = g_char_in;
 				set_process_priority(12, 0);
-			}
-						
+				//q_print_rdy_process();
+				//uart0_put_string("=================== BLOCKED QUEUE ===============================\r\n");
+				//q_print_blk_mem_process();
+			} else {
+				#ifdef DEBUG_0
+				uart0_put_string("Reading a char = ");
+				uart0_put_char(g_char_in);
+				uart0_put_string("\n\r");
+				#endif // DEBUG_0
+				
+				// If not in command mode, look for commands
+				if ( g_char_in == 'r' ) {
+					 q_print_rdy_process();
+				} else if ( g_char_in == 'm' ) {
+					q_print_blk_mem_process();
+				} else if	( g_char_in == 'c' ) {
+					q_print_blk_rcv_process();
+				}	else if ( g_char_in == '%' ) {
+					in_command_mode = 1;
+					uart0_put_string("Enter command:\r\n%");
+				}
+			}	
 		} else if (IIR_IntId & IIR_THRE) {
 		/* THRE Interrupt, transmit holding register becomes empty */
 
@@ -448,7 +478,7 @@ void UART_i (void) {
 				
 				// you could use the printf instead
 				//printf("Writing a char = %c \n\r", g_char_out);
-	#endif // DEBUG_0			
+	#endif // DEBUG_0
 				pUart->THR = g_char_out;
 				gp_buffer++;
 			} else {

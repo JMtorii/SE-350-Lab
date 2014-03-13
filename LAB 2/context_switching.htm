@@ -3,11 +3,11 @@
 <title>Static Call Graph - [N:\SE350\SE-350-Lab\SE-350-Lab\LAB 2\context_switching.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image N:\SE350\SE-350-Lab\SE-350-Lab\LAB 2\context_switching.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Thu Mar 13 00:04:56 2014
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Thu Mar 13 02:42:26 2014
 <BR><P>
-<H3>Maximum Stack Usage =        208 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        268 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
-k_delayed_send &rArr; create_envelope &rArr; k_request_memory_block &rArr; h_pop &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
+KCD &rArr; uart_put_string
 <P>
 <H3>
 Functions with no stack information
@@ -88,7 +88,7 @@ Function Pointers
  <LI><a href="#[36]">k_receive_message</a> from envelope.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[6c]">k_release_from_iprocess</a> from k_process.o(.text) referenced 2 times from k_process.o(.text)
  <LI><a href="#[37]">k_release_memory_block</a> from k_memory.o(.text) referenced from usr_proc.o(.text)
- <LI><a href="#[35]">k_release_processor</a> from k_process.o(.text) referenced 4 times from envelope.o(.text)
+ <LI><a href="#[35]">k_release_processor</a> from k_process.o(.text) referenced 5 times from envelope.o(.text)
  <LI><a href="#[38]">k_request_memory_block</a> from k_memory.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[34]">k_rtx_init</a> from k_rtx_init.o(.text) referenced from main_svc.o(.text)
  <LI><a href="#[3a]">k_set_process_priority</a> from k_process.o(.text) referenced 3 times from usr_proc.o(.text)
@@ -442,6 +442,7 @@ Global Symbols
 <P><STRONG><a name="[52]"></a>uart_put_char</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, uart_polling.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;proc1
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;proc2
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_i
 <LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;putc
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
@@ -665,7 +666,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[3a]"></a>k_set_process_priority</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, k_process.o(.text))
+<P><STRONG><a name="[3a]"></a>k_set_process_priority</STRONG> (Thumb, 66 bytes, Stack size 16 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = k_set_process_priority &rArr; q_update_priority &rArr; q_push
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_update_priority
@@ -684,7 +685,7 @@ Global Symbols
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_UART0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[6e]"></a>UART_i</STRONG> (Thumb, 196 bytes, Stack size 24 bytes, k_process.o(.text))
+<P><STRONG><a name="[6e]"></a>UART_i</STRONG> (Thumb, 222 bytes, Stack size 24 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = UART_i &rArr; q_print_rdy_process &rArr; q_print_process &rArr; itoa
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_rdy_process
@@ -713,12 +714,11 @@ Global Symbols
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_push
 <LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_get_process_priority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
-<LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_request_memory_block
+<BR>[Called By]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_request_memory_block
 <LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_rtx_init
 </UL>
-<BR>[Address Reference Count : 3]<UL><LI> envelope.o(.text)
-<LI> k_process.o(.text)
+<BR>[Address Reference Count : 3]<UL><LI> k_process.o(.text)
+<LI> envelope.o(.text)
 <LI> usr_proc.o(.text)
 </UL>
 <P><STRONG><a name="[74]"></a>CRT</STRONG> (Thumb, 96 bytes, Stack size 0 bytes, k_process.o(.text))
@@ -732,12 +732,12 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[77]"></a>KCD</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, k_process.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = KCD &rArr; k_release_processor &rArr; scheduler &rArr; q_pop_highest_priority
+<P><STRONG><a name="[77]"></a>KCD</STRONG> (Thumb, 126 bytes, Stack size 256 bytes, k_process.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 268<LI>Call Chain = KCD &rArr; uart_put_string
 </UL>
-<BR>[Calls]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_release_processor
-<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
+<BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
+<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_char
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
@@ -748,7 +748,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[79]"></a>add_system_processes</STRONG> (Thumb, 394 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[79]"></a>add_system_processes</STRONG> (Thumb, 408 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_init
 </UL>
 
@@ -866,13 +866,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_i
 </UL>
 
-<P><STRONG><a name="[81]"></a>q_remove_pid</STRONG> (Thumb, 92 bytes, Stack size 12 bytes, queue.o(.text))
+<P><STRONG><a name="[81]"></a>q_remove_pid</STRONG> (Thumb, 114 bytes, Stack size 12 bytes, queue.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = q_remove_pid
 </UL>
 <BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_envelope
 </UL>
 
-<P><STRONG><a name="[6d]"></a>q_update_priority</STRONG> (Thumb, 110 bytes, Stack size 24 bytes, queue.o(.text))
+<P><STRONG><a name="[6d]"></a>q_update_priority</STRONG> (Thumb, 132 bytes, Stack size 24 bytes, queue.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = q_update_priority &rArr; q_push
 </UL>
 <BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_push

@@ -143,14 +143,18 @@ void q_remove_pid(int pid) {
 		iter = blocked_rcv_queue[i].last;
 		while (iter != NULL) {
 			if (iter->m_pid == pid) {
-				if (iter == blocked_rcv_queue[i].last) {
+				if (iter == blocked_rcv_queue[i].last) {				//last case
 					blocked_rcv_queue[i].last = iter->prev;
+					if (iter == blocked_rcv_queue[i].first) {			//only one
+						blocked_rcv_queue[i].first = NULL;
+					}
 				}
-				else if (iter == blocked_rcv_queue[i].first) {
+				else if (iter == blocked_rcv_queue[i].first) {	//first case
 					blocked_rcv_queue[i].first = next;
+					next->prev = NULL;
 				}
 				else {
-					next->prev = iter->prev;
+					next->prev = iter->prev;											//middle case
 				}
 				return;
 			}
@@ -169,19 +173,24 @@ void q_update_priority (int pid, int priority) {
 		iter = ready_queue[i].last;
 		while (iter != NULL) {
 			if (iter->m_pid == pid) {
-				// add to correct queue
-				q_push(&ready_queue[priority], iter);
 				
 				// remove from other queue
 				if (iter == ready_queue[i].last) {
 					ready_queue[i].last = iter->prev;
+					if (iter == ready_queue[i].first) {			//only one
+						ready_queue[i].first = NULL;
+					}
 				}
 				else if (iter == ready_queue[i].first) {
 					ready_queue[i].first = next;
+					next->prev = NULL;
 				}
 				else {
 					next->prev = iter->prev;
 				}
+				
+				// add to correct queue
+				q_push(&ready_queue[priority], iter);
 				return;
 			}
 			next = iter;
