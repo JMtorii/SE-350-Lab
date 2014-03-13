@@ -291,20 +291,25 @@ void add_system_processes(void) {
 	g_proc_table[0].m_priority = 4;
 	g_proc_table[0].mpf_start_pc = &null;
 	
-	g_proc_table[NUM_TEST_PROCS+1].m_pid = (U32)13;
+	g_proc_table[NUM_TEST_PROCS+1].m_pid = (U32)12;
 	g_proc_table[NUM_TEST_PROCS+1].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+1].m_priority = 4;
-	g_proc_table[NUM_TEST_PROCS+1].mpf_start_pc = &CRT;
+	g_proc_table[NUM_TEST_PROCS+1].mpf_start_pc = &KCD;
 	
-	g_proc_table[NUM_TEST_PROCS+2].m_pid = (U32)14;
+	g_proc_table[NUM_TEST_PROCS+2].m_pid = (U32)13;
 	g_proc_table[NUM_TEST_PROCS+2].m_stack_size = 0x100;
-	g_proc_table[NUM_TEST_PROCS+2].m_priority = -1;
-	g_proc_table[NUM_TEST_PROCS+2].mpf_start_pc = &Timer_i;
+	g_proc_table[NUM_TEST_PROCS+2].m_priority = 4;
+	g_proc_table[NUM_TEST_PROCS+2].mpf_start_pc = &CRT;
 	
-	g_proc_table[NUM_TEST_PROCS+3].m_pid = (U32)15;
+	g_proc_table[NUM_TEST_PROCS+3].m_pid = (U32)14;
 	g_proc_table[NUM_TEST_PROCS+3].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+3].m_priority = -1;
-	g_proc_table[NUM_TEST_PROCS+3].mpf_start_pc = &UART_i;
+	g_proc_table[NUM_TEST_PROCS+3].mpf_start_pc = &Timer_i;
+	
+	g_proc_table[NUM_TEST_PROCS+4].m_pid = (U32)15;
+	g_proc_table[NUM_TEST_PROCS+4].m_stack_size = 0x100;
+	g_proc_table[NUM_TEST_PROCS+4].m_priority = -1;
+	g_proc_table[NUM_TEST_PROCS+4].mpf_start_pc = &UART_i;
 }
 
 // Proc for what the null process does

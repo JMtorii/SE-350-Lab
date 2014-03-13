@@ -3,7 +3,7 @@
 <title>Static Call Graph - [N:\SE350\SE-350-Lab\SE-350-Lab\LAB 2\context_switching.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image N:\SE350\SE-350-Lab\SE-350-Lab\LAB 2\context_switching.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Wed Mar 12 21:51:19 2014
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Wed Mar 12 22:14:21 2014
 <BR><P>
 <H3>Maximum Stack Usage =        208 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -50,6 +50,7 @@ Function Pointers
  <LI><a href="#[18]">I2C1_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[19]">I2C2_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[28]">I2S_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
+ <LI><a href="#[77]">KCD</a> from k_process.o(.text) referenced from k_process.o(.text)
  <LI><a href="#[2b]">MCPWM_IRQHandler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[6]">MemManage_Handler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
  <LI><a href="#[4]">NMI_Handler</a> from startup_lpc17xx.o(.text) referenced from startup_lpc17xx.o(RESET)
@@ -95,7 +96,7 @@ Function Pointers
  <LI><a href="#[89]">memory_block_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[85]">message_receive_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[86]">message_send_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
- <LI><a href="#[77]">null</a> from k_process.o(.text) referenced from k_process.o(.text)
+ <LI><a href="#[78]">null</a> from k_process.o(.text) referenced from k_process.o(.text)
  <LI><a href="#[8a]">priority_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[8c]">proc1</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[8b]">proc2</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
@@ -502,9 +503,9 @@ Global Symbols
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;message_receive_test
 <LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_delayed_send
 <LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_receive_message
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_num_msg
-<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;null
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;null
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CRT
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;h_pop
 </UL>
@@ -585,7 +586,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_rtx_init
 </UL>
 
-<P><STRONG><a name="[7a]"></a>alloc_stack</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, k_memory.o(.text))
+<P><STRONG><a name="[7b]"></a>alloc_stack</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, k_memory.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_init
 </UL>
 
@@ -675,7 +676,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;c_TIMER0_IRQHandler
 <LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_delayed_send
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_send_message
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CRT
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer_i
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_i
@@ -711,7 +712,7 @@ Global Symbols
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_process_priority
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_push
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
+<BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
 <LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_request_memory_block
 <LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_rtx_init
 </UL>
@@ -730,35 +731,45 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[77]"></a>null</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[77]"></a>KCD</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, k_process.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = KCD &rArr; get_num_msg &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
+</UL>
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_pop
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_num_msg
+<LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_release_processor
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
+</UL>
+<P><STRONG><a name="[78]"></a>null</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = null &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tfp_printf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[78]"></a>add_system_processes</STRONG> (Thumb, 122 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[79]"></a>add_system_processes</STRONG> (Thumb, 154 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_init
 </UL>
 
-<P><STRONG><a name="[63]"></a>process_init</STRONG> (Thumb, 488 bytes, Stack size 24 bytes, k_process.o(.text))
+<P><STRONG><a name="[63]"></a>process_init</STRONG> (Thumb, 490 bytes, Stack size 24 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = process_init &rArr; set_test_procs &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
 </UL>
-<BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
-<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;add_system_processes
+<BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;add_system_processes
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_process_priority
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_push
-<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;alloc_stack
+<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;alloc_stack
 </UL>
 <BR>[Called By]<UL><LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_rtx_init
 </UL>
 
 <P><STRONG><a name="[3a]"></a>k_set_process_priority</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, k_process.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_process_priority
+<BR><BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_process_priority
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usr_proc.o(.text)
 </UL>
-<P><STRONG><a name="[7b]"></a>set_process_priority</STRONG> (Thumb, 16 bytes, Stack size 12 bytes, k_process.o(.text), UNUSED)
+<P><STRONG><a name="[7c]"></a>set_process_priority</STRONG> (Thumb, 16 bytes, Stack size 12 bytes, k_process.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_set_process_priority
 </UL>
 
@@ -771,13 +782,6 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIMER0_IRQHandler
 <LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_IRQHandler
-</UL>
-
-<P><STRONG><a name="[7c]"></a>KCD</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, k_process.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_pop
-<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_num_msg
-<LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_release_processor
-<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
 </UL>
 
 <P><STRONG><a name="[66]"></a>h_pop</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, heap.o(.text))
@@ -804,7 +808,7 @@ Global Symbols
 <P><STRONG><a name="[75]"></a>q_pop</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, queue.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;receive_message_nonblocking
 <LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_receive_message
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CRT
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_pop_highest_priority
 </UL>
@@ -936,7 +940,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tfp_printf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
+<BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CRT
 </UL>
 
@@ -1015,7 +1019,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usr_proc.o(.text)
 </UL>
-<P><STRONG><a name="[79]"></a>set_test_procs</STRONG> (Thumb, 786 bytes, Stack size 8 bytes, usr_proc.o(.text))
+<P><STRONG><a name="[7a]"></a>set_test_procs</STRONG> (Thumb, 786 bytes, Stack size 8 bytes, usr_proc.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = set_test_procs &rArr; tfp_printf &rArr; tfp_format &rArr; putchw
 </UL>
 <BR>[Calls]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tfp_printf

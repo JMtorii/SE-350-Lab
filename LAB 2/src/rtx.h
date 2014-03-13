@@ -9,7 +9,7 @@
 #define RTX_ERR -1
 #define NULL 0
 #define NUM_TEST_PROCS 7
-#define NUM_SYS_PROCS 4
+#define NUM_SYS_PROCS 5
 
 /* Process Priority. The bigger the number is, the lower the priority is*/
 #define INTERRUPT -1
