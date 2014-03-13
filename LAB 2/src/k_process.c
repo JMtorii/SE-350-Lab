@@ -348,7 +348,7 @@ void KCD (void) {			//pid 12
 			// attempt to interpret command in input buffer
 			uart0_put_string("\r\n");
 			uart0_put_string((unsigned char*)input);
-			uart0_put_string("\r\n");
+			uart0_put_string(" is not a recognized command.  Please try again.\r\n");
 			
 			// clear the command buffer
 			for (i = 0; i < 256; ++i) {
