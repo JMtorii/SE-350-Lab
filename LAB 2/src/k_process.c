@@ -32,6 +32,11 @@ int in_command_mode = 0;
 // Current command sent to a process
 char current_command[256];
 
+// Wall clock globals
+uint32_t start_time = 0; // start time in ms
+int wall_clock_active = 0;
+int is_allowing_input = 1;
+
 /* process initialization table */
 PROC_INIT g_proc_table[NUM_TEST_PROCS+NUM_SYS_PROCS];
 extern PROC_INIT g_test_procs[NUM_TEST_PROCS];
@@ -302,27 +307,62 @@ void null (void) {
 
 void WallClock_p(void) {
 	int ret_val = 0;
+	
 	int this_pid = 11;
-	uint32_t start_time = 0; // start time in ms
-	int hours;
-	int minutes;
-	int seconds;
+	
+	// *starting values* for hours, minutes, seconds
+	int hours_start = 0;
+	int minutes_start = 0;
+	int seconds_start = 0;
+	
+	char digi[9];
 
 	while (1) {
 		/*uart0_put_string("\r\nIn wall clock!\r\n");
 		uart0_put_string("Current command: ");
 		uart0_put_string(current_command);
 		uart0_put_string("\r\n");*/
-		
-		if (current_command[1] == 'R' && current_command[2] == 0) {
+				
+		// If we're currently displaying the clock,
+		// send a message with the current digital display string to CRT
+		if (wall_clock_active && !is_allowing_input) {
+			uint32_t time_dif = g_timer_count - start_time;
+			char smallbuf[3];
+			
+			//TODO: Add time_dif across hours, minutes, seconds
+			// once again, real men never printf
+			itoa(hours_start, smallbuf);
+			digi[0] = smallbuf[0];
+			digi[1] = smallbuf[1];
+			digi[2] = ':';
+			itoa(minutes_start, smallbuf);
+			digi[3] = smallbuf[0];
+			digi[4] = smallbuf[1];
+			digi[5] = ':';
+			itoa(seconds_start, smallbuf);
+			digi[6] = smallbuf[0];
+			digi[7] = smallbuf[1];
+			digi[8] = 0;
+			
+			uart1_put_string("PRINTING TIME\r\n");
+		}
+		else if (current_command[1] == 'R' && current_command[2] == 0) {
 			uart0_put_string("Resetting wall clock...\r\n");
 			// reset the wall clock and display it on the CRT
 			start_time = g_timer_count;
+			wall_clock_active = 1;
+			hours_start = 0;
+			minutes_start = 0;
+			seconds_start = 0;
 		}
 		else if (current_command[1] == 'T' && current_command[2] == 0) {
 			uart0_put_string("Terminating wall clock...\r\n");
 			// terminates the wall clock (stop printing to CRT)
 			start_time = 0;
+			wall_clock_active = 0;
+			hours_start = 0;
+			minutes_start = 0;
+			seconds_start = 0;
 		}
 		else {
 			int error = 1;
@@ -330,22 +370,25 @@ void WallClock_p(void) {
 			if (current_command[1] == 'S' && current_command[2] == ' ') {
 				// attempt to parse a time
 				if (current_command[3] <= '9' && current_command[3] >= '0') {
-					hours = 10*(((int)'0')+current_command[3]);
 					if (current_command[4] <= '9' && current_command[4] >= '0') {
-						hours += (((int)'0')+current_command[4]);
 						if (current_command[5] == ':') {
 							if (current_command[6] <= '9' && current_command[6] >= '0') {
-								minutes += 10*(((int)'0')+current_command[6]);
 									if (current_command[7] <= '9' && current_command[7] >= '0') {
-										minutes += (((int)'0')+current_command[7]);
 										if (current_command[8] == ':') {
 											if (current_command[9] <= '9' && current_command[9] >= '0') {
-												seconds += 10*(((int)'0')+current_command[9]);
 													if (current_command[10] <= '9' && current_command[10] >= '0') {
-														seconds += (((int)'0')+current_command[10]);
 														if (current_command[11] == 0) {
 															uart0_put_string("Setting wall clock time...\r\n");
 															
+															hours_start = 10*(((int)'0')+current_command[3]);
+															hours_start += (((int)'0')+current_command[4]);
+															minutes_start += 10*(((int)'0')+current_command[6]);
+															minutes_start += (((int)'0')+current_command[7]);
+															seconds_start += 10*(((int)'0')+current_command[9]);
+															seconds_start += (((int)'0')+current_command[10]);
+															
+															start_time = g_timer_count;
+															wall_clock_active = 1;
 															// start CRT
 															error = 0;
 														}
@@ -360,13 +403,13 @@ void WallClock_p(void) {
 					}
 			
 			// if incorrect input, complain about the bad command
-			if (error) {
+			if (error && !wall_clock_active) {
 				uart0_put_string("\r\n\"");
 				uart0_put_string((unsigned char*)current_command);
 				uart0_put_string("\" is not a valid wall clock command.  Please try again.\r\n");
 			}
 		}
-		
+
 		set_process_priority(11, 4);
 		ret_val = release_processor();
 	}
@@ -399,6 +442,7 @@ void KCD (void) {			//pid 12
 			
 			// attempt to interpret command in input buffer
 			if (current_command[0] == 'W') {
+				is_allowing_input = 1;
 				set_process_priority(11, 0);
 			}
 			else {
@@ -446,6 +490,7 @@ void CRT (void) {			//pid 13
 }
 
 void Timer_i (void) {
+	int i = 1;
 	int ret_val = 0;
 	int this_pid = 14;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
@@ -467,6 +512,17 @@ void Timer_i (void) {
 			}
 			break;
 		}
+		if (!wall_clock_active) {
+			i = 1;
+		} else if (wall_clock_active && (g_timer_count-start_time) >= 1000*i) {
+			is_allowing_input = 0;
+			//set timer priority to realtime
+			set_process_priority(11, 0);
+			
+			//increment i (wait for next second to elapse)
+		  ++i;
+		}
+		
 		release_from_iprocess();
 	}
 }

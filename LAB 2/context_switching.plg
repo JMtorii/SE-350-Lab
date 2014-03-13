@@ -3,7 +3,7 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
-N:\SE350-Merge\SE-350-Lab\LAB 2\context_switching.uvproj
+N:\SE350\SE-350-Lab\MASTA\SE-350-Lab\LAB 2\context_switching.uvproj
 Project File Date:  03/13/2014
 
 <h2>Output:</h2>
@@ -24,16 +24,60 @@ src\k_memory.c(180): warning:  #223-D: function "atomic_on" declared implicitly
 src\k_memory.c(198): warning:  #223-D: function "atomic_off" declared implicitly
 src\k_memory.c(178): warning:  #177-D: variable "blocked_flag" was declared but never referenced
 compiling k_process.c...
-src\k_process.c(293): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(304): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(305): warning:  #177-D: variable "this_pid" was declared but never referenced
-src\k_process.c(306): warning:  #550-D: variable "start_time" was set but never used
-src\k_process.c(376): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(379): warning:  #177-D: variable "commandIndex" was declared but never referenced
-src\k_process.c(421): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(449): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(475): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(481): warning:  #550-D: variable "g_send_char" was set but never used
+src\k_process.c(298): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(309): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(311): warning:  #177-D: variable "this_pid" was declared but never referenced
+src\k_process.c(318): warning:  #550-D: variable "digi" was set but never used
+src\k_process.c(442): warning:  #177-D: variable "i" was declared but never referenced
+src\k_process.c(420): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(465): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(515): error:  #20: identifier "i" is undefined
+src\k_process.c(516): error:  #20: identifier "i" is undefined
+src\k_process.c(493): warning:  #177-D: variable "ret_val" was declared but never referenced
+src\k_process.c(530): warning:  #177-D: variable "ret_val" was declared but never referenced
+src\k_process.c(536): warning:  #550-D: variable "g_send_char" was set but never used
+compiling heap.c...
+compiling queue.c...
+compiling envelope.c...
+src\envelope.c(34): warning:  #223-D: function "atomic_on" declared implicitly
+src\envelope.c(40): warning:  #223-D: function "atomic_off" declared implicitly
+src\envelope.c(48): warning:  #223-D: function "atomic_on" declared implicitly
+src\envelope.c(55): warning:  #223-D: function "atomic_off" declared implicitly
+src\envelope.c(62): warning:  #223-D: function "atomic_off" declared implicitly
+src\envelope.c(86): warning:  #223-D: function "atomic_on" declared implicitly
+src\envelope.c(93): warning:  #223-D: function "atomic_off" declared implicitly
+compiling timer.c...
+compiling usr_proc.c...
+src\usr_proc.c(258): warning:  #550-D: variable "ret_val" was set but never used
+src\usr_proc.c(286): warning:  #550-D: variable "ret_val" was set but never used
+Target not created
+Rebuild target 'Context Switching SIM'
+assembling startup_LPC17xx.s...
+compiling system_LPC17xx.c...
+compiling uart_polling.c...
+compiling printf.c...
+compiling main_svc.c...
+compiling uart_irq.c...
+compiling HAL.c...
+compiling k_rtx_init.c...
+compiling k_memory.c...
+src\k_memory.c(154): warning:  #223-D: function "atomic_on" declared implicitly
+src\k_memory.c(163): warning:  #223-D: function "atomic_off" declared implicitly
+src\k_memory.c(170): warning:  #223-D: function "atomic_off" declared implicitly
+src\k_memory.c(180): warning:  #223-D: function "atomic_on" declared implicitly
+src\k_memory.c(198): warning:  #223-D: function "atomic_off" declared implicitly
+src\k_memory.c(178): warning:  #177-D: variable "blocked_flag" was declared but never referenced
+compiling k_process.c...
+src\k_process.c(298): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(309): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(311): warning:  #177-D: variable "this_pid" was declared but never referenced
+src\k_process.c(318): warning:  #550-D: variable "digi" was set but never used
+src\k_process.c(442): warning:  #177-D: variable "i" was declared but never referenced
+src\k_process.c(420): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(465): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(494): warning:  #177-D: variable "ret_val" was declared but never referenced
+src\k_process.c(531): warning:  #177-D: variable "ret_val" was declared but never referenced
+src\k_process.c(537): warning:  #550-D: variable "g_send_char" was set but never used
 compiling heap.c...
 compiling queue.c...
 compiling envelope.c...
@@ -49,9 +93,9 @@ compiling usr_proc.c...
 src\usr_proc.c(258): warning:  #550-D: variable "ret_val" was set but never used
 src\usr_proc.c(286): warning:  #550-D: variable "ret_val" was set but never used
 linking...
-Program Size: Code=8108 RO-data=412 RW-data=64 ZI-data=1336  
+Program Size: Code=8588 RO-data=412 RW-data=76 ZI-data=1332  
 "context_switching.axf" - 0 Error(s), 25 Warning(s).
-Load "N:\\SE350-Merge\\SE-350-Lab\\LAB 2\\context_switching.AXF" 
+Load "N:\\SE350\\SE-350-Lab\\MASTA\\SE-350-Lab\\LAB 2\\context_switching.AXF" 
 Erase Done.
 Programming Done.
 Verify OK.
@@ -72,16 +116,16 @@ src\k_memory.c(180): warning:  #223-D: function "atomic_on" declared implicitly
 src\k_memory.c(198): warning:  #223-D: function "atomic_off" declared implicitly
 src\k_memory.c(178): warning:  #177-D: variable "blocked_flag" was declared but never referenced
 compiling k_process.c...
-src\k_process.c(293): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(304): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(305): warning:  #177-D: variable "this_pid" was declared but never referenced
-src\k_process.c(306): warning:  #550-D: variable "start_time" was set but never used
-src\k_process.c(376): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(379): warning:  #177-D: variable "commandIndex" was declared but never referenced
-src\k_process.c(421): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(449): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(475): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(481): warning:  #550-D: variable "g_send_char" was set but never used
+src\k_process.c(298): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(309): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(311): warning:  #177-D: variable "this_pid" was declared but never referenced
+src\k_process.c(318): warning:  #550-D: variable "digi" was set but never used
+src\k_process.c(441): warning:  #177-D: variable "i" was declared but never referenced
+src\k_process.c(419): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(465): warning:  #550-D: variable "ret_val" was set but never used
+src\k_process.c(494): warning:  #177-D: variable "ret_val" was declared but never referenced
+src\k_process.c(531): warning:  #177-D: variable "ret_val" was declared but never referenced
+src\k_process.c(537): warning:  #550-D: variable "g_send_char" was set but never used
 compiling heap.c...
 compiling queue.c...
 compiling envelope.c...
@@ -97,120 +141,9 @@ compiling usr_proc.c...
 src\usr_proc.c(258): warning:  #550-D: variable "ret_val" was set but never used
 src\usr_proc.c(286): warning:  #550-D: variable "ret_val" was set but never used
 linking...
-Program Size: Code=8108 RO-data=412 RW-data=64 ZI-data=1336  
+Program Size: Code=8592 RO-data=412 RW-data=76 ZI-data=1332  
 "context_switching.axf" - 0 Error(s), 25 Warning(s).
-Load "N:\\SE350-Merge\\SE-350-Lab\\LAB 2\\context_switching.AXF" 
-Erase Done.
-Programming Done.
-Verify OK.
-Build target 'Context Switching SIM'
-compiling usr_proc.c...
-src\usr_proc.c(258): warning:  #550-D: variable "ret_val" was set but never used
-src\usr_proc.c(286): warning:  #550-D: variable "ret_val" was set but never used
-linking...
-Program Size: Code=8108 RO-data=412 RW-data=64 ZI-data=1336  
-"context_switching.axf" - 0 Error(s), 2 Warning(s).
-Load "N:\\SE350-Merge\\SE-350-Lab\\LAB 2\\context_switching.AXF" 
-Erase Done.
-Programming Done.
-Verify OK.
-Build target 'Context Switching SIM'
-linking...
-Program Size: Code=8108 RO-data=412 RW-data=64 ZI-data=1336  
-"context_switching.axf" - 0 Error(s), 0 Warning(s).
-Rebuild target 'Context Switching SIM'
-assembling startup_LPC17xx.s...
-compiling system_LPC17xx.c...
-compiling uart_polling.c...
-compiling printf.c...
-compiling main_svc.c...
-compiling uart_irq.c...
-compiling HAL.c...
-compiling k_rtx_init.c...
-compiling k_memory.c...
-src\k_memory.c(154): warning:  #223-D: function "atomic_on" declared implicitly
-src\k_memory.c(163): warning:  #223-D: function "atomic_off" declared implicitly
-src\k_memory.c(170): warning:  #223-D: function "atomic_off" declared implicitly
-src\k_memory.c(180): warning:  #223-D: function "atomic_on" declared implicitly
-src\k_memory.c(198): warning:  #223-D: function "atomic_off" declared implicitly
-src\k_memory.c(178): warning:  #177-D: variable "blocked_flag" was declared but never referenced
-compiling k_process.c...
-src\k_process.c(293): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(304): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(305): warning:  #177-D: variable "this_pid" was declared but never referenced
-src\k_process.c(306): warning:  #550-D: variable "start_time" was set but never used
-src\k_process.c(398): warning:  #177-D: variable "i" was declared but never referenced
-src\k_process.c(376): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(421): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(449): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(475): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(481): warning:  #550-D: variable "g_send_char" was set but never used
-compiling heap.c...
-compiling queue.c...
-compiling envelope.c...
-src\envelope.c(34): warning:  #223-D: function "atomic_on" declared implicitly
-src\envelope.c(40): warning:  #223-D: function "atomic_off" declared implicitly
-src\envelope.c(48): warning:  #223-D: function "atomic_on" declared implicitly
-src\envelope.c(55): warning:  #223-D: function "atomic_off" declared implicitly
-src\envelope.c(62): warning:  #223-D: function "atomic_off" declared implicitly
-src\envelope.c(86): warning:  #223-D: function "atomic_on" declared implicitly
-src\envelope.c(93): warning:  #223-D: function "atomic_off" declared implicitly
-compiling timer.c...
-compiling usr_proc.c...
-src\usr_proc.c(258): warning:  #550-D: variable "ret_val" was set but never used
-src\usr_proc.c(286): warning:  #550-D: variable "ret_val" was set but never used
-linking...
-Program Size: Code=8288 RO-data=412 RW-data=64 ZI-data=1336  
-"context_switching.axf" - 0 Error(s), 25 Warning(s).
-Load "N:\\SE350-Merge\\SE-350-Lab\\LAB 2\\context_switching.AXF" 
-Erase Done.
-Programming Done.
-Verify OK.
-Rebuild target 'Context Switching SIM'
-assembling startup_LPC17xx.s...
-compiling system_LPC17xx.c...
-compiling uart_polling.c...
-compiling printf.c...
-compiling main_svc.c...
-compiling uart_irq.c...
-compiling HAL.c...
-compiling k_rtx_init.c...
-compiling k_memory.c...
-src\k_memory.c(154): warning:  #223-D: function "atomic_on" declared implicitly
-src\k_memory.c(163): warning:  #223-D: function "atomic_off" declared implicitly
-src\k_memory.c(170): warning:  #223-D: function "atomic_off" declared implicitly
-src\k_memory.c(180): warning:  #223-D: function "atomic_on" declared implicitly
-src\k_memory.c(198): warning:  #223-D: function "atomic_off" declared implicitly
-src\k_memory.c(178): warning:  #177-D: variable "blocked_flag" was declared but never referenced
-compiling k_process.c...
-src\k_process.c(293): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(304): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(305): warning:  #177-D: variable "this_pid" was declared but never referenced
-src\k_process.c(306): warning:  #550-D: variable "start_time" was set but never used
-src\k_process.c(398): warning:  #177-D: variable "i" was declared but never referenced
-src\k_process.c(376): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(421): warning:  #550-D: variable "ret_val" was set but never used
-src\k_process.c(449): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(475): warning:  #177-D: variable "ret_val" was declared but never referenced
-src\k_process.c(481): warning:  #550-D: variable "g_send_char" was set but never used
-compiling heap.c...
-compiling queue.c...
-compiling envelope.c...
-src\envelope.c(34): warning:  #223-D: function "atomic_on" declared implicitly
-src\envelope.c(40): warning:  #223-D: function "atomic_off" declared implicitly
-src\envelope.c(48): warning:  #223-D: function "atomic_on" declared implicitly
-src\envelope.c(55): warning:  #223-D: function "atomic_off" declared implicitly
-src\envelope.c(62): warning:  #223-D: function "atomic_off" declared implicitly
-src\envelope.c(86): warning:  #223-D: function "atomic_on" declared implicitly
-src\envelope.c(93): warning:  #223-D: function "atomic_off" declared implicitly
-compiling timer.c...
-compiling usr_proc.c...
-src\usr_proc.c(258): warning:  #550-D: variable "ret_val" was set but never used
-src\usr_proc.c(286): warning:  #550-D: variable "ret_val" was set but never used
-linking...
-Program Size: Code=8288 RO-data=412 RW-data=64 ZI-data=1336  
-"context_switching.axf" - 0 Error(s), 25 Warning(s).
-Load "N:\\SE350-Merge\\SE-350-Lab\\LAB 2\\context_switching.AXF" 
+Load "N:\\SE350\\SE-350-Lab\\MASTA\\SE-350-Lab\\LAB 2\\context_switching.AXF" 
 Erase Done.
 Programming Done.
 Verify OK.

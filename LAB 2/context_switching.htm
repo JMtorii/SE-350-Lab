@@ -1,9 +1,9 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html><head>
-<title>Static Call Graph - [N:\SE350-Merge\SE-350-Lab\LAB 2\context_switching.axf]</title></head>
+<title>Static Call Graph - [N:\SE350\SE-350-Lab\MASTA\SE-350-Lab\LAB 2\context_switching.axf]</title></head>
 <body><HR>
-<H1>Static Call Graph for image N:\SE350-Merge\SE-350-Lab\LAB 2\context_switching.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Thu Mar 13 19:06:55 2014
+<H1>Static Call Graph for image N:\SE350\SE-350-Lab\MASTA\SE-350-Lab\LAB 2\context_switching.axf</H1><HR>
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Thu Mar 13 19:39:17 2014
 <BR><P>
 <H3>Maximum Stack Usage =        168 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -91,12 +91,12 @@ Function Pointers
  <LI><a href="#[38]">k_request_memory_block</a> from k_memory.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[34]">k_rtx_init</a> from k_rtx_init.o(.text) referenced from main_svc.o(.text)
  <LI><a href="#[39]">k_send_message</a> from envelope.o(.text) referenced from usr_proc.o(.text)
- <LI><a href="#[3a]">k_set_process_priority</a> from k_process.o(.text) referenced 5 times from usr_proc.o(.text)
+ <LI><a href="#[3a]">k_set_process_priority</a> from k_process.o(.text) referenced 6 times from usr_proc.o(.text)
  <LI><a href="#[33]">k_timer_init</a> from timer.o(.text) referenced from main_svc.o(.text)
  <LI><a href="#[85]">memory_block_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[82]">message_receive_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[83]">message_send_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
- <LI><a href="#[78]">null</a> from k_process.o(.text) referenced from k_process.o(.text)
+ <LI><a href="#[79]">null</a> from k_process.o(.text) referenced from k_process.o(.text)
  <LI><a href="#[86]">priority_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[88]">proc1</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[87]">proc2</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
@@ -462,12 +462,12 @@ Global Symbols
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;message_send_test
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;message_receive_test
 <LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_send_message
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
-<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
+<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_rdy_process
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_blk_rcv_process
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_blk_mem_process
-<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;null
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;null
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WallClock_p
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer_i
@@ -567,12 +567,13 @@ Global Symbols
 <LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_IRQHandler
 </UL>
 
-<P><STRONG><a name="[7d]"></a>itoa</STRONG> (Thumb, 84 bytes, Stack size 28 bytes, uart_irq.o(.text))
+<P><STRONG><a name="[78]"></a>itoa</STRONG> (Thumb, 84 bytes, Stack size 28 bytes, uart_irq.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = itoa
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
+<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_rdy_process
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_blk_mem_process
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WallClock_p
 </UL>
 
 <P><STRONG><a name="[34]"></a>k_rtx_init</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, k_rtx_init.o(.text))
@@ -595,7 +596,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_rtx_init
 </UL>
 
-<P><STRONG><a name="[7b]"></a>alloc_stack</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, k_memory.o(.text))
+<P><STRONG><a name="[7c]"></a>alloc_stack</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, k_memory.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_init
 </UL>
 
@@ -702,7 +703,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[72]"></a>Timer_i</STRONG> (Thumb, 86 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[72]"></a>Timer_i</STRONG> (Thumb, 144 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = Timer_i &rArr; send_envelope &rArr; q_remove_pid
 </UL>
 <BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_envelope
@@ -732,7 +733,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[76]"></a>KCD</STRONG> (Thumb, 146 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[76]"></a>KCD</STRONG> (Thumb, 380 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = KCD &rArr; uart_put_string
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
@@ -741,37 +742,38 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[77]"></a>WallClock_p</STRONG> (Thumb, 582 bytes, Stack size 0 bytes, k_process.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = WallClock_p &rArr; uart_put_string
+<P><STRONG><a name="[77]"></a>WallClock_p</STRONG> (Thumb, 496 bytes, Stack size 24 bytes, k_process.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = WallClock_p &rArr; itoa
 </UL>
-<BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itoa
+<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[78]"></a>null</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[79]"></a>null</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = null &rArr; uart_put_string
 </UL>
 <BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[79]"></a>add_system_processes</STRONG> (Thumb, 186 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[7a]"></a>add_system_processes</STRONG> (Thumb, 186 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_init
 </UL>
 
 <P><STRONG><a name="[62]"></a>process_init</STRONG> (Thumb, 260 bytes, Stack size 24 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = process_init &rArr; set_test_procs &rArr; uart_put_string
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;add_system_processes
+<BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_test_procs
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;add_system_processes
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_push
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_get_process_priority
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;alloc_stack
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;alloc_stack
 </UL>
 <BR>[Called By]<UL><LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_rtx_init
 </UL>
 
-<P><STRONG><a name="[4d]"></a>k_release_into_iprocess</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, k_process.o(.text))
+<P><STRONG><a name="[4d]"></a>k_release_into_iprocess</STRONG> (Thumb, 332 bytes, Stack size 8 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = k_release_into_iprocess &rArr; process_switch
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_switch
@@ -826,10 +828,10 @@ Global Symbols
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_release_into_iprocess
 </UL>
 
-<P><STRONG><a name="[7c]"></a>q_print_process</STRONG> (Thumb, 106 bytes, Stack size 48 bytes, queue.o(.text))
+<P><STRONG><a name="[7d]"></a>q_print_process</STRONG> (Thumb, 106 bytes, Stack size 48 bytes, queue.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = q_print_process &rArr; itoa
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itoa
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itoa
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_rdy_process
@@ -840,9 +842,9 @@ Global Symbols
 <P><STRONG><a name="[6f]"></a>q_print_rdy_process</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, queue.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = q_print_rdy_process &rArr; q_print_process &rArr; itoa
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
+<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
 <LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_num_mem_blk
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itoa
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itoa
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_i
@@ -851,8 +853,8 @@ Global Symbols
 <P><STRONG><a name="[70]"></a>q_print_blk_mem_process</STRONG> (Thumb, 74 bytes, Stack size 16 bytes, queue.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = q_print_blk_mem_process &rArr; q_print_process &rArr; itoa
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itoa
+<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;itoa
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_i
@@ -861,7 +863,7 @@ Global Symbols
 <P><STRONG><a name="[71]"></a>q_print_blk_rcv_process</STRONG> (Thumb, 42 bytes, Stack size 8 bytes, queue.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = q_print_blk_rcv_process &rArr; q_print_process &rArr; itoa
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
+<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_print_process
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_i
@@ -1004,7 +1006,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> usr_proc.o(.text)
 </UL>
-<P><STRONG><a name="[7a]"></a>set_test_procs</STRONG> (Thumb, 172 bytes, Stack size 8 bytes, usr_proc.o(.text))
+<P><STRONG><a name="[7b]"></a>set_test_procs</STRONG> (Thumb, 172 bytes, Stack size 8 bytes, usr_proc.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = set_test_procs &rArr; uart_put_string
 </UL>
 <BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
