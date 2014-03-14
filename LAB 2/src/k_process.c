@@ -307,7 +307,6 @@ void null (void) {
 
 void WallClock_p(void) {
 	int ret_val = 0;
-	
 	int this_pid = 11;
 	
 	// *starting values* for hours, minutes, seconds
@@ -316,6 +315,8 @@ void WallClock_p(void) {
 	int seconds_start = 0;
 	
 	char digi[9];
+	
+	PCB* this_pcb = get_pcb_from_pid(this_pid);
 
 	while (1) {
 		/*uart0_put_string("\r\nIn wall clock!\r\n");
@@ -326,28 +327,67 @@ void WallClock_p(void) {
 		// If we're currently displaying the clock,
 		// send a message with the current digital display string to CRT
 		if (wall_clock_active && !is_allowing_input) {
-			uint32_t time_dif = g_timer_count - start_time;
+			//Message* testMessage = (Message*)request_memory_block();
+			int sec = 0;
+			int min = 0;
+			int hr = 0;
+			uint32_t time_dif = (hours_start * 3600000) + (minutes_start * 60000) + (seconds_start * 1000) + (g_timer_count - start_time);
 			char smallbuf[3];
 			
 			//TODO: Add time_dif across hours, minutes, seconds
 			// once again, real men never printf
-			itoa(hours_start, smallbuf);
-			digi[0] = smallbuf[0];
-			digi[1] = smallbuf[1];
+			hr = (time_dif / (1000*60*60)) % 24;
+			itoa((int)(hr), smallbuf);
+			time_dif -= hr * 3600000;
+			if (hr < 10) {
+				digi[0] = '0';
+				digi[1] = smallbuf[0];
+			}
+			else {
+				digi[0] = smallbuf[0];
+				digi[1] = smallbuf[1];
+			}
+
 			digi[2] = ':';
-			itoa(minutes_start, smallbuf);
-			digi[3] = smallbuf[0];
-			digi[4] = smallbuf[1];
+			
+			min = (time_dif / (1000*60)) % 60;
+			itoa((int)(min), smallbuf);
+			time_dif -= min * 60000;
+			if (min < 10) {
+				digi[3] = '0';
+				digi[4] = smallbuf[0];
+			}
+			else {
+				digi[3] = smallbuf[0];
+				digi[4] = smallbuf[1];
+			}
+			
 			digi[5] = ':';
-			itoa(seconds_start, smallbuf);
-			digi[6] = smallbuf[0];
-			digi[7] = smallbuf[1];
+			
+			sec = (time_dif / 1000) % 60;
+			itoa((int)(sec), smallbuf);
+			time_dif -= sec * 1000;
+			if (sec < 10) {
+				digi[6] = '0';
+				digi[7] = smallbuf[0];
+			}
+			else {
+				digi[6] = smallbuf[0];
+				digi[7] = smallbuf[1];
+			}
+			
 			digi[8] = 0;
 			
-			uart1_put_string("PRINTING TIME\r\n");
+			//testMessage->mtype = 2;
+			//testMessage->mtext = digi;
+			
+			//send_message(13, testMessage);
+			
+			uart0_put_string(digi);
+			uart0_put_string("\r\n");
 		}
 		else if (current_command[1] == 'R' && current_command[2] == 0) {
-			uart0_put_string("Resetting wall clock...\r\n");
+			uart0_put_string("\r\nResetting wall clock...\r\n");
 			// reset the wall clock and display it on the CRT
 			start_time = g_timer_count;
 			wall_clock_active = 1;
@@ -356,7 +396,7 @@ void WallClock_p(void) {
 			seconds_start = 0;
 		}
 		else if (current_command[1] == 'T' && current_command[2] == 0) {
-			uart0_put_string("Terminating wall clock...\r\n");
+			uart0_put_string("\r\nTerminating wall clock...\r\n");
 			// terminates the wall clock (stop printing to CRT)
 			start_time = 0;
 			wall_clock_active = 0;
@@ -380,12 +420,12 @@ void WallClock_p(void) {
 														if (current_command[11] == 0) {
 															uart0_put_string("Setting wall clock time...\r\n");
 															
-															hours_start = 10*(((int)'0')+current_command[3]);
-															hours_start += (((int)'0')+current_command[4]);
-															minutes_start += 10*(((int)'0')+current_command[6]);
-															minutes_start += (((int)'0')+current_command[7]);
-															seconds_start += 10*(((int)'0')+current_command[9]);
-															seconds_start += (((int)'0')+current_command[10]);
+															hours_start = 10*(current_command[3] - ((int)'0'));
+															hours_start += (current_command[4] - ((int)'0'));
+															minutes_start = 10*(current_command[6] - ((int)'0'));
+															minutes_start += (current_command[7] - ((int)'0'));
+															seconds_start = 10*(current_command[9] - ((int)'0'));
+															seconds_start += (current_command[10] - ((int)'0'));
 															
 															start_time = g_timer_count;
 															wall_clock_active = 1;

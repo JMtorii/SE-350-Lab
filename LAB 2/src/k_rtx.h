@@ -87,4 +87,12 @@ extern int k_get_process_priority(int process_id);
 extern int  __SVC_0 _get_process_priority(U32 p_func, int process_id);
 #define get_process_priority(process_id) _get_process_priority((U32)k_get_process_priority, process_id)
 
+extern void *k_request_memory_block(void);
+extern void __SVC_0 *_request_memory_block(U32 p_func);
+#define request_memory_block() _request_memory_block((U32)k_request_memory_block)
+
+extern int k_send_message(int pid, void *p_msg);
+extern int __SVC_0 _send_message(U32 p_func, int pid, void *p_msg);
+#define send_message(pid, p_msg) _send_message((U32)k_send_message, pid, p_msg)
+
 #endif // ! K_RTX_H_
