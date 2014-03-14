@@ -36,6 +36,7 @@ char current_command[256];
 uint32_t start_time = 0; // start time in ms
 int wall_clock_active = 0;
 int is_allowing_input = 1;
+int g_second_count = 1;
 
 /* process initialization table */
 PROC_INIT g_proc_table[NUM_TEST_PROCS+NUM_SYS_PROCS];
@@ -394,6 +395,7 @@ void WallClock_p(void) {
 			hours_start = 0;
 			minutes_start = 0;
 			seconds_start = 0;
+			g_second_count = 1;
 		}
 		else if (current_command[1] == 'T' && current_command[2] == 0) {
 			uart0_put_string("\r\nTerminating wall clock...\r\n");
@@ -403,6 +405,7 @@ void WallClock_p(void) {
 			hours_start = 0;
 			minutes_start = 0;
 			seconds_start = 0;
+			g_second_count = 1;
 		}
 		else {
 			int error = 1;
@@ -429,6 +432,7 @@ void WallClock_p(void) {
 															
 															start_time = g_timer_count;
 															wall_clock_active = 1;
+															g_second_count = 1;
 															// start CRT
 															error = 0;
 														}
@@ -530,7 +534,6 @@ void CRT (void) {			//pid 13
 }
 
 void Timer_i (void) {
-	int i = 1;
 	int ret_val = 0;
 	int this_pid = 14;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
@@ -552,15 +555,13 @@ void Timer_i (void) {
 			}
 			break;
 		}
-		if (!wall_clock_active) {
-			i = 1;
-		} else if (wall_clock_active && (g_timer_count-start_time) >= 1000*i) {
+		if (wall_clock_active && (g_timer_count-start_time) >= 1000*g_second_count) {
 			is_allowing_input = 0;
 			//set timer priority to realtime
 			set_process_priority(11, 0);
 			
-			//increment i (wait for next second to elapse)
-		  ++i;
+			//increment g_second_count (wait for next second to elapse)
+		  ++g_second_count;
 		}
 		
 		release_from_iprocess();
