@@ -10,9 +10,8 @@
 
 extern int g_timer_count;
 
-void print(char* msg);
+void print_crt(char* msg);
 void set_test_procs(void);
-void print_test_results(void);
 void proc1(void);
 void proc2(void);
 void priority_test(void);

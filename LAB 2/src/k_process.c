@@ -247,7 +247,6 @@ int k_release_from_iprocess(void)
 
 int k_release_into_iprocess(void)
 {	
-
 	// Push old process back to ready queue
 	if ( p_pcb_old != NULL && p_pcb_old->m_state != BLK && p_pcb_old->m_state != BLK_ON_RCV) {
 		q_push(&ready_queue[k_get_process_priority(p_pcb_old->m_pid)], p_pcb_old);
@@ -328,15 +327,26 @@ void WallClock_p(void) {
 		// If we're currently displaying the clock,
 		// send a message with the current digital display string to CRT
 		if (wall_clock_active && !is_allowing_input) {
-			Message* testMessage = (Message*)request_memory_block();
+			Message* testMessage;
 			int sec = 0;
 			int min = 0;
 			int hr = 0;
 			uint32_t time_dif = (hours_start * 3600000) + (minutes_start * 60000) + (seconds_start * 1000) + (g_timer_count - start_time);
 			char smallbuf[3];
 			
+			testMessage = (Message*)request_memory_block();
+			
+			// Check if timer is over 24:00:00
+			if (time_dif >= 86400000) {
+				hours_start = 0;
+				minutes_start = 0;
+				seconds_start = 0;
+				time_dif = 0;
+				start_time = g_timer_count;
+				g_second_count = 1;
+			}
+			
 			//TODO: Add time_dif across hours, minutes, seconds
-			// once again, real men never printf
 			hr = (time_dif / (1000*60*60)) % 24;
 			itoa((int)(hr), smallbuf);
 			time_dif -= hr * 3600000;
@@ -385,9 +395,6 @@ void WallClock_p(void) {
 			testMessage->mtext = digi;
 			
 			send_message(13, testMessage);
-			
-			/*uart0_put_string(digi);
-			uart0_put_string("\r\n");*/
 		}
 		else if (current_command[1] == 'R' && current_command[2] == 0) {
 			uart0_put_string("\r\nResetting wall clock...\r\n");
@@ -455,7 +462,6 @@ void WallClock_p(void) {
 				uart0_put_string("\" is not a valid wall clock command.  Please try again.\r\n");
 			}
 		}
-
 		set_process_priority(11, 4);
 		ret_val = release_processor();
 	}
@@ -486,8 +492,12 @@ void KCD (void) {			//pid 12
 		else if (next_command_char != '\n') {
 			// attempt to interpret command in input buffer
 			if (current_command[0] == 'W') {
-				is_allowing_input = 1;
-				set_process_priority(11, 0);
+				if (get_pcb_from_pid(11)->m_state != BLK) {
+					is_allowing_input = 1;
+					set_process_priority(11, 0);
+				} else {
+					uart0_put_string("\r\nWall clock is currently blocked on memory.\r\n");
+				}
 			}
 			else {
 				uart0_put_string("\r\n\"");
@@ -520,7 +530,7 @@ void CRT (void) {			//pid 13
 			msg = (Message *)(receive_message(&sender_id));
 			if (msg->mtype == 2) {
 				while (msg->mtext[i] != '\0') {
-					uart1_put_char(msg->mtext[i++]);
+					uart0_put_char(msg->mtext[i++]);
 				}
 			}// does not respond to any other msg type
 			release_memory_block(msg);
@@ -534,9 +544,17 @@ void Timer_i (void) {
 	int ret_val = 0;
 	int this_pid = 14;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
+	int sizemailbox = 0;
 	
 	while (1) {
 		Envelope *env = this_pcb->mailbox.last;
+		int sizemailbox = 0;
+		while (env != NULL) {
+			++sizemailbox;
+			env = env->prev_msg;
+		}
+		
+		env = this_pcb->mailbox.last;
 		//uart1_put_string("We are in the timer_i process\r\n");
 		while (env != NULL) {
 			int time_to_send;
@@ -661,4 +679,18 @@ void UART_i (void) {
 		//uart0_put_string("THIS WORKS\r\n");
 		release_from_iprocess();
 	}
+}
+
+//modified from http://vijayinterviewquestions.blogspot.ca/2007/07/implement-strcpy-function.html
+char *my_strcpy(char dest[], const char source[])
+{
+int i = 0;
+while (source[i] != '\0')
+{
+if (i == 247) {break;}
+dest[i] = source[i];
+i++;
+}
+dest[i] = '\0';
+return(dest);
 }

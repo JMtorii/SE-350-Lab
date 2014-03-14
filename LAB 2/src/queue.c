@@ -71,6 +71,7 @@ void q_print_process(Queue *q, int priority) {
 	char pri_buffer[8];
 	char ind_buffer[8];
 	
+	#ifdef _DEBUG_HOTKEYS
 	iter = (PCB *)(q->last);
 	
 	itoa(priority, pri_buffer);
@@ -80,26 +81,23 @@ void q_print_process(Queue *q, int priority) {
 		itoa(i, ind_buffer);
 		itoa(iter->m_pid, pid_buffer);
 		
-		uart0_put_string("Index[");
-		uart0_put_string((unsigned char*)ind_buffer);
-		uart0_put_string("], pid: ");
-		uart0_put_string((unsigned char*)pid_buffer);
-		uart0_put_string(", priority: ");
-		uart0_put_string((unsigned char*)pri_buffer);
-		uart0_put_string("\r\n");
+			uart0_put_string("Index[");
+			uart0_put_string((unsigned char*)ind_buffer);
+			uart0_put_string("], pid: ");
+			uart0_put_string((unsigned char*)pid_buffer);
+			uart0_put_string("\r\n");
 		
 		iter = iter->prev;
 		i++;
 	}
+	#endif
 }
 
 void q_print_rdy_process(void) {
 	int i;
 	char buffer[8];
-	if (get_num_mem_blk() == 0) {
-		i = 0;
-	}
 	
+	#ifdef _DEBUG_HOTKEYS	
 	uart0_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
 		
@@ -110,12 +108,14 @@ void q_print_rdy_process(void) {
 		q_print_process(&ready_queue[i],i);
 	}
 	uart0_put_string("\r\nReady queue print complete:================\r\n");
+	#endif
 }
 
 void q_print_blk_mem_process(void) {
 	int i;
 	char buffer[8];
 	
+	#ifdef _DEBUG_HOTKEYS	
   uart0_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
 	  uart0_put_string("Priority: ");
@@ -124,16 +124,22 @@ void q_print_blk_mem_process(void) {
 		uart0_put_string("\r\n");
 		q_print_process(&blocked_queue[i],i);
 	}
-	uart0_put_string("\r\nReady queue print complete:================\r\n");
+	uart0_put_string("\r\nBlocked on memory print complete:================\r\n");
+	#endif
 }
 
 void q_print_blk_rcv_process(void) {
 	int i;
+	
+	#ifdef _DEBUG_HOTKEYS
 	uart0_put_string("\r\nContents of q:\r\n==============\r\n");
+	
 	for (i=0;i<NUM_PRIORITIES;++i) {
 		q_print_process(&blocked_rcv_queue[i],i);
 	}
+	
 	uart0_put_string("\r\nBlocked on rcv queue print complete:================\r\n");
+	#endif
 }
 
 void q_remove_pid(int pid) {

@@ -17,7 +17,10 @@ extern volatile unsigned int g_timer_count;
 
 typedef struct Message {
 	int mtype; /* user defined message type */
-	char *mtext; /* body of the message */
+	char *mtext;
+	//char mtext[248]; /* body of the message */
+	//248 is calculated from: {SIZE_OF_MEM_BLK - SIZEOF(int)} / SIZEOF(char)
+	// (1024 - 32) / 4 = 248
 } Message;
 
 typedef struct Envelope {

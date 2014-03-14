@@ -14,7 +14,6 @@ U32 * h_pop(void) {
 	U32* ret;
 	
 	if (first_mem_block == NULL){
-		printf("ERROR: OUT OF MEMORY\r\n");
 		return NULL;
 	}
 	
