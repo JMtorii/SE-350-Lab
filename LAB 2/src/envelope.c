@@ -28,11 +28,13 @@ int k_send_message(int receiving_pid, void* msg) {
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
 	void* env;
 	
+	if (((Message *)msg)->mtype == 2) {
+			k_set_process_priority(13, 0);
+	}
+	
 	// Allocate for envelope
-	uart1_put_string("Before alloc\r\n");
   env = (Envelope*)k_request_memory_block();
 	atomic_on();
-	uart1_put_string("After alloc \r\n");
 	// Create envelope wrapping message 
 	env = create_envelope(env, msg, this_pid, receiving_proc->m_pid);
 	// Send envelope to receiving proc

@@ -23,6 +23,15 @@ typedef struct msg {
 PROC_INIT g_test_procs[NUM_TEST_PROCS];
 int test_results[NUM_TEST_PROCS];
 
+void print_crt(char* message) {
+	msg* send_to_crt;
+	send_to_crt = (msg*)request_memory_block();
+	send_to_crt->mtype = 2;
+	send_to_crt->mtext = message;
+	
+	send_message(13, send_to_crt);
+}
+
 void set_test_procs() {
 	int i;
 	for( i = 0; i < NUM_TEST_PROCS; i++ ) {
@@ -54,8 +63,10 @@ void set_test_procs() {
 	g_test_procs[5].mpf_start_pc = &message_send_test;
 	g_test_procs[6].mpf_start_pc = &message_receive_test;
 	
+	#ifdef DEBUG_0
 	uart1_put_string("\n\r");
 	uart1_put_string("G021_test: START\r\n");
+	#endif
 }
 
 // Proc to print test results and terminate program
@@ -91,14 +102,14 @@ void proc1(void)
 			ret_val = release_processor();
 			
 			#ifdef DEBUG_0
-				uart1_put_string("Process 1 completed!\r\n");
+				print_crt("Process 1 completed!\r\n");
 			#endif /* DEBUG_0 */
 			
 			if (ret_val == -1) {
-				uart1_put_string("G021_test: test 1 FAIL\r\n");
+				print_crt("G021_test: test 1 FAIL\r\n");
 				test_results[0] = 0;
 			} else {
-				uart1_put_string("G021_test: test 1 OK\r\n");
+				print_crt("G021_test: test 1 OK\r\n");
 			}
 		}
 		
@@ -122,14 +133,14 @@ void proc2(void)
 			ret_val = release_processor();
 			
 			#ifdef DEBUG_0
-				uart1_put_string("Process 2 completed!\r\n");
+				print_crt("Process 2 completed!\r\n");
 			#endif /* DEBUG_0 */
 			
 			if (ret_val == -1) {
-				uart1_put_string("G021_test: test 2 FAIL\r\n");
+				print_crt("G021_test: test 2 FAIL\r\n");
 				test_results[1] = 0;
 			} else {
-				uart1_put_string("G021_test: test 2 OK\r\n");
+				print_crt("G021_test: test 2 OK\r\n");
 			}
 		}
 		uart1_put_char('0' + i%10);
@@ -150,22 +161,22 @@ void priority_test(void)
 		for (i = 1;i < 3;i++) {
 			set_process_priority(3,i);
 			#ifdef DEBUG_0
-				uart1_put_string("PRIORITY SET!\r\n");
+				print_crt("PRIORITY SET!\r\n");
 			#endif /* DEBUG_0 */
 		}
 		
 		#ifdef DEBUG_0
-			uart1_put_string("Process 3 completed!\r\n");
+			print_crt("Process 3 completed!\r\n");
 		#endif /* DEBUG_0 */
 		
 		set_process_priority(3,3);
 		ret_val = release_processor();
 		//printf("Timer result: %d \r\n",g_timer_count);
 		if (ret_val == -1) {
-			uart1_put_string("G021_test: test 3 FAIL\r\n");
+			print_crt("G021_test: test 3 FAIL\r\n");
 			test_results[2] = 0;
 		} else {
-			uart1_put_string("G021_test: test 3 OK\r\n");
+			print_crt("G021_test: test 3 OK\r\n");
 		}
 	}
 }
@@ -197,7 +208,7 @@ void memory_block_test(void)
 		tmp_string[5] = '\0';
 		
 		#ifdef DEBUG_0
-			uart1_put_string("Proc 4 completed!\r\n");
+			print_crt("Proc 4 completed!\r\n");
 			/*printf("INT!   Address: 0x%x, Value: %d\r\n",tmp_int,*tmp_int);
 			printf("CHAR[]! Address: 0x%x, Value: %s\r\n",&tmp_string,tmp_string);*/
 		#endif /* DEBUG_0 */
@@ -208,10 +219,10 @@ void memory_block_test(void)
 		ret_val = release_processor();
 		
 		if (ret_val == -1) {
-			uart1_put_string("G021_test: test 4 FAIL\r\n");
+			print_crt("G021_test: test 4 FAIL\r\n");
 			test_results[3] = 0;
 		} else {
-			uart1_put_string("G021_test: test 4 OK\r\n");
+			print_crt("G021_test: test 4 OK\r\n");
 		}
 	}
 }
@@ -234,7 +245,7 @@ void blocked_test(void)
 			i = 0;
 		}
 		#ifdef DEBUG_0
-			uart1_put_string("Proc 5 completed!\r\n");
+			print_crt("Proc 5 completed!\r\n");
 			//printf("KILL!   Address: 0x%x, Value: %d\r\n",tmp_int,*tmp_int);
 		#endif /* DEBUG_0 */
 		
@@ -242,10 +253,10 @@ void blocked_test(void)
 		ret_val = release_processor();
 		
 		if (ret_val == -1) {
-			uart1_put_string("G021_test: test 5 FAIL\r\n");
+			print_crt("G021_test: test 5 FAIL\r\n");
 			test_results[4] = 0;
 		} else {
-			uart1_put_string("G021_test: test 5 OK\r\n");
+			print_crt("G021_test: test 5 OK\r\n");
 		}
 		
 		if (i == 5) {
@@ -266,10 +277,10 @@ void message_send_test(void) {
  		testMessage2->mtype = 0;
 		testMessage2->mtext = "MSG is my favourite vitamin.";*/
 		
-		uart1_put_string("Preparing to send message...");
+		print_crt("Preparing to send message...");
 		send_message(7, testMessage);
 		//delayed_send(7, testMessage, 60);
-		uart1_put_string("Message sent!\r\n");
+		print_crt("Message sent!\r\n");
 		
 		//send_message(7, testMessage2);
 		//delayed_send(7, testMessage2, 100);
@@ -299,7 +310,7 @@ void message_receive_test(void) {
 		release_memory_block(rcvMessage);
 		
 		#ifdef DEBUG_0
-			uart1_put_string("Process 7 completed!\r\n");
+			print_crt("Process 7 completed!\r\n");
 		#endif /* DEBUG_0 */
 		
 		ret_val = release_processor();

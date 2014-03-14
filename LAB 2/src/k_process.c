@@ -299,8 +299,8 @@ void null (void) {
 	int ret_val = 30;
 	while (1) {
 		#ifdef DEBUG_0
-			uart1_put_string("[proc0]: ret_val=%d\r\n");
-			uart1_put_string("NULL PROCESS!!\r\n");
+			/*uart1_put_string("[proc0]: ret_val=%d\r\n");
+			uart1_put_string("NULL PROCESS!!\r\n");*/
 		#endif 
 		ret_val = release_processor();
 	}
@@ -328,7 +328,7 @@ void WallClock_p(void) {
 		// If we're currently displaying the clock,
 		// send a message with the current digital display string to CRT
 		if (wall_clock_active && !is_allowing_input) {
-			//Message* testMessage = (Message*)request_memory_block();
+			Message* testMessage = (Message*)request_memory_block();
 			int sec = 0;
 			int min = 0;
 			int hr = 0;
@@ -377,15 +377,15 @@ void WallClock_p(void) {
 				digi[7] = smallbuf[1];
 			}
 			
-			digi[8] = 0;
+			digi[8] = '\0';
 			
-			//testMessage->mtype = 2;
-			//testMessage->mtext = digi;
+			testMessage->mtype = 2;
+			testMessage->mtext = digi;
 			
-			//send_message(13, testMessage);
+			send_message(13, testMessage);
 			
-			uart0_put_string(digi);
-			uart0_put_string("\r\n");
+			/*uart0_put_string(digi);
+			uart0_put_string("\r\n");*/
 		}
 		else if (current_command[1] == 'R' && current_command[2] == 0) {
 			uart0_put_string("\r\nResetting wall clock...\r\n");
@@ -421,7 +421,7 @@ void WallClock_p(void) {
 											if (current_command[9] <= '9' && current_command[9] >= '0') {
 													if (current_command[10] <= '9' && current_command[10] >= '0') {
 														if (current_command[11] == 0) {
-															uart0_put_string("Setting wall clock time...\r\n");
+															uart0_put_string("\r\nSetting wall clock time...\r\n");
 															
 															hours_start = 10*(current_command[3] - ((int)'0'));
 															hours_start += (current_command[4] - ((int)'0'));
@@ -511,24 +511,22 @@ void CRT (void) {			//pid 13
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 	
 	while (1) {
-		/*
-		while(get_num_msg(this_pcb) > 0) {
+
+		while(this_pcb->mailbox.first != NULL) {
 			Envelope* env;
 			Message* msg;
+			int sender_id;
+			int i = 0;
 			
-			env = q_pop(&(this_pcb->mailbox));
-			msg = &(env->msg);
+			msg = (Message *)(receive_message(&sender_id));
 			if (msg->mtype == 2) {
-				char* iter = msg->mtext;
-				while (msg->mtext != '\0' && msg->mtext != NULL) {//is null check required?
-					printf("%c", iter);
-					++iter;
+				while (msg->mtext[i] != '\0') {
+					uart1_put_char(msg->mtext[i++]);
 				}
 			}// does not respond to any other msg type
-			
-			k_release_memory_block(env);
+			release_memory_block(msg);
 		}
-		printf("HERE10\r\n");*/
+		set_process_priority(this_pid, 4);
 		ret_val = release_processor();
 	}	
 }
@@ -540,7 +538,7 @@ void Timer_i (void) {
 	
 	while (1) {
 		Envelope *env = this_pcb->mailbox.last;
-		uart1_put_string("We are in the timer_i process\r\n");
+		//uart1_put_string("We are in the timer_i process\r\n");
 		while (env != NULL) {
 			int time_to_send;
 			PCB* send_to;
