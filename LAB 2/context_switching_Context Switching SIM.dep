@@ -38,7 +38,7 @@ I (C:\Software\Keil\ARM\ARMCC\bin\..\include\stdint.h)(0x4EB17B44)
 I (C:\Software\Keil\ARM\CMSIS\Include\core_cmInstr.h)(0x505A054C)
 I (C:\Software\Keil\ARM\CMSIS\Include\core_cmFunc.h)(0x4FDB3D1C)
 I (C:\Software\Keil\ARM\Inc\NXP\LPC17xx\system_LPC17xx.h)(0x4F58EE42)
-I (src\uart.h)(0x53223C5A)
+I (src\uart.h)(0x532261E4)
 I (src\k_rtx.h)(0x532251FE)
 I (src\queue.h)(0x53223C5A)
 I (src\k_process.h)(0x53223C5A)
@@ -64,8 +64,8 @@ I (src\uart_polling.h)(0x53223C5A)
 I (src\uart_def.h)(0x53223C5A)
 I (src\k_memory.h)(0x53223C5A)
 I (src\heap.h)(0x53223C5A)
-I (src\uart.h)(0x53223C5A)
-F (.\src\k_memory.c)(0x53223C5A)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Software\Keil\ARM\RV31\INC -I C:\Software\Keil\ARM\CMSIS\Include -I C:\Software\Keil\ARM\Inc\NXP\LPC17xx -DDEBUG_0 -o "k_memory.o" --omf_browse "k_memory.crf" --depend "k_memory.d")
+I (src\uart.h)(0x532261E4)
+F (.\src\k_memory.c)(0x53226259)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Software\Keil\ARM\RV31\INC -I C:\Software\Keil\ARM\CMSIS\Include -I C:\Software\Keil\ARM\Inc\NXP\LPC17xx -DDEBUG_0 -o "k_memory.o" --omf_browse "k_memory.crf" --depend "k_memory.d")
 I (src\k_memory.h)(0x53223C5A)
 I (src\k_rtx.h)(0x532251FE)
 I (src\queue.h)(0x53223C5A)
@@ -74,9 +74,10 @@ I (src\uart_polling.h)(0x53223C5A)
 I (C:\Software\Keil\ARM\ARMCC\bin\..\include\stdint.h)(0x4EB17B44)
 I (src\uart_def.h)(0x53223C5A)
 I (src\heap.h)(0x53223C5A)
+I (src\uart.h)(0x532261E4)
 I (src\printf.h)(0x53223C5A)
 I (C:\Software\Keil\ARM\ARMCC\bin\..\include\stdarg.h)(0x4EB17B3C)
-F (.\src\k_process.c)(0x53225FF5)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Software\Keil\ARM\RV31\INC -I C:\Software\Keil\ARM\CMSIS\Include -I C:\Software\Keil\ARM\Inc\NXP\LPC17xx -DDEBUG_0 -o "k_process.o" --omf_browse "k_process.crf" --depend "k_process.d")
+F (.\src\k_process.c)(0x53226416)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Software\Keil\ARM\RV31\INC -I C:\Software\Keil\ARM\CMSIS\Include -I C:\Software\Keil\ARM\Inc\NXP\LPC17xx -DDEBUG_0 -o "k_process.o" --omf_browse "k_process.crf" --depend "k_process.d")
 I (C:\Software\Keil\ARM\Inc\NXP\LPC17xx\LPC17xx.h)(0x4FF5A98C)
 I (C:\Software\Keil\ARM\CMSIS\Include\core_cm3.h)(0x5006D242)
 I (C:\Software\Keil\ARM\ARMCC\bin\..\include\stdint.h)(0x4EB17B44)
@@ -115,7 +116,7 @@ I (src\k_memory.h)(0x53223C5A)
 I (src\heap.h)(0x53223C5A)
 I (src\printf.h)(0x53223C5A)
 I (C:\Software\Keil\ARM\ARMCC\bin\..\include\stdarg.h)(0x4EB17B3C)
-F (.\src\envelope.c)(0x532255CD)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Software\Keil\ARM\RV31\INC -I C:\Software\Keil\ARM\CMSIS\Include -I C:\Software\Keil\ARM\Inc\NXP\LPC17xx -DDEBUG_0 -o "envelope.o" --omf_browse "envelope.crf" --depend "envelope.d")
+F (.\src\envelope.c)(0x53226229)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Software\Keil\ARM\RV31\INC -I C:\Software\Keil\ARM\CMSIS\Include -I C:\Software\Keil\ARM\Inc\NXP\LPC17xx -DDEBUG_0 -o "envelope.o" --omf_browse "envelope.crf" --depend "envelope.d")
 I (src\envelope.h)(0x53223C5A)
 I (src\k_rtx.h)(0x532251FE)
 I (src\queue.h)(0x53223C5A)
@@ -125,6 +126,7 @@ I (C:\Software\Keil\ARM\ARMCC\bin\..\include\stdint.h)(0x4EB17B44)
 I (src\uart_def.h)(0x53223C5A)
 I (src\k_memory.h)(0x53223C5A)
 I (src\heap.h)(0x53223C5A)
+I (src\uart.h)(0x532261E4)
 I (src\printf.h)(0x53223C5A)
 I (C:\Software\Keil\ARM\ARMCC\bin\..\include\stdarg.h)(0x4EB17B3C)
 F (.\src\timer.c)(0x53223C5A)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Software\Keil\ARM\RV31\INC -I C:\Software\Keil\ARM\CMSIS\Include -I C:\Software\Keil\ARM\Inc\NXP\LPC17xx -DDEBUG_0 -o "timer.o" --omf_browse "timer.crf" --depend "timer.d")

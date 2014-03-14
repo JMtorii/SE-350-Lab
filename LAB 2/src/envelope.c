@@ -6,6 +6,7 @@
  */
 
 #include "envelope.h"
+#include "uart.h"
 
 #ifdef DEBUG_0
 #include "printf.h"

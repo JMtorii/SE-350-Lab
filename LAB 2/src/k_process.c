@@ -315,7 +315,7 @@ void WallClock_p(void) {
 	int minutes_start = 0;
 	int seconds_start = 0;
 	
-	char digi[9];
+	char digi[11];
 	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 
@@ -377,7 +377,9 @@ void WallClock_p(void) {
 				digi[7] = smallbuf[1];
 			}
 			
-			digi[8] = '\0';
+			digi[8] = '\r';
+			digi[9] = '\n';
+			digi[10] = '\0';
 			
 			testMessage->mtype = 2;
 			testMessage->mtext = digi;
@@ -482,8 +484,6 @@ void KCD (void) {			//pid 12
 			}
 		}
 		else if (next_command_char != '\n') {
-			int i = 0;
-			
 			// attempt to interpret command in input buffer
 			if (current_command[0] == 'W') {
 				is_allowing_input = 1;
@@ -513,7 +513,6 @@ void CRT (void) {			//pid 13
 	while (1) {
 
 		while(this_pcb->mailbox.first != NULL) {
-			Envelope* env;
 			Message* msg;
 			int sender_id;
 			int i = 0;

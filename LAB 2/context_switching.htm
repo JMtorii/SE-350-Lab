@@ -3,7 +3,7 @@
 <title>Static Call Graph - [N:\SE350\SE-350-Lab\MASTA\SE-350-Lab\LAB 2\context_switching.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image N:\SE350\SE-350-Lab\MASTA\SE-350-Lab\LAB 2\context_switching.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Thu Mar 13 21:51:14 2014
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Thu Mar 13 22:06:22 2014
 <BR><P>
 <H3>Maximum Stack Usage =        168 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -611,7 +611,7 @@ Global Symbols
 <BR>[Address Reference Count : 2]<UL><LI> k_process.o(.text)
 <LI> usr_proc.o(.text)
 </UL>
-<P><STRONG><a name="[36]"></a>k_release_memory_block</STRONG> (Thumb, 118 bytes, Stack size 24 bytes, k_memory.o(.text))
+<P><STRONG><a name="[36]"></a>k_release_memory_block</STRONG> (Thumb, 114 bytes, Stack size 24 bytes, k_memory.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = k_release_memory_block &rArr; q_pop_highest_priority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;q_push
@@ -735,7 +735,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[76]"></a>KCD</STRONG> (Thumb, 304 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[76]"></a>KCD</STRONG> (Thumb, 302 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = KCD &rArr; uart_put_string
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
@@ -744,7 +744,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[77]"></a>WallClock_p</STRONG> (Thumb, 744 bytes, Stack size 24 bytes, k_process.o(.text))
+<P><STRONG><a name="[77]"></a>WallClock_p</STRONG> (Thumb, 756 bytes, Stack size 24 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = WallClock_p &rArr; itoa
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
@@ -756,7 +756,7 @@ Global Symbols
 <P><STRONG><a name="[79]"></a>null</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[7a]"></a>add_system_processes</STRONG> (Thumb, 442 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[7a]"></a>add_system_processes</STRONG> (Thumb, 440 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_init
 </UL>
 

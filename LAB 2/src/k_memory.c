@@ -6,6 +6,7 @@
  */
 
 #include "k_memory.h"
+#include "uart.h"
 
 #ifdef DEBUG_0
 #include "printf.h"
@@ -175,7 +176,6 @@ void *k_request_memory_block(void) {
 int k_release_memory_block(void *p_mem_blk) {
 	PCB* tmp;
 	int i;
-  int blocked_flag = 0;
 	
 	atomic_on();
 	

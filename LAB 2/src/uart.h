@@ -68,4 +68,8 @@ int uart_irq_init(int n_uart);
 // Convert int to char array
 char* itoa(int i, char b[]);
 
+// Disable/enable interrupts
+void atomic_on(void);
+void atomic_off(void);
+
 #endif /* ! UART_IRQ_H_ */
