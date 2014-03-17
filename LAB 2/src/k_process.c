@@ -529,7 +529,7 @@ void CRT (void) {			//pid 13
 			
 			msg = (Message *)(receive_message(&sender_id));
 			if (msg->mtype == 2) {
-				while (msg->mtext[i] != '\0') {
+				while (msg->mtext[i] != '\0') { //TODO Send to UART iprocess instead of put_char
 					uart0_put_char(msg->mtext[i++]);
 				}
 			}// does not respond to any other msg type
@@ -570,6 +570,7 @@ void Timer_i (void) {
 			}
 			break;
 		}
+		
 		if (wall_clock_active && (g_timer_count-start_time) >= 1000*g_second_count) {
 			is_allowing_input = 0;
 			//set timer priority to realtime
@@ -593,7 +594,7 @@ void UART_i (void) {
 	uint8_t g_send_char = 0;
 	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
-
+  // TODO: Send message to KCD for input instead of changing priority
 	while (1) {
 		
 		uint8_t IIR_IntId;	    // Interrupt ID from IIR 		 

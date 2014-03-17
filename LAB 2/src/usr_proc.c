@@ -57,7 +57,7 @@ void set_test_procs() {
 			g_test_procs[i].m_priority=3;
   	}
 		if (i == 4) {  // Memory blocking processes
-			g_test_procs[i].m_priority=4;
+			g_test_procs[i].m_priority=0;
   	}
 		if (i == 5) { // Send message process
 			g_test_procs[i].m_priority=3;
