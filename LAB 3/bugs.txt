@@ -1,0 +1,32 @@
+Known Bugs
+==========
+
+1. In certain circumstances, requesting a memory block causes a hard fault.
+
+Cases where the fault seems to occur:
+
+When every block has been used after process 5 is run.
+
+Hypothesis: This error occurs after "release_processor" is called inside a process when
+a) no memory blocks are available
+b) the immediately following process requires a memory block
+
+xxx
+4
+5 OOM
+1
+2
+3
+4 Breaks
+
+xxx
+5 OOM
+4 
+1
+2
+3
+1
+2
+3...works
+
+Or using a number coprime with the number of memblocks also works.
