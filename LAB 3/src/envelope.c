@@ -69,14 +69,23 @@ void* k_receive_message(int* sender_id) {
 	return (void *)returnMessage;
 }
 
-// NOTE: Does not currently work
-Envelope* receive_message_nonblocking(void) {
+void* k_receive_message_nonblocking(int* sender_id) {	
 	Envelope* env;
-	/*
-	atomic_on();
+	Message* returnMessage;
+	
+	// Check if any in mailbox
+  if( gp_current_process->mailbox.first == NULL) {
+		return NULL;
+  }
 	env = (Envelope*)q_pop(&(gp_current_process->mailbox));
-	atomic_off();*/
-	return env;
+	*sender_id = env->sender_pid;
+	//printf("PID in env: %d, PID return: %d\r\n",env->sender_pid,*sender_id);
+	returnMessage = env->msg;
+	atomic_off();
+	//printf("Received at: %d\r\n", g_timer_count);
+	k_release_memory_block(env);
+	
+	return (void *)returnMessage;
 }
 
 int k_delayed_send(int receiving_pid, void* msg, int delay) {

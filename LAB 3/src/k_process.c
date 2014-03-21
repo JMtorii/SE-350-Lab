@@ -319,10 +319,10 @@ void WallClock_p(void) {
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 
 	while (1) {
-		/*uart0_put_string("\r\nIn wall clock!\r\n");
-		uart0_put_string("Current command: ");
-		uart0_put_string(current_command);
-		uart0_put_string("\r\n");*/
+		/*uart1_put_string("\r\nIn wall clock!\r\n");
+		uart1_put_string("Current command: ");
+		uart1_put_string(current_command);
+		uart1_put_string("\r\n");*/
 				
 		// If we're currently displaying the clock,
 		// send a message with the current digital display string to CRT
@@ -392,12 +392,12 @@ void WallClock_p(void) {
 			digi[10] = '\0';
 			
 			testMessage->mtype = 2;
-			testMessage->mtext = digi;
+			my_strcpy(testMessage->mtext, digi);
 			
 			send_message(13, testMessage);
 		}
 		else if (current_command[1] == 'R' && current_command[2] == 0) {
-			uart0_put_string("\r\nResetting wall clock...\r\n");
+			uart1_put_string("\r\nResetting wall clock...\r\n");
 			// reset the wall clock and display it on the CRT
 			start_time = g_timer_count;
 			wall_clock_active = 1;
@@ -407,7 +407,7 @@ void WallClock_p(void) {
 			g_second_count = 1;
 		}
 		else if (current_command[1] == 'T' && current_command[2] == 0) {
-			uart0_put_string("\r\nTerminating wall clock...\r\n");
+			uart1_put_string("\r\nTerminating wall clock...\r\n");
 			// terminates the wall clock (stop printing to CRT)
 			start_time = 0;
 			wall_clock_active = 0;
@@ -430,7 +430,7 @@ void WallClock_p(void) {
 											if (current_command[9] <= '9' && current_command[9] >= '0') {
 													if (current_command[10] <= '9' && current_command[10] >= '0') {
 														if (current_command[11] == 0) {
-															uart0_put_string("\r\nSetting wall clock time...\r\n");
+															uart1_put_string("\r\nSetting wall clock time...\r\n");
 															
 															hours_start = 10*(current_command[3] - ((int)'0'));
 															hours_start += (current_command[4] - ((int)'0'));
@@ -457,9 +457,9 @@ void WallClock_p(void) {
 			
 			// if incorrect input, complain about the bad command
 			if (error && !wall_clock_active) {
-				uart0_put_string("\r\n\"");
-				uart0_put_string((unsigned char*)current_command);
-				uart0_put_string("\" is not a valid wall clock command.  Please try again.\r\n");
+				uart1_put_string("\r\n\"");
+				uart1_put_string((unsigned char*)current_command);
+				uart1_put_string("\" is not a valid wall clock command.  Please try again.\r\n");
 			}
 		}
 		set_process_priority(11, 4);
@@ -485,7 +485,7 @@ void KCD (void) {			//pid 12
 			
 			// abort if we try to enter a command that's too long
 			if(commandIndex > 255) {
-				uart0_put_string("\r\n");
+				uart1_put_string("\r\n");
 				in_command_mode = 0;
 			}
 		}
@@ -496,38 +496,37 @@ void KCD (void) {			//pid 12
 					is_allowing_input = 1;
 					set_process_priority(11, 0);
 				} else {
-					uart0_put_string("\r\nWall clock is currently blocked on memory.\r\n");
+					uart1_put_string("\r\nWall clock is currently blocked on memory.\r\n");
 				}
-			}
+			}/*
 			else if (current_command[0] == 'C') {
 				// Two cases: 2 digit process id or 1 digit process id. 
 				// Another way: use an iterator
 				int error = 1;
-				if (current_command[2] == ' ' && current_command[3] <= '9' && current_command[3] >= '0'){
-					if (current_command[4] <= '9' && current_command[4] >= '0') {
-						if (current_command[5] == ' ' && current_command[6] <= '9' && current_command[6] >= '0') {
-							set_process_priority(current_command[3] * 10 + current_command[4], current_command[6]);
+				if (current_command[1] == ' ' && current_command[2] <= '9' && current_command[2] >= '0'){
+					if (current_command[3] <= '9' && current_command[3] >= '0') {
+						if (current_command[4] == ' ' && current_command[5] <= '9' && current_command[5] >= '0') {
+							set_process_priority(current_command[2] * 10 + current_command[3], current_command[5]);
 							error = 0;
 						}
-					} else if (current_command[4] == ' '){
-						if (current_command[5] <= '9' && current_command[5] >= '0') {
-							set_process_priority(current_command[3], current_command[5]);
+					} else if (current_command[3] == ' '){
+						if (current_command[4] <= '9' && current_command[4] >= '0') {
+							set_process_priority(current_command[2], current_command[4]);
 							error = 0;
 						}
 					}
 				}
 				
 				if (error == 1) {
-					uart0_put_string("\r\n\"");
-					uart0_put_string((unsigned char*)current_command);
-					uart0_put_string("\" is not a recognized command.  Please make sure the format is: %C process_id new_priority.\r\n");
+					uart1_put_string("\r\n\"");
+					uart1_put_string((unsigned char*)current_command);
+					uart1_put_string("\" is not a recognized command.  Please make sure the format is: %C process_id new_priority.\r\n");
 				}
-				
-			}
+			}*/
 			else {
-				uart0_put_string("\r\n\"");
-				uart0_put_string((unsigned char*)current_command);
-				uart0_put_string("\" is not a recognized command.  Please try again.\r\n");
+				uart1_put_string("\r\n\"");
+				uart1_put_string((unsigned char*)current_command);
+				uart1_put_string("\" is not a recognized command.  Please try again.\r\n");
 			}
 			
 			in_command_mode = 0;
@@ -546,10 +545,21 @@ void CRT (void) {			//pid 13
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 	
 	while (1) {
-
+		Message* msg;
+		Envelope* env;
+		int sender_id = 0;
+		
+		msg = (Message *)receive_message(&sender_id);
+		if (msg->mtype == 2) {
+			LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
+			//create_envelope(env, msg, sender_id, 15);	//send to UART_i
+			send_message(15, msg);
+			pUart->IER ^= IER_THRE;
+		} else {
+			release_memory_block(msg);
+		}
+		/*
 		while(this_pcb->mailbox.first != NULL) {
-			Message* msg;
-			int sender_id;
 			int i = 0;
 			
 			msg = (Message *)(receive_message(&sender_id));
@@ -559,8 +569,7 @@ void CRT (void) {			//pid 13
 				}
 			}// does not respond to any other msg type
 			release_memory_block(msg);
-		}
-		set_process_priority(this_pid, 4);
+		}*/
 		ret_val = release_processor();
 	}	
 }
@@ -569,7 +578,6 @@ void Timer_i (void) {
 	int ret_val = 0;
 	int this_pid = 14;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
-	int sizemailbox = 0;
 	
 	while (1) {
 		Envelope *env = this_pcb->mailbox.last;
@@ -614,19 +622,18 @@ void UART_i (void) {
 	int this_pid = 15;
 	uint8_t g_char_in;
 	uint8_t g_char_out;
-	uint8_t g_buffer[]= "You Typed a Q\n\r";
-	uint8_t *gp_buffer = g_buffer;
+	Message* msg = NULL;// (Message*)receive_message_unblocking(NULL);
+	uint8_t *gp_buffer = NULL; //msg->mtext;
 	uint8_t g_send_char = 0;
 	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
   // TODO: Send message to KCD for input instead of changing priority
 	while (1) {
-		
 		uint8_t IIR_IntId;	    // Interrupt ID from IIR 		 
 		LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
 		
 	#ifdef DEBUG_0
-		//uart0_put_string("Entering c_UART0_IRQHandler\n\r");
+		//uart1_put_string("Entering c_UART0_IRQHandler\n\r");
 	#endif // DEBUG_0
 
 		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR
@@ -634,7 +641,6 @@ void UART_i (void) {
 		if (IIR_IntId & IIR_RDA) { // Receive Data Avaialbe
 			/* read UART. Read RBR will clear the interrupt */
 			g_char_in = pUart->RBR;
-			g_buffer[12] = g_char_in; // nasty hack
 			g_send_char = 1;
 			
 			// If we're in command mode, send keystrokes to process
@@ -642,13 +648,13 @@ void UART_i (void) {
 				next_command_char = g_char_in;
 				set_process_priority(12, 0);
 				//q_print_rdy_process();
-				//uart0_put_string("=================== BLOCKED QUEUE ===============================\r\n");
+				//uart1_put_string("=================== BLOCKED QUEUE ===============================\r\n");
 				//q_print_blk_mem_process();
 			} else {
 				#ifdef DEBUG_0
-				//uart0_put_string("Reading a char = ");
+				//uart1_put_string("Reading a char = ");
 				//uart0_put_char(g_char_in);
-				//uart0_put_string("\n\r");
+				//uart1_put_string("\n\r");
 				#endif // DEBUG_0
 				
 				// If not in command mode, look for commands
@@ -667,42 +673,46 @@ void UART_i (void) {
 					// enter command mode
 					in_command_mode = 1;
 					// show the prompt
-					uart0_put_string("%");
+					uart1_put_string("%");
 				}
 			}	
 		} else if (IIR_IntId & IIR_THRE) {
 		/* THRE Interrupt, transmit holding register becomes empty */
-
-			if (*gp_buffer != '\0' ) {
-				g_char_out = *gp_buffer;
-	#ifdef DEBUG_0
-				uart0_put_string("Writing a char = ");
-				uart0_put_char(g_char_out);
-				uart0_put_string("\n\r");
-				
-				// you could use the printf instead
-				//printf("Writing a char = %c \n\r", g_char_out);
-	#endif // DEBUG_0
-				pUart->THR = g_char_out;
-				gp_buffer++;
-			} else {
-	#ifdef DEBUG_0
-				uart0_put_string("Finish writing. Turning off IER_THRE\n\r");
-	#endif // DEBUG_0
-				pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
-				pUart->THR = '\0';
-				g_send_char = 0;
-				gp_buffer = g_buffer;		
-			}
+			msg = (Message*)k_receive_message_nonblocking(NULL);
+			if (msg != NULL) {
+				gp_buffer = msg->mtext;
+				if (*gp_buffer != '\0' ) {
+					g_char_out = *gp_buffer;
+		#ifdef DEBUG_0
+					uart1_put_string("Writing a char = ");
+					uart1_put_char(g_char_out);
+					uart1_put_string("\n\r");
 					
+					// you could use the printf instead
+					//printf("Writing a char = %c \n\r", g_char_out);
+		#endif // DEBUG_0
+					pUart->THR = g_char_out;
+					gp_buffer++;
+				} else {
+		#ifdef DEBUG_0
+					uart1_put_string("Finish writing. Turning off IER_THRE\n\r");
+		#endif // DEBUG_0
+					pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
+					pUart->THR = '\0';
+					g_send_char = 0;
+					gp_buffer = msg->mtext;	
+					release_memory_block(msg);					
+				}
+			}		
 		} else {  /* not implemented yet */
 	#ifdef DEBUG_0
-				//uart0_put_string("Should not get here!\n\r");
+				//uart1_put_string("Should not get here!\n\r");
 	#endif // DEBUG_0
 			//return;
 		}	
 
-		//uart0_put_string("THIS WORKS\r\n");
+		//uart1_put_string("THIS WORKS\r\n");
+		
 		release_from_iprocess();
 	}
 }

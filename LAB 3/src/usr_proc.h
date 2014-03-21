@@ -19,5 +19,7 @@ void memory_block_test(void);
 void blocked_test(void);
 void message_send_test(void);
 void message_receive_test(void);
-
+void A(void);
+void B(void);
+void C(void);
 #endif /* USR_PROC_H_ */

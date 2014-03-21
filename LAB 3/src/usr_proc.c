@@ -16,7 +16,7 @@
 
 typedef struct msg {
 	int mtype;
-	char *mtext;
+	char mtext[1];
 } msg;
 
 /* initialization table item */
@@ -27,7 +27,7 @@ void print_crt(char* message) {
 	msg* send_to_crt;
 	send_to_crt = (msg*)request_memory_block();
 	send_to_crt->mtype = 2;
-	send_to_crt->mtext = message;
+	//send_to_crt->mtext = message; use strncpy if needed
 	
 	send_message(13, send_to_crt);
 }
@@ -54,16 +54,22 @@ void set_test_procs() {
 		
 		// Testing with different priorities on processes
 		if (i == 3) {  // Memory blocks test
-			g_test_procs[i].m_priority=3;
+			g_test_procs[i].m_priority=4;
   	}
-		if (i == 4) {  // Memory blocking processes
-			g_test_procs[i].m_priority=0;
-  	}
-		if (i == 5) { // Send message process
+		if (i == 4) { // Send message process
 			g_test_procs[i].m_priority=3;
 		}
-		if (i == 6) { // Recieve message process	
+		if (i == 5) { // Recieve message process	
 			g_test_procs[i].m_priority=3;
+		}
+		if (i == 6) { // A	
+			g_test_procs[i].m_priority=4;
+		}
+		if (i == 7) { // B	
+			g_test_procs[i].m_priority=4;
+		}
+		if (i == 8) { // C	
+			g_test_procs[i].m_priority=4;
 		}
 	}
 
@@ -71,9 +77,11 @@ void set_test_procs() {
 	g_test_procs[1].mpf_start_pc = &proc2;
 	g_test_procs[2].mpf_start_pc = &priority_test;
 	g_test_procs[3].mpf_start_pc = &memory_block_test;
-	g_test_procs[4].mpf_start_pc = &blocked_test;
-	g_test_procs[5].mpf_start_pc = &message_send_test;
-	g_test_procs[6].mpf_start_pc = &message_receive_test;
+	g_test_procs[4].mpf_start_pc = &message_send_test;
+	g_test_procs[5].mpf_start_pc = &message_receive_test;
+	g_test_procs[6].mpf_start_pc = &A;
+	g_test_procs[7].mpf_start_pc = &B;
+	g_test_procs[8].mpf_start_pc = &C;
 	
 	print_debug("\n\r");
   print_debug("G021_test: START\r\n");
@@ -213,9 +221,7 @@ void memory_block_test(void)
 	}
 }
 
-/**
- * @brief: Requests memory blocks and returns, this will block all memory related processes
- */
+/* use memory_block_test and comment out releases to test blocked on memory
 void blocked_test(void)
 {	
 	int ret_val = 70;
@@ -247,7 +253,7 @@ void blocked_test(void)
 			//print_test_results();
 		}
 	}
-}
+}*/
 	
 void message_send_test(void) {
 	int ret_val = 80;
@@ -258,7 +264,8 @@ void message_send_test(void) {
 		msg* testMessage;
 		testMessage = (msg*)request_memory_block();
 		testMessage->mtype = 0;
-		testMessage->mtext = text;
+		my_strcpy(testMessage->mtext, text);
+		//testMessage->mtext = text;
 		
 		/*msg* testMessage2 = (msg*)request_memory_block();
  		testMessage2->mtype = 0;
@@ -298,5 +305,71 @@ void message_receive_test(void) {
 		print_debug("Process 7 completed!\r\n");
 		
 		ret_val = release_processor();
+	}
+}
+
+void A(void) {
+	int num;
+	void* p = request_memory_block();
+	/*register with Command Decoder as handler of %Z commands
+	while (1) {
+		p = receive_message(NULL);
+		if (the message(p) contains the %Z command then) {
+			release_memory_block(p);
+			break;
+	  } else {
+			release_memory_block(p);
+		}
+	}
+	num = 0;
+	while (1) {
+		p = request_memory_block();
+		((Message *)p)->mtype = count_report;
+		((Message *)p)->mtext = num;
+		send_message(8,p);
+		num = num + 1;
+		release_processor();
+	}*/
+	// note that Process A does not de-allocate
+	// any received envelopes in the second loop
+}
+
+void B(void) {
+	/*while (1) {
+		void* msg = receive_message(NULL);
+		send_message(7,msg);
+		release_processor();
+	}*/
+}
+
+void C (void) {
+	while (1) {/*
+		perform any needed initialization and create a local message queue
+		while (1) {
+			if (local message queue is empty) {
+				p <- receive a message
+			}
+			else {
+				p <- dequeue the first message from the local message queue
+			}
+			
+			if (msg_type of p == count_report) {
+				if (msg_data[0] of p is evenly divisible by 20) {
+					send "Process C" to CRT display using msg envelope p
+					q <- request_memory_block()
+					request a delayed_send for 10 sec delay with msg_type=wakeup10 using q
+					while (1) {
+						p <- receive a message //block and let other processes execute
+						if (message_type of p == wakeup10) then
+						exit this loop
+					} else {
+						put message (p) on the local message queue for later processing
+					}
+				}
+			}
+		}
+		
+		release_memory_block(p);*/
+		release_processor();
 	}
 }

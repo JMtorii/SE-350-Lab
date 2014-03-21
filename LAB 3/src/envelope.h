@@ -17,8 +17,7 @@ extern volatile unsigned int g_timer_count;
 
 typedef struct Message {
 	int mtype; /* user defined message type */
-	char *mtext;
-	//char mtext[248]; /* body of the message */
+	char mtext[248]; /* body of the message */
 	//248 is calculated from: {SIZE_OF_MEM_BLK - SIZEOF(int)} / SIZEOF(char)
 	// (1024 - 32) / 4 = 248
 } Message;
@@ -38,7 +37,7 @@ int k_delayed_send(int receiving_pid, void* env, int delay);
 
 void* k_receive_message(int *sender_id);
 
-Envelope* receive_message_nonblocking(void);
+void* k_receive_message_nonblocking(int *sender_id);
 
 void *create_envelope(Envelope* env, void *msg, int sender_pid, int destination_pid);
 

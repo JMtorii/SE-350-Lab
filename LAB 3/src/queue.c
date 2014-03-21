@@ -81,11 +81,11 @@ void q_print_process(Queue *q, int priority) {
 		itoa(i, ind_buffer);
 		itoa(iter->m_pid, pid_buffer);
 		
-			uart0_put_string("Index[");
-			uart0_put_string((unsigned char*)ind_buffer);
-			uart0_put_string("], pid: ");
-			uart0_put_string((unsigned char*)pid_buffer);
-			uart0_put_string("\r\n");
+			uart1_put_string("Index[");
+			uart1_put_string((unsigned char*)ind_buffer);
+			uart1_put_string("], pid: ");
+			uart1_put_string((unsigned char*)pid_buffer);
+			uart1_put_string("\r\n");
 		
 		iter = iter->prev;
 		i++;
@@ -98,16 +98,16 @@ void q_print_rdy_process(void) {
 	char buffer[8];
 	
 	#ifdef _DEBUG_HOTKEYS	
-	uart0_put_string("\r\nContents of q:\r\n==============\r\n");
+	uart1_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
 		
-		uart0_put_string("Priority: ");
+		uart1_put_string("Priority: ");
 		itoa(i, buffer);
-		uart0_put_string((unsigned char*)buffer);
-		uart0_put_string("\r\n");
+		uart1_put_string((unsigned char*)buffer);
+		uart1_put_string("\r\n");
 		q_print_process(&ready_queue[i],i);
 	}
-	uart0_put_string("\r\nReady queue print complete:================\r\n");
+	uart1_put_string("\r\nReady queue print complete:================\r\n");
 	#endif
 }
 
@@ -116,15 +116,15 @@ void q_print_blk_mem_process(void) {
 	char buffer[8];
 	
 	#ifdef _DEBUG_HOTKEYS	
-  uart0_put_string("\r\nContents of q:\r\n==============\r\n");
+  uart1_put_string("\r\nContents of q:\r\n==============\r\n");
 	for (i=0;i<NUM_PRIORITIES;++i) {
-	  uart0_put_string("Priority: ");
+	  uart1_put_string("Priority: ");
 		itoa(i, buffer);
-		uart0_put_string((unsigned char*)buffer);
-		uart0_put_string("\r\n");
+		uart1_put_string((unsigned char*)buffer);
+		uart1_put_string("\r\n");
 		q_print_process(&blocked_queue[i],i);
 	}
-	uart0_put_string("\r\nBlocked on memory print complete:================\r\n");
+	uart1_put_string("\r\nBlocked on memory print complete:================\r\n");
 	#endif
 }
 
@@ -132,13 +132,13 @@ void q_print_blk_rcv_process(void) {
 	int i;
 	
 	#ifdef _DEBUG_HOTKEYS
-	uart0_put_string("\r\nContents of q:\r\n==============\r\n");
+	uart1_put_string("\r\nContents of q:\r\n==============\r\n");
 	
 	for (i=0;i<NUM_PRIORITIES;++i) {
 		q_print_process(&blocked_rcv_queue[i],i);
 	}
 	
-	uart0_put_string("\r\nBlocked on rcv queue print complete:================\r\n");
+	uart1_put_string("\r\nBlocked on rcv queue print complete:================\r\n");
 	#endif
 }
 
