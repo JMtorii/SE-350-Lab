@@ -22,7 +22,7 @@ void k_rtx_init(void)
         __enable_irq();
 	
 				//NVIC_DisableIRQ(UART0_IRQn); // Remove this when timer interrupts work
-	
+				
 				uart1_put_string("\n\n\r");
 	
 	/* start the first process */

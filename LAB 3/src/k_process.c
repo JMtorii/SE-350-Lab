@@ -21,6 +21,7 @@ PCB **gp_pcbs;                  /* array of pcbs */
 PCB *gp_current_process;
 PCB *p_pcb_old;
 
+uint8_t g_send_char = 0;
 U32 g_switch_flag = 1;          /* whether to continue to run the process before the UART receive interrupt */
                                 /* 1 means to switch to another process, 0 means to continue the current process */
 																/* this value will be set by UART handler */
@@ -334,7 +335,7 @@ void WallClock_p(void) {
 			uint32_t time_dif = (hours_start * 3600000) + (minutes_start * 60000) + (seconds_start * 1000) + (g_timer_count - start_time);
 			char smallbuf[3];
 			
-			testMessage = (Message*)request_memory_block();
+			//testMessage = (Message*)request_memory_block();
 			
 			// Check if timer is over 24:00:00
 			if (time_dif >= 86400000) {
@@ -391,10 +392,10 @@ void WallClock_p(void) {
 			digi[9] = '\n';
 			digi[10] = '\0';
 			
-			testMessage->mtype = 2;
-			my_strcpy(testMessage->mtext, digi);
+			//testMessage->mtype = 2;
+			//my_strcpy(testMessage->mtext, digi);
 			
-			send_message(13, testMessage);
+			//send_message(13, testMessage);
 		}
 		else if (current_command[1] == 'R' && current_command[2] == 0) {
 			uart1_put_string("\r\nResetting wall clock...\r\n");
@@ -481,7 +482,7 @@ void KCD (void) {			//pid 12
 			
 			// read in a character, add it to input
 			current_command[commandIndex++] = next_command_char;
-			uart0_put_char(next_command_char);
+			uart1_put_char(next_command_char);
 			
 			// abort if we try to enter a command that's too long
 			if(commandIndex > 255) {
@@ -552,9 +553,8 @@ void CRT (void) {			//pid 13
 		msg = (Message *)receive_message(&sender_id);
 		if (msg->mtype == 2) {
 			LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
-			//create_envelope(env, msg, sender_id, 15);	//send to UART_i
 			send_message(15, msg);
-			pUart->IER ^= IER_THRE;
+			pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 		} else {
 			release_memory_block(msg);
 		}
@@ -624,7 +624,7 @@ void UART_i (void) {
 	uint8_t g_char_out;
 	Message* msg = NULL;// (Message*)receive_message_unblocking(NULL);
 	uint8_t *gp_buffer = NULL; //msg->mtext;
-	uint8_t g_send_char = 0;
+	
 	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
   // TODO: Send message to KCD for input instead of changing priority
@@ -633,11 +633,11 @@ void UART_i (void) {
 		LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
 		
 	#ifdef DEBUG_0
-		//uart1_put_string("Entering c_UART0_IRQHandler\n\r");
+		uart1_put_string("Entering c_UART0_IRQHandler\n\r");
 	#endif // DEBUG_0
 
 		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR
-			
+		
 		if (IIR_IntId & IIR_RDA) { // Receive Data Avaialbe
 			/* read UART. Read RBR will clear the interrupt */
 			g_char_in = pUart->RBR;
@@ -647,14 +647,13 @@ void UART_i (void) {
 			if (in_command_mode) {
 				next_command_char = g_char_in;
 				set_process_priority(12, 0);
-				//q_print_rdy_process();
-				//uart1_put_string("=================== BLOCKED QUEUE ===============================\r\n");
-				//q_print_blk_mem_process();
+				
+				g_send_char = 0;
 			} else {
 				#ifdef DEBUG_0
-				//uart1_put_string("Reading a char = ");
-				//uart0_put_char(g_char_in);
-				//uart1_put_string("\n\r");
+				uart1_put_string("Reading a char = ");
+				uart1_put_char(g_char_in);
+				uart1_put_string("\n\r");
 				#endif // DEBUG_0
 				
 				// If not in command mode, look for commands
@@ -675,12 +674,17 @@ void UART_i (void) {
 					// show the prompt
 					uart1_put_string("%");
 				}
-			}	
+			}
 		} else if (IIR_IntId & IIR_THRE) {
 		/* THRE Interrupt, transmit holding register becomes empty */
-			msg = (Message*)k_receive_message_nonblocking(NULL);
-			if (msg != NULL) {
+			
+			if (msg == NULL) {
+				int senderid;
+				msg = (Message*)k_receive_message_nonblocking(&senderid);
 				gp_buffer = msg->mtext;
+			}
+			
+			if (msg != NULL) {
 				if (*gp_buffer != '\0' ) {
 					g_char_out = *gp_buffer;
 		#ifdef DEBUG_0
@@ -700,8 +704,8 @@ void UART_i (void) {
 					pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 					pUart->THR = '\0';
 					g_send_char = 0;
-					gp_buffer = msg->mtext;	
-					release_memory_block(msg);					
+					release_memory_block(msg);
+					msg = NULL;
 				}
 			}		
 		} else {  /* not implemented yet */
@@ -712,7 +716,7 @@ void UART_i (void) {
 		}	
 
 		//uart1_put_string("THIS WORKS\r\n");
-		
+
 		release_from_iprocess();
 	}
 }

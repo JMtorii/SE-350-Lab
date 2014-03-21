@@ -81,9 +81,8 @@ void* k_receive_message_nonblocking(int* sender_id) {
 	*sender_id = env->sender_pid;
 	//printf("PID in env: %d, PID return: %d\r\n",env->sender_pid,*sender_id);
 	returnMessage = env->msg;
-	atomic_off();
 	//printf("Received at: %d\r\n", g_timer_count);
-	k_release_memory_block(env);
+	k_release_memory_block_nonblocking(env);
 	
 	return (void *)returnMessage;
 }

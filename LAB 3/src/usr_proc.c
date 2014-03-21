@@ -54,13 +54,13 @@ void set_test_procs() {
 		
 		// Testing with different priorities on processes
 		if (i == 3) {  // Memory blocks test
-			g_test_procs[i].m_priority=4;
+			g_test_procs[i].m_priority=3;
   	}
 		if (i == 4) { // Send message process
 			g_test_procs[i].m_priority=3;
 		}
 		if (i == 5) { // Recieve message process	
-			g_test_procs[i].m_priority=3;
+			g_test_procs[i].m_priority=4;
 		}
 		if (i == 6) { // A	
 			g_test_procs[i].m_priority=4;
@@ -263,7 +263,7 @@ void message_send_test(void) {
 	while(1) {
 		msg* testMessage;
 		testMessage = (msg*)request_memory_block();
-		testMessage->mtype = 0;
+		testMessage->mtype = 2;
 		my_strcpy(testMessage->mtext, text);
 		//testMessage->mtext = text;
 		
@@ -272,12 +272,12 @@ void message_send_test(void) {
 		testMessage2->mtext = "MSG is my favourite vitamin.";*/
 		
 		print_debug("Preparing to send message...");
-		send_message(7, testMessage);
-		//delayed_send(7, testMessage, 150);
+		send_message(13, testMessage);
+		//delayed_send(6, testMessage, 150);
 		print_debug("Message sent!\r\n");
 		
-		//send_message(7, testMessage2);
-		//delayed_send(7, testMessage2, 100);
+		//send_message(6, testMessage2);
+		//delayed_send(6, testMessage2, 100);
 		
 		print_debug("Process 6 completed!\r\n");
 		

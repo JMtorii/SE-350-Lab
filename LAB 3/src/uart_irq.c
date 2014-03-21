@@ -15,6 +15,7 @@
 int atomicflag = 1;
 
 extern uint32_t g_switch_flag;
+extern uint8_t g_send_char;
 
 extern int k_release_processor(void);
 /**
@@ -176,11 +177,16 @@ __asm void UART0_IRQHandler(void)
  */
 void c_UART0_IRQHandler(void)
 {
+	
+		LPC_UART_TypeDef *pUart;
+		pUart = (LPC_UART_TypeDef *) LPC_UART0;
 		//NOTE: interrupt acknowledged by process 
 	
 		// Switch to uart0 iprocess context
 		p_pcb_old = gp_current_process;
 		gp_current_process = get_pcb_from_pid(15);
+	
+
 }
 
 void atomic_on(void) {

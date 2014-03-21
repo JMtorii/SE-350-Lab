@@ -199,6 +199,29 @@ int k_release_memory_block(void *p_mem_blk) {
 	return RTX_OK;
 }
 
+int k_release_memory_block_nonblocking(void *p_mem_blk) {
+	PCB* tmp;
+	int i;
+	
+	if (p_mem_blk < heap_begin || p_mem_blk > heap_begin+NUM_MEM_BLK*SIZE_MEM_BLK) {
+		return RTX_ERR;
+	}
+	
+	// Push memory block back into heap
+	h_push(p_mem_blk);
+	
+	// If there is an entry in blocked queue after memory is free, then put process back to ready queue
+	for (i = 0;i <= 4;++i) {
+		if (blocked_queue[i].first != NULL) {
+			tmp = (PCB*)q_pop_highest_priority(blocked_queue);
+			tmp->m_state = RDY;
+			q_push(&ready_queue[k_get_process_priority(tmp->m_pid)], tmp);
+			break;
+		}
+	}	
+	return RTX_OK;
+}
+
 void print_num_mem_blk(void) {
 	int i;
 	MemBlock *iter;
