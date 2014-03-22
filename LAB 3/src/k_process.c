@@ -291,6 +291,11 @@ void add_system_processes(void) {
 	g_proc_table[NUM_TEST_PROCS+5].m_stack_size = 0x100;
 	g_proc_table[NUM_TEST_PROCS+5].m_priority = -1;
 	g_proc_table[NUM_TEST_PROCS+5].mpf_start_pc = &UART_i;
+	
+	g_proc_table[NUM_TEST_PROCS+6].m_pid = (U32)10;
+	g_proc_table[NUM_TEST_PROCS+6].m_stack_size = 0x100;
+	g_proc_table[NUM_TEST_PROCS+6].m_priority = 4;
+	g_proc_table[NUM_TEST_PROCS+6].mpf_start_pc = &set_process_priority_process;
 }
 
 // Proc for what the null process does
@@ -301,6 +306,48 @@ void null (void) {
 			/*uart1_put_string("[proc0]: ret_val=%d\r\n");
 			uart1_put_string("NULL PROCESS!!\r\n");*/
 		#endif 
+		ret_val = release_processor();
+	}
+}
+
+void set_process_priority_process(void) {
+	int ret_val = 0;
+	int this_pid = 10;
+	
+	PCB* this_pcb = get_pcb_from_pid(this_pid);
+	
+	while(1) {
+		// Two cases: 2 digit process id or 1 digit process id. 
+		// Another way: use an iterator
+		int error = 1;
+		if (current_command[1] == ' ' && current_command[2] <= '9' && current_command[2] >= '0'){
+			if (current_command[3] <= '9' && current_command[3] >= '0') {
+				if (current_command[4] == ' ' && current_command[5] <= '9' && current_command[5] >= '0') {
+					int pid = 10*(current_command[2]-'0') + current_command[3] - '0';
+					int pri = current_command[5] - '0';
+					set_process_priority(pid, pri);
+					error = 0;
+				}
+			} else if (current_command[3] == ' '){
+				if (current_command[4] <= '9' && current_command[4] >= '0') {
+					int pid = current_command[2] - '0';
+					int pri = current_command[4] - '0';
+					set_process_priority(pid, pri);
+					error = 0;
+				}
+			}
+		}
+		
+		if (error == 1) {
+			uart0_put_string("\r\n\"");
+			uart0_put_string((unsigned char*)current_command);
+			uart0_put_string("\" is not a recognized command.  Please make sure the format is: %C process_id new_priority.\r\n");
+		} else {
+			uart0_put_string("\r\n");
+			atomic_off();
+		}
+		
+		set_process_priority(10, 4);
 		ret_val = release_processor();
 	}
 }
@@ -498,32 +545,16 @@ void KCD (void) {			//pid 12
 				} else {
 					uart0_put_string("\r\nWall clock is currently blocked on memory.\r\n");
 				}
-			} /*
+			} 
 			else if (current_command[0] == 'C') {
-				// Two cases: 2 digit process id or 1 digit process id. 
-				// Another way: use an iterator
-				int error = 1;
-				if (current_command[2] == ' ' && current_command[3] <= '9' && current_command[3] >= '0'){
-					if (current_command[4] <= '9' && current_command[4] >= '0') {
-						if (current_command[5] == ' ' && current_command[6] <= '9' && current_command[6] >= '0') {
-							set_process_priority(current_command[3] * 10 + current_command[4], current_command[6]);
-							error = 0;
-						}
-					} else if (current_command[4] == ' '){
-						if (current_command[5] <= '9' && current_command[5] >= '0') {
-							set_process_priority(current_command[3], current_command[5]);
-							error = 0;
-						}
-					}
+				if (get_pcb_from_pid(10)->m_state != BLK) {
+					is_allowing_input = 1;
+					set_process_priority(10, 0);
+				} else {
+					uart0_put_string("\r\nSet process priority process is currently blocked on memory.\r\n");
 				}
 				
-				if (error == 1) {
-					uart0_put_string("\r\n\"");
-					uart0_put_string((unsigned char*)current_command);
-					uart0_put_string("\" is not a recognized command.  Please make sure the format is: %C process_id new_priority.\r\n");
-				}
-				
-			}*/
+			}
 			else if (current_command[0] == 'Z') {
 				Message* messageToSend;
 				uart1_put_string("KCD Z\r\n");

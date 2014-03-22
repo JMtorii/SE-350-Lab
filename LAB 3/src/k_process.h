@@ -34,6 +34,7 @@ int k_release_into_iprocess(void);
 
 void add_system_processes(void);
 void null(void);
+void set_process_priority_process(void);
 void WallClock_p(void);
 void KCD (void);
 void CRT (void);
