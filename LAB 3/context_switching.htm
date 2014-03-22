@@ -3,7 +3,7 @@
 <title>Static Call Graph - [N:\SE-350-Lab-c381ba068ffbf91446d6d36a242f63c2a9743ca9\LAB 3\context_switching.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image N:\SE-350-Lab-c381ba068ffbf91446d6d36a242f63c2a9743ca9\LAB 3\context_switching.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Sat Mar 22 17:43:11 2014
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.02 [Build 28]: Last Updated: Sat Mar 22 18:33:23 2014
 <BR><P>
 <H3>Maximum Stack Usage =        116 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -94,7 +94,7 @@ Function Pointers
  <LI><a href="#[37]">k_request_memory_block</a> from k_memory.o(.text) referenced 2 times from k_process.o(.text)
  <LI><a href="#[34]">k_rtx_init</a> from k_rtx_init.o(.text) referenced from main_svc.o(.text)
  <LI><a href="#[38]">k_send_message</a> from envelope.o(.text) referenced 2 times from k_process.o(.text)
- <LI><a href="#[3b]">k_set_process_priority</a> from k_process.o(.text) referenced 7 times from usr_proc.o(.text)
+ <LI><a href="#[3b]">k_set_process_priority</a> from k_process.o(.text) referenced 9 times from usr_proc.o(.text)
  <LI><a href="#[33]">k_timer_init</a> from timer.o(.text) referenced from main_svc.o(.text)
  <LI><a href="#[87]">memory_block_test</a> from usr_proc.o(.text) referenced from usr_proc.o(.text)
  <LI><a href="#[7a]">null</a> from k_process.o(.text) referenced from k_process.o(.text)
@@ -547,6 +547,7 @@ Global Symbols
 <LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_delayed_send
 <LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_send_message
 <LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_receive_message
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KCD
 <LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_release_memory_block
 <LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;k_request_memory_block
 <LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART0_IRQHandler
@@ -728,16 +729,17 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[77]"></a>KCD</STRONG> (Thumb, 368 bytes, Stack size 0 bytes, k_process.o(.text))
+<P><STRONG><a name="[77]"></a>KCD</STRONG> (Thumb, 580 bytes, Stack size 0 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = KCD &rArr; uart_put_string
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;atomic_off
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_string
 <LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_put_char
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> k_process.o(.text)
 </UL>
-<P><STRONG><a name="[78]"></a>WallClock_p</STRONG> (Thumb, 1050 bytes, Stack size 24 bytes, k_process.o(.text))
+<P><STRONG><a name="[78]"></a>WallClock_p</STRONG> (Thumb, 1022 bytes, Stack size 24 bytes, k_process.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = WallClock_p &rArr; itoa
 </UL>
 <BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pcb_from_pid

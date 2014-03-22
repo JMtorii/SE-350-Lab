@@ -474,7 +474,6 @@ void KCD (void) {			//pid 12
 	int commandIndex = 0;
 	
 	while (1) {
-		
 		if(next_command_char != '\r') {
 			// no backspace support
 			// real programmers never make mistakes
@@ -498,20 +497,24 @@ void KCD (void) {			//pid 12
 				} else {
 					uart0_put_string("\r\nWall clock is currently blocked on memory.\r\n");
 				}
-			} /*
+			} 
 			else if (current_command[0] == 'C') {
 				// Two cases: 2 digit process id or 1 digit process id. 
 				// Another way: use an iterator
 				int error = 1;
-				if (current_command[2] == ' ' && current_command[3] <= '9' && current_command[3] >= '0'){
-					if (current_command[4] <= '9' && current_command[4] >= '0') {
-						if (current_command[5] == ' ' && current_command[6] <= '9' && current_command[6] >= '0') {
-							set_process_priority(current_command[3] * 10 + current_command[4], current_command[6]);
+				if (current_command[1] == ' ' && current_command[2] <= '9' && current_command[2] >= '0'){
+					if (current_command[3] <= '9' && current_command[3] >= '0') {
+						if (current_command[4] == ' ' && current_command[5] <= '9' && current_command[5] >= '0') {
+							int pid = 10*(current_command[2] - '0') + current_command[3] - '0';
+							int pri = current_command[5] - '0';
+							set_process_priority(pid, pri);
 							error = 0;
 						}
-					} else if (current_command[4] == ' '){
-						if (current_command[5] <= '9' && current_command[5] >= '0') {
-							set_process_priority(current_command[3], current_command[5]);
+					} else if (current_command[3] == ' '){
+						if (current_command[4] <= '9' && current_command[4] >= '0') {
+							int pid = current_command[2] - '0';
+							int pri = current_command[4] - '0';
+							set_process_priority(pid, pri);
 							error = 0;
 						}
 					}
@@ -521,9 +524,13 @@ void KCD (void) {			//pid 12
 					uart0_put_string("\r\n\"");
 					uart0_put_string((unsigned char*)current_command);
 					uart0_put_string("\" is not a recognized command.  Please make sure the format is: %C process_id new_priority.\r\n");
+				} else {
+					uart0_put_string("\r\n");
+					atomic_off();
 				}
 				
-			}*/
+				
+			}
 			else if (current_command[0] == 'Z') {
 				Message* messageToSend;
 				uart1_put_string("KCD Z\r\n");
