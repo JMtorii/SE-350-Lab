@@ -53,7 +53,7 @@ void set_test_procs() {
 			g_test_procs[i].m_priority=3;
   	}
 		if (i == 4) { // Send message process
-			g_test_procs[i].m_priority=3;
+			g_test_procs[i].m_priority=4;
 		}
 		if (i == 5) { // Recieve message process	
 			g_test_procs[i].m_priority=4;
@@ -268,7 +268,7 @@ void message_send_test(void) {
 		testMessage2->mtext = "MSG is my favourite vitamin.";*/
 		
 		print_debug("Preparing to send message...");
-		send_message(13, testMessage);
+		send_message(6, testMessage);
 		//delayed_send(6, testMessage, 150);
 		print_debug("Message sent!\r\n");
 		

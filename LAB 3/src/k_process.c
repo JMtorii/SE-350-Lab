@@ -315,7 +315,9 @@ void WallClock_p(void) {
 	char digi[11];
 	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
-
+	
+	atomic_on();
+	
 	while (1) {
 		/*uart1_put_string("\r\nIn wall clock!\r\n");
 		uart1_put_string("Current command: ");
@@ -462,6 +464,7 @@ void WallClock_p(void) {
 			}
 		}
 		set_process_priority(11, 4);
+		atomic_off();
 		ret_val = release_processor();
 	}
 }
@@ -673,7 +676,7 @@ void UART_i (void) {
 			
 			if (msg == NULL) {
 				int senderid;
-				msg = (Message*)receive_message_nonblocking(&senderid);
+				msg = (Message*)k_receive_message_nonblocking(&senderid);
 				gp_buffer = msg->mtext;
 			}
 			
@@ -686,7 +689,7 @@ void UART_i (void) {
 					pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 					pUart->THR = '\0';
 					g_send_char = 0;
-					release_memory_block_nonblocking(msg);
+					k_release_memory_block_nonblocking(msg);
 					msg = NULL;
 				}
 			}		

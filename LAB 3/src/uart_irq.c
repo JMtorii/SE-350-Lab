@@ -12,7 +12,7 @@
 #include "printf.h"
 #endif
 
-int atomicflag = 0;
+int atomicflag = 1;
 
 extern uint32_t g_switch_flag;
 extern uint8_t g_send_char;
@@ -27,7 +27,7 @@ extern int k_release_processor(void);
 int uart_irq_init(int n_uart) {
 
 	LPC_UART_TypeDef *pUart;
-	atomicflag = 0;
+	atomicflag = 1;
 	
 	if ( n_uart ==0 ) {
 		/*
