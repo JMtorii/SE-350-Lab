@@ -59,11 +59,20 @@ extern int __SVC_0 _release_processor(U32 p_func);
 extern void *k_request_memory_block(void);
 #define request_memory_block() _request_memory_block((U32)k_request_memory_block)
 extern void *_request_memory_block(U32 p_func) __SVC_0;
+
+extern void *k_request_memory_block_nonblocking(void);
+#define request_memory_block_nonblocking() _request_memory_block_nonblocking((U32)k_request_memory_block_nonblocking)
+extern void *_request_memory_block_nonblocking(U32 p_func) __SVC_0;
+
 /* __SVC_0 can also be put at the end of the function declaration */
 
 extern int k_release_memory_block(void *);
 #define release_memory_block(p_mem_blk) _release_memory_block((U32)k_release_memory_block, p_mem_blk)
 extern int _release_memory_block(U32 p_func, void *p_mem_blk) __SVC_0;
+
+extern int k_release_memory_block_nonblocking(void *);
+#define release_memory_block_nonblocking(p_mem_blk) _release_memory_block_nonblockingU32)k_release_memory_block_nonblocking, p_mem_blk)
+extern int _release_memory_block_nonblocking(U32 p_func, void *p_mem_blk) __SVC_0;
 
 extern int k_set_process_priority(int process_id, int priority);
 #define set_process_priority(process_id, priority) _set_process_priority((U32)k_set_process_priority, process_id, priority)
@@ -80,6 +89,10 @@ extern int _send_message(U32 p_func, int pid, void *p_msg) __SVC_0;
 extern void *k_receive_message(int *p_pid);
 #define receive_message(p_pid) _receive_message((U32)k_receive_message, p_pid)
 extern void *_receive_message(U32 p_func, void *p_pid) __SVC_0;
+
+extern void *k_receive_message_nonblocking(int *p_pid);
+#define receive_message_nonblocking(p_pid) _receive_message_nonblocking((U32)k_receive_message_nonblocking, p_pid)
+extern void *_receive_message_nonblocking(U32 p_func, void *p_pid) __SVC_0;
 
 extern int k_delayed_send(int pid, void *p_msg, int delay);
 #define delayed_send(pid, p_msg, delay) _delayed_send((U32)k_delayed_send, pid, p_msg, delay)

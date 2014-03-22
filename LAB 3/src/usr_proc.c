@@ -10,10 +10,6 @@
 #include "uart_polling.h"
 #include "usr_proc.h"
 
-#ifdef DEBUG_0
-#include "printf.h"
-#endif /* DEBUG_0 */
-
 typedef struct msg {
 	int mtype;
 	char mtext[1];
@@ -33,13 +29,13 @@ void print_crt(char* message) {
 }
 
 void print_debug(char* message) {
-	#ifdef DEBUG_0
+	#ifdef DEBUG_1
 		uart1_put_string(message);
 	#endif
 }
 
 void print_char_debug(char message) {
-	#ifdef DEBUG_0
+	#ifdef DEBUG_1
 		uart1_put_char(message);
 	#endif
 }

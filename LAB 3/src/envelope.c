@@ -29,13 +29,14 @@ int k_send_message(int receiving_pid, void* msg) {
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
 	void* env;
 	
+	// Allocate for envelope
+  env = (Envelope*)k_request_memory_block();
+		
+	atomic_on();
+	
 	if (((Message *)msg)->mtype == 2) {
 			k_set_process_priority(13, 0);
 	}
-	
-	// Allocate for envelope
-  env = (Envelope*)k_request_memory_block();
-	atomic_on();
 	// Create envelope wrapping message 
 	env = create_envelope(env, msg, this_pid, receiving_proc->m_pid);
 	// Send envelope to receiving proc
@@ -49,15 +50,15 @@ void* k_receive_message(int* sender_id) {
 	Envelope* env;
 	Message* returnMessage;
 	atomic_on();
-	
 	// Check if any in mailbox
   while( gp_current_process->mailbox.first == NULL) {
-  	gp_current_process->m_state = BLK_ON_RCV;
-			
+		gp_current_process->m_state = BLK_ON_RCV;
   	q_push(&blocked_rcv_queue[k_get_process_priority(gp_current_process->m_pid)],gp_current_process);
   	atomic_off();
  	  k_release_processor();
+		atomic_on();
   }
+	atomic_on();
 	env = (Envelope*)q_pop(&(gp_current_process->mailbox));
 	*sender_id = env->sender_pid;
 	//printf("PID in env: %d, PID return: %d\r\n",env->sender_pid,*sender_id);
@@ -94,7 +95,8 @@ int k_delayed_send(int receiving_pid, void* msg, int delay) {
 	
 	// Allocate for envelope
   env = (Envelope*)k_request_memory_block();
-  atomic_on();
+	
+	atomic_on();
   this_pid = gp_current_process->m_pid;
   receiving_proc = get_pcb_from_pid(receiving_pid);
   env = create_envelope(env, msg, this_pid, receiving_proc->m_pid);

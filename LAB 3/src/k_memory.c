@@ -7,6 +7,7 @@
 
 #include "k_memory.h"
 #include "uart.h"
+#include "uart_polling.h"
 
 #ifdef DEBUG_0
 #include "printf.h"
@@ -153,6 +154,7 @@ U32 *alloc_stack(U32 size_b)
 void *k_request_memory_block(void) {
 	U32 * ret_val;
 	atomic_on();
+	
 	while (first_mem_block == NULL) { //Is this correct?
 		// Set that process state to BLOCKED
 		gp_current_process->m_state = BLK;
@@ -163,12 +165,33 @@ void *k_request_memory_block(void) {
 		// Release processor
 		atomic_off();
 		k_release_processor();
+		atomic_on();
 	}
+	atomic_on();
 	// Pop from heap
 	if (first_mem_block != NULL) {
 		ret_val = h_pop();
 	}	
 	atomic_off();
+	return (void *) ret_val;
+}
+
+void *k_request_memory_block_nonblocking(void) {
+	U32 * ret_val;
+	while (first_mem_block == NULL) { //Is this correct?
+		// Set that process state to BLOCKED
+		gp_current_process->m_state = BLK;
+		
+		// Put PCB on blocked_resource q
+		q_push(&blocked_queue[k_get_process_priority(gp_current_process->m_pid)], gp_current_process);
+		
+		// Release processor
+		k_release_processor();
+	}
+	// Pop from heap
+	if (first_mem_block != NULL) {
+		ret_val = h_pop();
+	}	
 	return (void *) ret_val;
 }
 
@@ -225,6 +248,7 @@ int k_release_memory_block_nonblocking(void *p_mem_blk) {
 void print_num_mem_blk(void) {
 	int i;
 	MemBlock *iter;
+	char buffer[3];
 	
 	i=0;
 	iter=first_mem_block;
@@ -235,6 +259,10 @@ void print_num_mem_blk(void) {
 	if (i == 1) {
 		int k=i;i=k;
 	}
+	uart1_put_string("Number of MemBlocks: ");
+	itoa(i, buffer);
+	uart1_put_string(buffer);
+	uart1_put_string("\r\n");
 	//printf("Number of MemBlocks: %d\r\n", i);
 }
 

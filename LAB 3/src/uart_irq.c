@@ -12,7 +12,7 @@
 #include "printf.h"
 #endif
 
-int atomicflag = 1;
+int atomicflag = 0;
 
 extern uint32_t g_switch_flag;
 extern uint8_t g_send_char;
@@ -27,7 +27,8 @@ extern int k_release_processor(void);
 int uart_irq_init(int n_uart) {
 
 	LPC_UART_TypeDef *pUart;
-
+	atomicflag = 0;
+	
 	if ( n_uart ==0 ) {
 		/*
 		Steps 1 & 2: system control configuration.
@@ -185,20 +186,22 @@ void c_UART0_IRQHandler(void)
 		// Switch to uart0 iprocess context
 		p_pcb_old = gp_current_process;
 		gp_current_process = get_pcb_from_pid(15);
-	
-
 }
 
 void atomic_on(void) {
-	  atomicflag = 1;
-		NVIC_DisableIRQ(UART0_IRQn);
-		NVIC_DisableIRQ(TIMER0_IRQn);
+	  //if (++atomicflag) {
+			NVIC_DisableIRQ(UART0_IRQn);
+			NVIC_DisableIRQ(TIMER0_IRQn);
+		/*} else {
+			uart1_put_string("Off called before On\r\n");
+		}*/
 }
 
 void atomic_off(void) {
-	  atomicflag = 0;
-		NVIC_EnableIRQ(UART0_IRQn);
-		NVIC_EnableIRQ(TIMER0_IRQn);
+	  //if (!--atomicflag) {
+			NVIC_EnableIRQ(UART0_IRQn);
+			NVIC_EnableIRQ(TIMER0_IRQn);
+		//}
 }
 
 // Taken from http://stackoverflow.com/questions/9655202/how-to-convert-integer-to-string-in-c

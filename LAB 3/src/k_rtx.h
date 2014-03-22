@@ -24,11 +24,13 @@
 #define KCD_REG 1
 #define CRT_DISP 2
 
+/*
 #ifdef DEBUG_0
-#define USR_SZ_STACK 0x200         /* user proc stack size 512B   */
+#define USR_SZ_STACK 0x200          user proc stack size 512B 
 #else
-#define USR_SZ_STACK 0x100         /* user proc stack size 218B  */
-#endif /* DEBUG_0 */
+#define USR_SZ_STACK 0x100          user proc stack size 218B
+#endif DEBUG_0
+*/
 
 /*----- Types -----*/
 typedef unsigned char U8;
@@ -91,6 +93,10 @@ extern void *k_request_memory_block(void);
 extern void __SVC_0 *_request_memory_block(U32 p_func);
 #define request_memory_block() _request_memory_block((U32)k_request_memory_block)
 
+extern void *k_request_memory_block_nonblocking(void);
+extern void __SVC_0 *_request_memory_block_nonblocking(U32 p_func);
+#define request_memory_block_nonblocking() _request_memory_block_nonblocking((U32)k_request_memory_block_nonblocking)
+
 extern int k_send_message(int pid, void *p_msg);
 extern int __SVC_0 _send_message(U32 p_func, int pid, void *p_msg);
 #define send_message(pid, p_msg) _send_message((U32)k_send_message, pid, p_msg)
@@ -99,8 +105,16 @@ extern int k_release_memory_block(void *);
 #define release_memory_block(p_mem_blk) _release_memory_block((U32)k_release_memory_block, p_mem_blk)
 extern int _release_memory_block(U32 p_func, void *p_mem_blk) __SVC_0;
 
+extern int k_release_memory_block_nonblocking(void *);
+#define release_memory_block_nonblocking(p_mem_blk) _release_memory_block_nonblocking((U32)k_release_memory_block_nonblocking, p_mem_blk)
+extern int _release_memory_block_nonblocking(U32 p_func, void *p_mem_blk) __SVC_0;
+
 extern void *k_receive_message(int *p_pid);
 #define receive_message(p_pid) _receive_message((U32)k_receive_message, p_pid)
 extern void *_receive_message(U32 p_func, void *p_pid) __SVC_0;
+
+extern void *k_receive_message_nonblocking(int *p_pid);
+#define receive_message_nonblocking(p_pid) _receive_message_nonblocking((U32)k_receive_message_nonblocking, p_pid)
+extern void *_receive_message_nonblocking(U32 p_func, void *p_pid) __SVC_0;
 
 #endif // ! K_RTX_H_

@@ -89,6 +89,7 @@ void process_init()
 		if (g_proc_table[i].m_priority != -1) {
 			q_push(&ready_queue[k_get_process_priority((gp_pcbs[i])->m_pid)],gp_pcbs[i]);
 		}
+
 		// Assign memory address of stack pointer for each pcb
 		(gp_pcbs[i])->mp_sp = sp;
 	}
@@ -290,7 +291,7 @@ void add_system_processes(void) {
 	
 	g_proc_table[NUM_TEST_PROCS+5].m_pid = (U32)15;
 	g_proc_table[NUM_TEST_PROCS+5].m_stack_size = 0x100;
-	g_proc_table[NUM_TEST_PROCS+5].m_priority = -1;
+	g_proc_table[NUM_TEST_PROCS+5].m_priority = -1; // how does this end up in queue 4?
 	g_proc_table[NUM_TEST_PROCS+5].mpf_start_pc = &UART_i;
 }
 
@@ -298,10 +299,6 @@ void add_system_processes(void) {
 void null (void) {
 	int ret_val = 30;
 	while (1) {
-		#ifdef DEBUG_0
-			/*uart1_put_string("[proc0]: ret_val=%d\r\n");
-			uart1_put_string("NULL PROCESS!!\r\n");*/
-		#endif 
 		ret_val = release_processor();
 	}
 }
@@ -335,7 +332,7 @@ void WallClock_p(void) {
 			uint32_t time_dif = (hours_start * 3600000) + (minutes_start * 60000) + (seconds_start * 1000) + (g_timer_count - start_time);
 			char smallbuf[3];
 			
-			//testMessage = (Message*)request_memory_block();
+			testMessage = (Message*)request_memory_block();
 			
 			// Check if timer is over 24:00:00
 			if (time_dif >= 86400000) {
@@ -392,13 +389,14 @@ void WallClock_p(void) {
 			digi[9] = '\n';
 			digi[10] = '\0';
 			
-			//testMessage->mtype = 2;
-			//my_strcpy(testMessage->mtext, digi);
+			//print_num_mem_blk();
+			testMessage->mtype = 2;
+		  my_strcpy(testMessage->mtext, digi);
 			
-			//send_message(13, testMessage);
+			send_message(13, testMessage);
 		}
 		else if (current_command[1] == 'R' && current_command[2] == 0) {
-			uart1_put_string("\r\nResetting wall clock...\r\n");
+			uart0_put_string("\r\nResetting wall clock...\r\n");
 			// reset the wall clock and display it on the CRT
 			start_time = g_timer_count;
 			wall_clock_active = 1;
@@ -625,16 +623,16 @@ void UART_i (void) {
 	Message* msg = NULL;// (Message*)receive_message_unblocking(NULL);
 	uint8_t *gp_buffer = NULL; //msg->mtext;
 	
-	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
+	
+	// TODO: Assess how the PCB should be configured for UART
+	this_pcb->prev = NULL;
+	
   // TODO: Send message to KCD for input instead of changing priority
 	while (1) {
 		uint8_t IIR_IntId;	    // Interrupt ID from IIR 		 
 		LPC_UART_TypeDef *pUart = (LPC_UART_TypeDef *)LPC_UART0;
-		
-	#ifdef DEBUG_0
-		uart1_put_string("Entering c_UART0_IRQHandler\n\r");
-	#endif // DEBUG_0
+		//printf("Priority: %d\n", this_pcb->m_priority);
 
 		IIR_IntId = (pUart->IIR) >> 1 ; // skip pending bit in IIR
 		
@@ -650,11 +648,6 @@ void UART_i (void) {
 				
 				g_send_char = 0;
 			} else {
-				#ifdef DEBUG_0
-				uart1_put_string("Reading a char = ");
-				uart1_put_char(g_char_in);
-				uart1_put_string("\n\r");
-				#endif // DEBUG_0
 				
 				// If not in command mode, look for commands
 				if ( g_char_in == 'r' ) {
@@ -680,31 +673,20 @@ void UART_i (void) {
 			
 			if (msg == NULL) {
 				int senderid;
-				msg = (Message*)k_receive_message_nonblocking(&senderid);
+				msg = (Message*)receive_message_nonblocking(&senderid);
 				gp_buffer = msg->mtext;
 			}
 			
 			if (msg != NULL) {
 				if (*gp_buffer != '\0' ) {
 					g_char_out = *gp_buffer;
-		#ifdef DEBUG_0
-					uart1_put_string("Writing a char = ");
-					uart1_put_char(g_char_out);
-					uart1_put_string("\n\r");
-					
-					// you could use the printf instead
-					//printf("Writing a char = %c \n\r", g_char_out);
-		#endif // DEBUG_0
 					pUart->THR = g_char_out;
 					gp_buffer++;
 				} else {
-		#ifdef DEBUG_0
-					uart1_put_string("Finish writing. Turning off IER_THRE\n\r");
-		#endif // DEBUG_0
 					pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 					pUart->THR = '\0';
 					g_send_char = 0;
-					release_memory_block(msg);
+					release_memory_block_nonblocking(msg);
 					msg = NULL;
 				}
 			}		
@@ -712,7 +694,6 @@ void UART_i (void) {
 	#ifdef DEBUG_0
 				//uart1_put_string("Should not get here!\n\r");
 	#endif // DEBUG_0
-			//return;
 		}	
 
 		//uart1_put_string("THIS WORKS\r\n");

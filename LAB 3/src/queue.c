@@ -77,7 +77,6 @@ void q_print_process(Queue *q, int priority) {
 	itoa(priority, pri_buffer);
 	
 	while (iter != NULL) {
-		
 		itoa(i, ind_buffer);
 		itoa(iter->m_pid, pid_buffer);
 		
@@ -124,6 +123,7 @@ void q_print_blk_mem_process(void) {
 		uart1_put_string("\r\n");
 		q_print_process(&blocked_queue[i],i);
 	}
+	print_num_mem_blk();
 	uart1_put_string("\r\nBlocked on memory print complete:================\r\n");
 	#endif
 }

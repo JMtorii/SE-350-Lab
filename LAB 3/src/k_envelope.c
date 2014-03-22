@@ -69,31 +69,35 @@ void* receive_message(int* sender_id) {
 	
 	Envelope* env;
 	Message* returnMessage;
-	//atomic(on)
+	atomic_on();
+	
 	while( gp_current_process->mailbox.first == NULL) {
 		gp_current_process->m_state = BLK_ON_RCV;
 		q_push(&blocked_rcv_queue[get_process_priority(gp_current_process->m_pid)],gp_current_process);
+		atomic_off();
 		release_processor();
+		atomic_on();
 	}
+	atomic_on();
 	env = (Envelope*)q_pop(&(gp_current_process->mailbox));
 	*sender_id = env->sender_pid;
-	printf("PID in env: %d, PID return: %d\r\n",env->sender_pid,*sender_id);
-	//atomic(off)
+	//printf("PID in env: %d, PID return: %d\r\n",env->sender_pid,*sender_id);
+
 	returnMessage = (Message *)k_request_memory_block();
+
 	*returnMessage = env->msg;
 	
-	printf("Received at: %d\r\n", g_timer_count);
+	//printf("Received at: %d\r\n", g_timer_count);
 	
 	k_release_memory_block(env);
+	atomic_off();
 	return (void *)returnMessage;
 }
 
 void* receive_message_nonblocking(void) {
 	
 	Envelope* env;
-	//atomic(on)
 	env = (Envelope*)q_pop(&(gp_current_process->mailbox));
-	//atomic(off)
 	return env;
 	
 }
