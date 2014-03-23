@@ -9,11 +9,7 @@
 #include "rtx.h"
 #include "uart_polling.h"
 #include "usr_proc.h"
-
-typedef struct msg {
-	int mtype;
-	char mtext[1];
-} msg;
+#include "q_queue.h"
 
 /* initialization table item */
 PROC_INIT g_test_procs[NUM_TEST_PROCS];
@@ -59,13 +55,13 @@ void set_test_procs() {
 			g_test_procs[i].m_priority=4;
 		}
 		if (i == 6) { // A	
-			g_test_procs[i].m_priority=4;
+			g_test_procs[i].m_priority=1;
 		}
 		if (i == 7) { // B	
-			g_test_procs[i].m_priority=4;
+			g_test_procs[i].m_priority=1;
 		}
 		if (i == 8) { // C	
-			g_test_procs[i].m_priority=4;
+			g_test_procs[i].m_priority=1;
 		}
 	}
 
@@ -253,13 +249,15 @@ void blocked_test(void)
 	
 void message_send_test(void) {
 	int ret_val = 80;
-	char text[25] = "Vegetables are my enemy.";
-	
+	char text[38] = "Vegetables are my enemy #XXXXX\r\n";
+	int count = 0;
 	
 	while(1) {
 		msg* testMessage;
+		++count;
 		testMessage = (msg*)request_memory_block();
 		testMessage->mtype = 2;
+		itoa(count, &text[23]);
 		my_strcpy(testMessage->mtext, text);
 		//testMessage->mtext = text;
 		
@@ -268,7 +266,7 @@ void message_send_test(void) {
 		testMessage2->mtext = "MSG is my favourite vitamin.";*/
 		
 		print_debug("Preparing to send message...");
-		send_message(6, testMessage);
+		send_message(13, testMessage);
 		//delayed_send(6, testMessage, 150);
 		print_debug("Message sent!\r\n");
 		
@@ -306,11 +304,13 @@ void message_receive_test(void) {
 
 void A(void) {
 	int num;
-	void* p = request_memory_block();
-	/*register with Command Decoder as handler of %Z commands
+	int sender_pid;
 	while (1) {
-		p = receive_message(NULL);
-		if (the message(p) contains the %Z command then) {
+		msg* p = (msg*)request_memory_block();
+		uart1_put_string("Waiting for KCD\r\n");
+		p = (msg*)(receive_message(&sender_pid));
+		if (p->mtext[0] == '%' && p->mtext[1] == 'Z') {
+			uart1_put_string("Received %Z from KCD\r\n");
 			release_memory_block(p);
 			break;
 	  } else {
@@ -319,53 +319,74 @@ void A(void) {
 	}
 	num = 0;
 	while (1) {
-		p = request_memory_block();
-		((Message *)p)->mtype = count_report;
-		((Message *)p)->mtext = num;
+		char b[8];
+		msg* p = (msg*)request_memory_block();
+		itoa(num, b);
+		p->mtype = 3;
+		my_strcpy(p->mtext, b);
+		//p->mtext = b;
 		send_message(8,p);
-		num = num + 1;
+		uart1_put_string(b);
+		uart1_put_string("Sent Message from A to B\r\n");
+		num++;
 		release_processor();
-	}*/
+	}
 	// note that Process A does not de-allocate
 	// any received envelopes in the second loop
 }
 
 void B(void) {
-	/*while (1) {
-		void* msg = receive_message(NULL);
-		send_message(7,msg);
+	int sender_pid;
+	while (1) {
+		msg* p; 
+		p = (msg*)(receive_message(&sender_pid));
+		uart1_put_string("Sent Message from B to C\r\n");
+		send_message(9,p);
 		release_processor();
-	}*/
+	}
 }
 
 void C (void) {
-	while (1) {/*
-		perform any needed initialization and create a local message queue
-		while (1) {
-			if (local message queue is empty) {
-				p <- receive a message
-			}
-			else {
-				p <- dequeue the first message from the local message queue
-			}
-			
-			if (msg_type of p == count_report) {
-				if (msg_data[0] of p is evenly divisible by 20) {
-					send "Process C" to CRT display using msg envelope p
-					q <- request_memory_block()
-					request a delayed_send for 10 sec delay with msg_type=wakeup10 using q
-					while (1) {
-						p <- receive a message //block and let other processes execute
-						if (message_type of p == wakeup10) then
-						exit this loop
+	Q_Queue local_mailbox;
+	int sender_pid;
+	q_init(&local_mailbox);
+
+	while (1) {
+		msg* p;
+		if (local_mailbox.first == NULL) {
+			p = (msg*)(receive_message(&sender_pid));
+		}
+		else {
+			p = (msg*)q_pop(&local_mailbox);
+		}
+
+		if (p->mtype == 3) {
+			int msg_value = atoi(p->mtext);
+			if (msg_value%20 == 0) {
+				msg* MessageToSend = (msg*)request_memory_block();
+
+				msg* q = (msg*)request_memory_block();
+				MessageToSend->mtype = 2;
+				my_strcpy(MessageToSend->mtext, "Process C");
+				send_message(13, MessageToSend);
+
+				q->mtype = 4;
+				my_strcpy(q->mtext, "");
+				delayed_send(9,q,10000);
+
+				while (1) {
+					msg* r;
+					r = (msg*)(receive_message(&sender_pid)); //block and let other processes execute
+					if (r->mtype == 4) {
+						release_memory_block(r);
+						break;
 					} else {
-						put message (p) on the local message queue for later processing
+						q_push(&local_mailbox, r);
 					}
 				}
 			}
 		}
-		
-		release_memory_block(p);*/
+		release_memory_block(p);
 		release_processor();
 	}
 }

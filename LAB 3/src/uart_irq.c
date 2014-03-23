@@ -195,6 +195,7 @@ void atomic_on(void) {
 		/*} else {
 			uart1_put_string("Off called before On\r\n");
 		}*/
+	atomicflag = 1;
 }
 
 void atomic_off(void) {
@@ -202,6 +203,11 @@ void atomic_off(void) {
 			NVIC_EnableIRQ(UART0_IRQn);
 			NVIC_EnableIRQ(TIMER0_IRQn);
 		//}
+	atomicflag = 0;
+}
+
+int get_atomic(void) {
+	return atomicflag;
 }
 
 // Taken from http://stackoverflow.com/questions/9655202/how-to-convert-integer-to-string-in-c

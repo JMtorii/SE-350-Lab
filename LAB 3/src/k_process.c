@@ -11,6 +11,7 @@
 #include "uart_polling.h"
 #include "k_process.h"
 #include "envelope.h"
+#include "uart.h"
 
 #ifdef DEBUG_0
 #include "printf.h"
@@ -291,14 +292,61 @@ void add_system_processes(void) {
 	
 	g_proc_table[NUM_TEST_PROCS+5].m_pid = (U32)15;
 	g_proc_table[NUM_TEST_PROCS+5].m_stack_size = 0x100;
-	g_proc_table[NUM_TEST_PROCS+5].m_priority = -1; // how does this end up in queue 4?
+	g_proc_table[NUM_TEST_PROCS+5].m_priority = -1;
 	g_proc_table[NUM_TEST_PROCS+5].mpf_start_pc = &UART_i;
+	
+	g_proc_table[NUM_TEST_PROCS+6].m_pid = (U32)10;
+	g_proc_table[NUM_TEST_PROCS+6].m_stack_size = 0x100;
+	g_proc_table[NUM_TEST_PROCS+6].m_priority = 4;
+	g_proc_table[NUM_TEST_PROCS+6].mpf_start_pc = &set_process_priority_process;
 }
 
 // Proc for what the null process does
 void null (void) {
 	int ret_val = 30;
 	while (1) {
+		ret_val = release_processor();
+	}
+}
+
+void set_process_priority_process(void) {
+	int ret_val = 0;
+	int this_pid = 10;
+
+	PCB* this_pcb = get_pcb_from_pid(this_pid);
+
+	while(1) {
+		// Two cases: 2 digit process id or 1 digit process id. 
+		// Another way: use an iterator
+		int error = 1;
+		if (current_command[1] == ' ' && current_command[2] <= '9' && current_command[2] >= '0'){
+			if (current_command[3] <= '9' && current_command[3] >= '0') {
+				if (current_command[4] == ' ' && current_command[5] <= '9' && current_command[5] >= '0') {
+					int pid = 10*(current_command[2]-'0') + current_command[3] - '0';
+					int pri = current_command[5] - '0';
+					set_process_priority(pid, pri);
+					error = 0;
+				}
+			} else if (current_command[3] == ' '){
+				if (current_command[4] <= '9' && current_command[4] >= '0') {
+					int pid = current_command[2] - '0';
+					int pri = current_command[4] - '0';
+					set_process_priority(pid, pri);
+					error = 0;
+				}
+			}
+		}
+
+		if (error == 1) {
+			uart1_put_string("\r\n\"");
+			uart1_put_string((unsigned char*)current_command);
+			uart1_put_string("\" is not a recognized command.  Please make sure the format is: %C process_id new_priority.\r\n");
+		} else {
+			uart1_put_string("\r\n");
+			atomic_off();
+		}
+
+		set_process_priority(10, 4);
 		ret_val = release_processor();
 	}
 }
@@ -315,8 +363,6 @@ void WallClock_p(void) {
 	char digi[11];
 	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
-	
-	atomic_on();
 	
 	while (1) {
 		/*uart1_put_string("\r\nIn wall clock!\r\n");
@@ -398,7 +444,7 @@ void WallClock_p(void) {
 			send_message(13, testMessage);
 		}
 		else if (current_command[1] == 'R' && current_command[2] == 0) {
-			uart0_put_string("\r\nResetting wall clock...\r\n");
+			uart1_put_string("\r\nResetting wall clock...\r\n");
 			// reset the wall clock and display it on the CRT
 			start_time = g_timer_count;
 			wall_clock_active = 1;
@@ -464,7 +510,6 @@ void WallClock_p(void) {
 			}
 		}
 		set_process_priority(11, 4);
-		atomic_off();
 		ret_val = release_processor();
 	}
 }
@@ -474,20 +519,20 @@ void KCD (void) {			//pid 12
 	int this_pid = 12;
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 	int commandIndex = 0;
-	
+
 	while (1) {
-		
+
 		if(next_command_char != '\r') {
 			// no backspace support
 			// real programmers never make mistakes
-			
+
 			// read in a character, add it to input
 			current_command[commandIndex++] = next_command_char;
 			uart1_put_char(next_command_char);
-			
+
 			// abort if we try to enter a command that's too long
 			if(commandIndex > 255) {
-				uart1_put_string("\r\n");
+				//uart0_put_string("\r\n");
 				in_command_mode = 0;
 			}
 		}
@@ -498,43 +543,36 @@ void KCD (void) {			//pid 12
 					is_allowing_input = 1;
 					set_process_priority(11, 0);
 				} else {
-					uart1_put_string("\r\nWall clock is currently blocked on memory.\r\n");
+					//uart0_put_string("\r\nWall clock is currently blocked on memory.\r\n");
 				}
-			}/*
+			} 
 			else if (current_command[0] == 'C') {
-				// Two cases: 2 digit process id or 1 digit process id. 
-				// Another way: use an iterator
-				int error = 1;
-				if (current_command[1] == ' ' && current_command[2] <= '9' && current_command[2] >= '0'){
-					if (current_command[3] <= '9' && current_command[3] >= '0') {
-						if (current_command[4] == ' ' && current_command[5] <= '9' && current_command[5] >= '0') {
-							set_process_priority(current_command[2] * 10 + current_command[3], current_command[5]);
-							error = 0;
-						}
-					} else if (current_command[3] == ' '){
-						if (current_command[4] <= '9' && current_command[4] >= '0') {
-							set_process_priority(current_command[2], current_command[4]);
-							error = 0;
-						}
-					}
+				if (get_pcb_from_pid(10)->m_state != BLK) {
+					is_allowing_input = 1;
+					set_process_priority(10, 0);
+				} else {
+					//uart0_put_string("\r\nSet process priority process is currently blocked on memory.\r\n");
 				}
-				
-				if (error == 1) {
-					uart1_put_string("\r\n\"");
-					uart1_put_string((unsigned char*)current_command);
-					uart1_put_string("\" is not a recognized command.  Please make sure the format is: %C process_id new_priority.\r\n");
-				}
-			}*/
-			else {
-				uart1_put_string("\r\n\"");
-				uart1_put_string((unsigned char*)current_command);
-				uart1_put_string("\" is not a recognized command.  Please try again.\r\n");
+
 			}
-			
+			else if (current_command[0] == 'Z') {
+				Message* messageToSend;
+				uart1_put_string("KCD Z\r\n");
+				messageToSend = (Message*)request_memory_block();
+				messageToSend->mtype = 1;
+				my_strcpy(messageToSend->mtext, "%Z");
+				send_message(7, messageToSend);
+			}
+			else {
+				//uart0_put_string("\r\n\"");
+				//uart0_put_string((unsigned char*)current_command);
+				//uart0_put_string("\" is not a recognized command.  Please try again.\r\n");
+			}
+
 			in_command_mode = 0;
 			commandIndex = 0;
 		}
-		
+
 		// release processor, retreat into the background
 		set_process_priority(12, 4);
 		ret_val = release_processor();
@@ -686,8 +724,8 @@ void UART_i (void) {
 					pUart->THR = g_char_out;
 					gp_buffer++;
 				} else {
-					pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 					pUart->THR = '\0';
+					pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 					g_send_char = 0;
 					k_release_memory_block_nonblocking(msg);
 					msg = NULL;

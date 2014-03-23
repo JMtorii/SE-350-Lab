@@ -39,6 +39,7 @@ void KCD (void);
 void CRT (void);
 void Timer_i(void);
 void UART_i(void);
+void set_process_priority_process(void);
 
 char *my_strcpy(char dest[], const char source[]);
 
