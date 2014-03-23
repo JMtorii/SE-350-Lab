@@ -261,7 +261,7 @@ void print_num_mem_blk(void) {
 	}
 	uart1_put_string("Number of MemBlocks: ");
 	itoa(i, buffer);
-	uart1_put_string(buffer);
+	uart1_put_string((unsigned char*)buffer);
 	uart1_put_string("\r\n");
 	//printf("Number of MemBlocks: %d\r\n", i);
 }

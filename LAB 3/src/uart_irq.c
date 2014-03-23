@@ -179,8 +179,8 @@ __asm void UART0_IRQHandler(void)
 void c_UART0_IRQHandler(void)
 {
 	
-		LPC_UART_TypeDef *pUart;
-		pUart = (LPC_UART_TypeDef *) LPC_UART0;
+		//LPC_UART_TypeDef *pUart;
+		//pUart = (LPC_UART_TypeDef *) LPC_UART0;
 		//NOTE: interrupt acknowledged by process 
 	
 		// Switch to uart0 iprocess context

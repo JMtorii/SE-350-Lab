@@ -564,6 +564,7 @@ void KCD (void) {			//pid 12
 				send_message(7, messageToSend);
 			}
 			else {
+				uart1_put_string("Wrong shit.\r\n");
 				//uart0_put_string("\r\n\"");
 				//uart0_put_string((unsigned char*)current_command);
 				//uart0_put_string("\" is not a recognized command.  Please try again.\r\n");
@@ -662,7 +663,7 @@ void UART_i (void) {
 	uint8_t g_char_in;
 	uint8_t g_char_out;
 	Message* msg = NULL;// (Message*)receive_message_unblocking(NULL);
-	uint8_t *gp_buffer = NULL; //msg->mtext;
+	char *gp_buffer = NULL; //msg->mtext;
 	
 	PCB* this_pcb = get_pcb_from_pid(this_pid);
 	
@@ -714,7 +715,7 @@ void UART_i (void) {
 			
 			if (msg == NULL) {
 				int senderid;
-				msg = (Message*)k_receive_message_nonblocking(&senderid);
+				msg = (Message*)receive_message_nonblocking(&senderid);
 				gp_buffer = msg->mtext;
 			}
 			
@@ -727,7 +728,7 @@ void UART_i (void) {
 					pUart->THR = '\0';
 					pUart->IER ^= IER_THRE; // toggle the IER_THRE bit 
 					g_send_char = 0;
-					k_release_memory_block_nonblocking(msg);
+					release_memory_block_nonblocking(msg);
 					msg = NULL;
 				}
 			}		
