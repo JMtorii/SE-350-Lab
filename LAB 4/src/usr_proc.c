@@ -54,22 +54,25 @@ void set_test_procs() {
 		test_results[i] = 1;
 		
 		// Testing with different priorities on processes
-		if (i == 3) {  // Memory blocks test
-			g_test_procs[i].m_priority=3;
-  	}
-		if (i == 4) {  // A
+		if (i == 0) {  // Message send
 			g_test_procs[i].m_priority=1;
   	}
-		if (i == 5) { // B
+		if (i == 1) {  // Message receive
 			g_test_procs[i].m_priority=1;
 		}
+		if (i == 4) {  // A
+			g_test_procs[i].m_priority=3;
+  	}
+		if (i == 5) { // B
+			g_test_procs[i].m_priority=3;
+		}
 		if (i == 6) { // C	
-			g_test_procs[i].m_priority=1;
+			g_test_procs[i].m_priority=3;
 		}
 	}
 
-	g_test_procs[0].mpf_start_pc = &proc1;
-	g_test_procs[1].mpf_start_pc = &proc2;
+	g_test_procs[0].mpf_start_pc = &message_send_test;
+	g_test_procs[1].mpf_start_pc = &message_receive_test;
 	g_test_procs[2].mpf_start_pc = &priority_test;
 	g_test_procs[3].mpf_start_pc = &memory_block_test;
 	g_test_procs[4].mpf_start_pc = &A;
@@ -250,31 +253,33 @@ void blocked_test(void)
 	}
 }
 	
+// NOTE: CHECK commented code, used for timing
 void message_send_test(void) {
 	int ret_val = 80;
 	char text[25] = "Vegetables are my enemy.";
 	
-	
 	while(1) {
 		msg* testMessage;
+    msg* testMessage2;
+		
 		testMessage = (msg*)request_memory_block();
 		testMessage->mtype = 0;
 		testMessage->mtext = text;
 		
-		/*msg* testMessage2 = (msg*)request_memory_block();
+		/*testMessage2 = (msg*)request_memory_block();
  		testMessage2->mtype = 0;
 		testMessage2->mtext = "MSG is my favourite vitamin.";*/
-		
+				
 		print_debug("Preparing to send message...");
-		send_message(7, testMessage);
-		//delayed_send(7, testMessage, 150);
+		
+		send_message(2, testMessage);
+		//delayed_send(2, testMessage, 150);
 		print_debug("Message sent!\r\n");
 		
-		//send_message(7, testMessage2);
-		//delayed_send(7, testMessage2, 100);
+		//send_message(2, testMessage2);
+		//delayed_send(2, testMessage2, 100);
 		
-		print_debug("Process 6 completed!\r\n");
-		
+		print_debug("Process 6 completed!\r\n");		
 		ret_val = release_processor();
 	}
 }
@@ -289,15 +294,14 @@ void message_receive_test(void) {
 		msg* rcvMessage;
 
 		rcvMessage = (msg*)(receive_message(&sender_id));
-		//printf("SenderID: %d Message:",sender_id);
+		printf("SenderID: %d Message:",sender_id);
 		while (rcvMessage->mtext[i] != '\0') {
 			print_char_debug(rcvMessage->mtext[i++]);
 		}
-		
+				
 		release_memory_block(rcvMessage);
 		
 		print_debug("Process 7 completed!\r\n");
-		
 		ret_val = release_processor();
 	}
 }

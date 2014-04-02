@@ -161,7 +161,7 @@ void *k_request_memory_block(void) {
 		q_push(&blocked_queue[k_get_process_priority(gp_current_process->m_pid)], gp_current_process);
 		
 		// Release processor
-		atomic_off();
+		//atomic_off();
 		k_release_processor();
 	}
 	// Pop from heap
@@ -169,6 +169,20 @@ void *k_request_memory_block(void) {
 		ret_val = h_pop();
 	}	
 	atomic_off();
+	
+	// Output time taken
+	/*time_elapsed = g_timer_count - start_time;
+	itoa(time_elapsed, buffer);
+	uart1_put_string("Time elapsed: ");
+	uart1_put_string(buffer);
+	uart1_put_string("\r\n");
+	itoa(g_timer_count, buffer);
+	uart1_put_string(buffer);
+	uart1_put_string(" ");
+	itoa(start_time, buffer);
+	uart1_put_string(buffer);
+	uart1_put_string("\r\n");*/
+	
 	return (void *) ret_val;
 }
 

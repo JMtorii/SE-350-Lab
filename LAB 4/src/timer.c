@@ -69,9 +69,9 @@ uint32_t k_timer_init(uint8_t n_timer)
 	   see MR setting below 
 	*/
 	pTimer->PR = 12499;  
-
+	
 	/* Step 4.2: MR setting, see section 21.6.7 on pg496 of LPC17xx_UM. */
-	pTimer->MR0 = 31;
+	pTimer->MR0 = 1;
 
 	/* Step 4.3: MCR setting, see table 429 on pg496 of LPC17xx_UM.
 	   Interrupt on MR0: when MR0 mathches the value in the TC, 
@@ -120,7 +120,7 @@ void c_TIMER0_IRQHandler(void)
 {
 	/* ack inttrupt, see section  21.6.1 on pg 493 of LPC17XX_UM */
 	LPC_TIM0->IR = BIT(0);  
-	g_timer_count += 31;
+	g_timer_count += 1;
 	
 	// Switch to timer iprocess context
 	p_pcb_old = gp_current_process;

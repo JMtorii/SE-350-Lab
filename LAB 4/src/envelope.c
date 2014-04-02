@@ -25,9 +25,12 @@ void *create_envelope(Envelope* env, void *msg, int sender_pid, int destination_
 }
 
 int k_send_message(int receiving_pid, void* msg) {
+	int start_time = g_timer_count;
+	int time_elapsed;
+	char buffer[8];
 	int this_pid = gp_current_process->m_pid;
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
-	void* env;
+	void* env;	
 	
 	if (((Message *)msg)->mtype == 2) {
 			k_set_process_priority(13, 0);
@@ -41,6 +44,19 @@ int k_send_message(int receiving_pid, void* msg) {
 	// Send envelope to receiving proc
 	send_envelope(receiving_proc, env);
 	atomic_off();
+	
+	// Output time taken
+	/*time_elapsed = g_timer_count - start_time;
+	itoa(time_elapsed, buffer);
+	uart1_put_string("Time elapsed: ");
+	uart1_put_string(buffer);
+	uart1_put_string("\r\n");
+	itoa(g_timer_count, buffer);
+	uart1_put_string(buffer);
+	uart1_put_string(" ");
+	itoa(start_time, buffer);
+	uart1_put_string(buffer);
+	uart1_put_string("\r\n");*/
 	
 	return RTX_OK;
 }
@@ -65,6 +81,19 @@ void* k_receive_message(int* sender_id) {
 	atomic_off();
 	//printf("Received at: %d\r\n", g_timer_count);
 	k_release_memory_block(env);
+	
+	// Output time taken
+	/*time_elapsed = g_timer_count - start_time;
+	itoa(time_elapsed, buffer);
+	uart1_put_string("Time elapsed: ");
+	uart1_put_string(buffer);
+	uart1_put_string("\r\n");
+	itoa(g_timer_count, buffer);
+	uart1_put_string(buffer);
+	uart1_put_string(" ");
+	itoa(start_time, buffer);
+	uart1_put_string(buffer);
+	uart1_put_string("\r\n");*/
 	
 	return (void *)returnMessage;
 }

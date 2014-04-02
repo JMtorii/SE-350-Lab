@@ -51,10 +51,20 @@ void send_message(int receiving_pid, void* msg) {
 	atomic ( off ) ;*/
 	
 	int this_pid = gp_current_process->m_pid;
+	int start_time = g_timer_count;
+	char buffer[8];
+	int time_elapsed;
 	PCB *receiving_proc = get_pcb_from_pid(receiving_pid);
 	void* env = create_envelope(msg, this_pid, receiving_proc->m_pid);
 
 	send_envelope(receiving_proc, env);
+	time_elapsed = g_timer_count - start_time;
+	
+	itoa(time_elapsed, buffer); 
+	uart0_put_string("\r\n");
+	uart0_put_string("Time elapsed: ");
+	uart0_put_string(buffer);
+	uart0_put_string("\r\n");
 }
 
 void* receive_message(int* sender_id) {
